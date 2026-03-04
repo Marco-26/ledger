@@ -2,6 +2,7 @@ import pandas as pd
 import camelot
 import re
 from dataclasses import dataclass
+from constants import DATE_PATTERN_REGEX, TOP_N_TRANSACTIONS, DECIMAL_CASE_ROUND
 
 @dataclass
 class MontlyStatement:
@@ -21,8 +22,6 @@ class MontlyStatement:
     self.top_incomes = top_incomes
 
 def extract_table_from_pdf(filepath: str):
-  date_pattern = r'\d{2}-\d{2}-\d{2}'
-
   tables = camelot.read_pdf(filepath, pages="all", flavor="stream", suppress_stdout=True)
   rows = []
   
@@ -30,7 +29,7 @@ def extract_table_from_pdf(filepath: str):
     df = table.df
     
     for _, row in df.iterrows():
-      if re.match(date_pattern, str(row[0]).strip()):
+      if re.match(DATE_PATTERN_REGEX, str(row[0]).strip()):
         rows.append(row.tolist())
   
   return rows
@@ -55,17 +54,17 @@ def preprocess_data(data: pd.DataFrame) -> pd.DataFrame:
   return df
 
 def generate_monthly_statement(df: pd.DataFrame) -> MontlyStatement:
-  top3_expenses = df[df["Debit"] != "-"].sort_values(by="Debit", ascending=False).head(3)
-  top3_incomes = df[df["Credit"] != "-"].sort_values(by="Credit", ascending=False).head(3)
+  top3_expenses = df[df["Debit"] != "-"].sort_values(by="Debit", ascending=False).head(TOP_N_TRANSACTIONS)
+  top3_incomes = df[df["Credit"] != "-"].sort_values(by="Credit", ascending=False).head(TOP_N_TRANSACTIONS)
   transactions = len(df)
   total_debit = df["Debit"].replace("-", 0).sum()
   total_credit = df["Credit"].replace("-", 0).sum()
   net_balance = total_credit - total_debit
   
   statement = MontlyStatement(
-    debit=round(total_debit, 2),
-    credit=round(total_credit, 2),
-    net_balance=round(net_balance, 2),
+    debit=round(total_debit, DECIMAL_CASE_ROUND),
+    credit=round(total_credit, DECIMAL_CASE_ROUND),
+    net_balance=round(net_balance, DECIMAL_CASE_ROUND),
     number_of_transactions=transactions,
     top_expenses=top3_expenses,
     top_incomes=top3_incomes
