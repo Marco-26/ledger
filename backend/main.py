@@ -3,6 +3,9 @@ import camelot
 import re
 from dataclasses import dataclass
 from constants import DATE_PATTERN_REGEX, TOP_N_TRANSACTIONS, DECIMAL_CASE_ROUND
+from fastapi import FastAPI, File
+from typing import Annotated
+from io import BytesIO
 
 @dataclass
 class MontlyStatement:
@@ -21,8 +24,8 @@ class MontlyStatement:
     self.top_expenses = top_expenses
     self.top_incomes = top_incomes
 
-def extract_table_from_pdf(filepath: str):
-  tables = camelot.read_pdf(filepath, pages="all", flavor="stream", suppress_stdout=True)
+def extract_table_from_pdf(file: bytes):
+  tables = camelot.read_pdf(file, pages="all", flavor="stream", suppress_stdout=True)
   rows = []
   
   for table in tables:
@@ -72,15 +75,14 @@ def generate_monthly_statement(df: pd.DataFrame) -> MontlyStatement:
   
   return statement
   
+app = FastAPI()
 
-if __name__ == "__main__":
-  file_path = "statement.pdf" 
-  rows = extract_table_from_pdf(file_path)
+@app.get("/statement")
+def generate_statement(file: Annotated[bytes, File()]):
+  rows = extract_table_from_pdf(BytesIO(file))
   df = generate_df(rows)
   
   cleaned_df = preprocess_data(df)
-  generate_monthly_statement(cleaned_df)
-  
   statement = generate_monthly_statement(cleaned_df)
   
-  print("Statement: ", statement)
+  return statement
