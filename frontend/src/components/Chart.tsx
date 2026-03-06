@@ -29,8 +29,8 @@ import {
 export const description = "An interactive area chart";
 
 const chartData = [
-  { date: "2024-04-01", desktop: 222, mobile: 150 },
-  { date: "2024-04-02", desktop: 97, mobile: 180 },
+  { date: "2024-04-01", debit: 222, credit: 150 },
+  { date: "2024-04-02", debit: 97, credit: 180 },
   { date: "2024-04-03", desktop: 167, mobile: 120 },
   { date: "2024-04-04", desktop: 242, mobile: 260 },
   { date: "2024-04-05", desktop: 373, mobile: 290 },
@@ -244,14 +244,14 @@ export function ChartAreaInteractive() {
               }
             />
             <Area
-              dataKey="mobile"
+              dataKey="debit"
               type="natural"
               fill="url(#fillMobile)"
               stroke="var(--color-mobile)"
               stackId="a"
             />
             <Area
-              dataKey="desktop"
+              dataKey="credit"
               type="natural"
               fill="url(#fillDesktop)"
               stroke="var(--color-desktop)"

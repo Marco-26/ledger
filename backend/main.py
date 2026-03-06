@@ -9,20 +9,28 @@ from io import BytesIO
 
 @dataclass
 class MontlyStatement:
-  debit: float
-  credit: float
+  debit_total: float
+  credit_total: float
   net_balance: float
   number_of_transactions: int
   top_expenses: list
   top_incomes: list
+  debit_list_filtered: list[float] # List of daily debit totals, filtered to be used in graph
+  credit_list_filtered: list[float] # List of daily credit totals, filtered to be used in graph
+  debit_list: list[float] # List of daily debit totals, unfiltered
+  credit_list: list[float] # List of daily credit totals, unfiltered
   
-  def __init__(self, debit: float, credit: float, net_balance: float, number_of_transactions: int, top_expenses: list, top_incomes: list):
-    self.debit = debit
-    self.credit = credit
+  def __init__(self, debit_total: float, credit_total: float, net_balance: float, number_of_transactions: int, top_expenses: list, top_incomes: list, debit_list_filtered: list[float], credit_list_filtered  : list[float], debit_list: list[float], credit_list: list[float]):
+    self.debit_total = debit_total
+    self.credit_total = credit_total
     self.net_balance = net_balance
     self.number_of_transactions = number_of_transactions
     self.top_expenses = top_expenses
     self.top_incomes = top_incomes
+    self.debit_list_filtered = debit_list_filtered
+    self.credit_list_filtered = credit_list_filtered
+    self.debit_list = debit_list
+    self.credit_list = credit_list
 
 def extract_table_from_pdf(file: bytes):
   tables = camelot.read_pdf(file, pages="all", flavor="stream", suppress_stdout=True)
@@ -57,20 +65,39 @@ def preprocess_data(data: pd.DataFrame) -> pd.DataFrame:
   return df
 
 def generate_monthly_statement(df: pd.DataFrame) -> MontlyStatement:
-  top3_expenses = df[df["Debit"] != "-"].sort_values(by="Debit", ascending=False).head(TOP_N_TRANSACTIONS)
-  top3_incomes = df[df["Credit"] != "-"].sort_values(by="Credit", ascending=False).head(TOP_N_TRANSACTIONS)
+  top_expenses = (
+    df[df["Debit"] != "-"]
+    [["Date", "Description", "Debit"]]
+    .sort_values(by="Debit", ascending=False)
+    .head(TOP_N_TRANSACTIONS)
+  )
+  
+  top_incomes = (
+    df[df["Credit"] != "-"]
+    [["Date", "Description", "Credit"]]
+    .sort_values(by="Credit", ascending=False)
+    .head(TOP_N_TRANSACTIONS)
+  )
+  
   transactions = len(df)
   total_debit = df["Debit"].replace("-", 0).sum()
   total_credit = df["Credit"].replace("-", 0).sum()
   net_balance = total_credit - total_debit
   
+  df["Debit"] = df["Debit"].replace("-", 0).tolist()
+  df["Credit"] = df["Credit"].replace("-", 0).tolist()
+  
   statement = MontlyStatement(
-    debit=round(total_debit, DECIMAL_CASE_ROUND),
-    credit=round(total_credit, DECIMAL_CASE_ROUND),
+    debit_total=round(total_debit, DECIMAL_CASE_ROUND),
+    credit_total=round(total_credit, DECIMAL_CASE_ROUND),
     net_balance=round(net_balance, DECIMAL_CASE_ROUND),
     number_of_transactions=transactions,
-    top_expenses=top3_expenses,
-    top_incomes=top3_incomes
+    top_expenses=top_expenses,
+    top_incomes=top_incomes,
+    debit_list_filtered=df.groupby("Date")["Debit"].sum(),
+    credit_list_filtered=df.groupby("Date")["Credit"].sum(),
+    debit_list=df[df["Debit"] > 0][["Date", "Description","Debit"]],
+    credit_list=df[df["Credit"] > 0][["Date", "Description","Credit"]]
   )
   
   return statement
