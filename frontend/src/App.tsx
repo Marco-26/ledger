@@ -1,7 +1,7 @@
-import DebitChart from "./components/Chart";
+import { ChartAreaInteractive } from "./components/Chart";
 
 function App() {
-  return <DebitChart />;
+  return <ChartAreaInteractive />;
 }
 
 export default App;
