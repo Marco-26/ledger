@@ -4,6 +4,7 @@ import re
 from dataclasses import dataclass
 from constants import DATE_PATTERN_REGEX, TOP_N_TRANSACTIONS, DECIMAL_CASE_ROUND
 from fastapi import FastAPI, File
+from fastapi.middleware.cors import CORSMiddleware
 from typing import Annotated
 from io import BytesIO
 
@@ -15,10 +16,10 @@ class MontlyStatement:
   number_of_transactions: int
   top_expenses: list
   top_incomes: list
-  debit_list_filtered: list[float] # List of daily debit totals, filtered to be used in graph
-  credit_list_filtered: list[float] # List of daily credit totals, filtered to be used in graph
-  debit_list: list[float] # List of daily debit totals, unfiltered
-  credit_list: list[float] # List of daily credit totals, unfiltered
+  debit_list_filtered: list # List of daily debit totals, filtered to be used in graph
+  credit_list_filtered: list # List of daily credit totals, filtered to be used in graph
+  debit_list: list # List of daily debit totals, unfiltered
+  credit_list: list # List of daily credit totals, unfiltered
   
   def __init__(self, debit_total: float, credit_total: float, net_balance: float, number_of_transactions: int, top_expenses: list, top_incomes: list, debit_list_filtered: list[float], credit_list_filtered  : list[float], debit_list: list[float], credit_list: list[float]):
     self.debit_total = debit_total
@@ -104,7 +105,18 @@ def generate_monthly_statement(df: pd.DataFrame) -> MontlyStatement:
   
 app = FastAPI()
 
-@app.get("/statement")
+origins = [
+  "http://localhost:5173",
+]
+
+app.add_middleware(
+  CORSMiddleware,
+  allow_origins=origins,
+  allow_methods=["*"],
+  allow_headers=["*"],
+)
+
+@app.post("/api/statement")
 def generate_statement(file: Annotated[bytes, File()]):
   rows = extract_table_from_pdf(BytesIO(file))
   df = generate_df(rows)
