@@ -26,10 +26,6 @@ function App() {
     loadStatement();
   }, []);
 
-  useEffect(() => {
-    console.log("Statement updated:", statement);
-  }, [statement]);
-
   return (
     <ChartAreaInteractive
       transactionList={statement?.transactionListFiltered}
