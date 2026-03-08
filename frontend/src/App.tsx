@@ -5,7 +5,7 @@ import type { IStatement } from "./data/StatementDtos";
 import statementPdf from "./statement.pdf";
 
 function App() {
-  const [statement, setStatement] = useState<IStatement | null>(null);
+  const [statement, setStatement] = useState<IStatement>();
 
   useEffect(() => {
     const loadStatement = async () => {
@@ -27,12 +27,14 @@ function App() {
   }, []);
 
   useEffect(() => {
-    if (!statement) return;
-
-    console.log("Generated statement:", statement);
+    console.log("Statement updated:", statement);
   }, [statement]);
 
-  return <ChartAreaInteractive />;
+  return (
+    <ChartAreaInteractive
+      transactionList={statement?.transactionListFiltered}
+    />
+  );
 }
 
 export default App;

@@ -6,18 +6,23 @@ export class StatementService {
   readonly baseURL = "/statement";
 
   public async generateStatement(file: File): Promise<IStatement> {
-    const formData = new FormData();
-    formData.append("file", file);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
 
-    const response = await apiClient.post(this.baseURL, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
+      const response = await apiClient.post(this.baseURL, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
-    const statement = StatementDataAdapter.convertToStatement(response.data);
+      const statement = StatementDataAdapter.convertToStatement(response.data);
 
-    return statement;
+      return statement;
+    } catch (error) {
+      console.error("Error in StatementService.generateStatement:", error);
+      return Promise.reject(error);
+    }
   }
 }
 

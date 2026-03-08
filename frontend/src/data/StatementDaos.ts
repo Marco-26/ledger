@@ -1,3 +1,9 @@
+export interface ITransactionResponse {
+  date: string;
+  credit: number;
+  debit: number;
+}
+
 export interface IStatementResponse {
   debit_total: number;
   credit_total: number;
@@ -5,8 +11,7 @@ export interface IStatementResponse {
   number_of_transactions: number;
   top_expenses: [];
   top_incomes: [];
-  debit_list_filtered: [];
-  credit_list_filtered: [];
+  transaction_list_filtered: ITransactionResponse[];
   credit_list: [];
   debit_list: [];
 }

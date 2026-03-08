@@ -7,7 +7,7 @@ from fastapi import FastAPI, File
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Annotated
 from io import BytesIO
-from schema.monthly_statement import MontlyStatement
+from schema.monthly_statement import MontlyStatement, Transaction
 
 def extract_table_from_pdf(file: bytes):
   tables = camelot.read_pdf(file, pages="all", flavor="stream", suppress_stdout=True)
@@ -71,8 +71,7 @@ def generate_monthly_statement(df: pd.DataFrame) -> MontlyStatement:
     number_of_transactions=transactions,
     top_expenses=top_expenses,
     top_incomes=top_incomes,
-    debit_list_filtered=df.groupby("Date")["Debit"].sum(),
-    credit_list_filtered=df.groupby("Date")["Credit"].sum(),
+    transaction_list_filtered=[Transaction(date=row["Date"], debit=row["Debit"], credit=row["Credit"]) for _, row in df.iterrows()],
     debit_list=df[df["Debit"] > 0][["Date", "Description","Debit"]],
     credit_list=df[df["Credit"] > 0][["Date", "Description","Credit"]]
   )

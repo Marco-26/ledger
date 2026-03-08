@@ -1,3 +1,9 @@
+export interface ITransaction {
+  date: string;
+  credit: number;
+  debit: number;
+}
+
 export interface IStatement {
   debitTotal: number;
   creditTotal: number;
@@ -5,8 +11,7 @@ export interface IStatement {
   numberOfTransactions: number;
   topExpenses: [];
   topIncomes: [];
-  debitListFiltered: [];
-  creditListFiltered: [];
+  transactionListFiltered: ITransaction[];
   creditList: [];
   debitList: [];
 }
