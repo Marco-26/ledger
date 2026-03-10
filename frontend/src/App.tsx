@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ChartAreaInteractive } from "./components/Chart";
+import { Dashboard } from "./components/Dashboard";
 import { statementService } from "./service/StatementService";
 import type { IStatement } from "./data/StatementDtos";
 import statementPdf from "./statement.pdf";
@@ -26,10 +26,16 @@ function App() {
     loadStatement();
   }, []);
 
+  if (!statement) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="text-lg font-medium animate-pulse">Loading financial statement...</div>
+      </div>
+    );
+  }
+
   return (
-    <ChartAreaInteractive
-      transactionList={statement?.transactionListFiltered}
-    />
+    <Dashboard data={statement} />
   );
 }
 
