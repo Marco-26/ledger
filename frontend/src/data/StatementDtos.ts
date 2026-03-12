@@ -4,14 +4,21 @@ export interface ITransaction {
   debit: number;
 }
 
+export interface ITransactionDetail {
+  Date: string;
+  Description: string;
+  Credit?: number;
+  Debit?: number;
+}
+
 export interface IStatement {
   debitTotal: number;
   creditTotal: number;
   netBalance: number;
   numberOfTransactions: number;
-  topExpenses: [];
-  topIncomes: [];
+  topExpenses: ITransactionDetail[];
+  topIncomes: ITransactionDetail[];
   transactionListFiltered: ITransaction[];
-  creditList: [];
-  debitList: [];
+  creditList: ITransactionDetail[];
+  debitList: ITransactionDetail[];
 }

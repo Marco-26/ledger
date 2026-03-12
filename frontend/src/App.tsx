@@ -26,17 +26,21 @@ function App() {
     loadStatement();
   }, []);
 
+  useEffect(() => {
+    console.log("Statement data updated:", statement);
+  }, [statement]);
+
   if (!statement) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <div className="text-lg font-medium animate-pulse">Loading financial statement...</div>
+        <div className="text-lg font-medium animate-pulse">
+          Loading financial statement...
+        </div>
       </div>
     );
   }
 
-  return (
-    <Dashboard data={statement} />
-  );
+  return <Dashboard data={statement} />;
 }
 
 export default App;

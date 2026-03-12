@@ -4,14 +4,21 @@ export interface ITransactionResponse {
   debit: number;
 }
 
+export interface ITransactionDetailResponse {
+  Date: string;
+  Description: string;
+  Credit?: number;
+  Debit?: number;
+}
+
 export interface IStatementResponse {
   debit_total: number;
   credit_total: number;
   net_balance: number;
   number_of_transactions: number;
-  top_expenses: [];
-  top_incomes: [];
+  top_expenses: ITransactionDetailResponse[];
+  top_incomes: ITransactionDetailResponse[];
   transaction_list_filtered: ITransactionResponse[];
-  credit_list: [];
-  debit_list: [];
+  credit_list: ITransactionDetailResponse[];
+  debit_list: ITransactionDetailResponse[];
 }
