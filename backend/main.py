@@ -93,6 +93,7 @@ app.add_middleware(
 
 @app.post("/api/statement")
 def generate_statement(file: Annotated[bytes, File()]):
+  print("Test")
   rows = extract_table_from_pdf(BytesIO(file))
   df = generate_df(rows)
   
