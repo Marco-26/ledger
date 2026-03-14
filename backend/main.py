@@ -9,60 +9,59 @@ from typing import Annotated
 from io import BytesIO
 from schema.monthly_statement import MontlyStatement, Transaction
 
+
 def extract_table_from_pdf(file: bytes):
   tables = camelot.read_pdf(file, pages="all", flavor="stream", suppress_stdout=True)
   rows = []
-  
+
   for table in tables:
     df = table.df
-    
+
     for _, row in df.iterrows():
       if re.match(DATE_PATTERN_REGEX, str(row[0]).strip()):
         rows.append(row.tolist())
-  
+
   return rows
 
-def generate_df(rows:list) -> pd.DataFrame:
+
+def generate_df(rows: list) -> pd.DataFrame:
   df = pd.DataFrame(rows)
   df = df.drop(1, axis=1)
   df.columns = ["Date", "Description", "Debit", "Credit", "Balance"]
   return df
 
+
 def preprocess_data(data: pd.DataFrame) -> pd.DataFrame:
   numeric_columns = ["Debit", "Credit", "Balance"]
   df = data.copy()
-  
+
   for col in numeric_columns:
     df[col] = df[col].str.replace(".", "")
     df[col] = df[col].str.replace(",", ".")
     df[col] = pd.to_numeric(df[col], errors="coerce")
-    
-  df["Credit"] = df["Credit"].fillna("-")
-  df["Debit"] = df["Debit"].fillna("-")
+
+  df["Credit"] = df["Credit"].fillna(0.0)
+  df["Debit"] = df["Debit"].fillna(0.0)
   return df
+
 
 def generate_monthly_statement(df: pd.DataFrame) -> MontlyStatement:
   top_expenses = (
-    df[df["Debit"] != "-"]
-    [["Date", "Description", "Debit"]]
+    df.loc[df["Debit"] > 0, ["Date", "Description", "Debit"]]
     .sort_values(by="Debit", ascending=False)
     .head(TOP_N_TRANSACTIONS)
-  )
-  
+  ).to_dict(orient="records")
+
   top_incomes = (
-    df[df["Credit"] != "-"]
-    [["Date", "Description", "Credit"]]
+    df.loc[df["Credit"] > 0, ["Date", "Description", "Credit"]]
     .sort_values(by="Credit", ascending=False)
     .head(TOP_N_TRANSACTIONS)
-  )
-  
+  ).to_dict(orient="records")
+
   transactions = len(df)
-  total_debit = df["Debit"].replace("-", 0).sum()
-  total_credit = df["Credit"].replace("-", 0).sum()
+  total_debit = df["Debit"].sum()
+  total_credit = df["Credit"].sum()
   net_balance = total_credit - total_debit
-  
-  df["Debit"] = df["Debit"].replace("-", 0).tolist()
-  df["Credit"] = df["Credit"].replace("-", 0).tolist()
   
   statement = MontlyStatement(
     debit_total=round(total_debit, DECIMAL_CASE_ROUND),
@@ -71,13 +70,20 @@ def generate_monthly_statement(df: pd.DataFrame) -> MontlyStatement:
     number_of_transactions=transactions,
     top_expenses=top_expenses,
     top_incomes=top_incomes,
-    transaction_list_filtered=[Transaction(date=row["Date"], debit=row["Debit"], credit=row["Credit"]) for _, row in df.iterrows()],
-    debit_list=df[df["Debit"] > 0][["Date", "Description","Debit"]],
-    credit_list=df[df["Credit"] > 0][["Date", "Description","Credit"]]
-  )
-  
+    transaction_list_filtered=[
+      Transaction(date=row["Date"], debit=row["Debit"], credit=row["Credit"])
+      for _, row in df.iterrows()
+    ],
+    debit_list=df.loc[df["Debit"] > 0, ["Date", "Description", "Debit"]].to_dict(
+      orient="records"
+    ),
+    credit_list=df.loc[df["Credit"] > 0, ["Date", "Description", "Credit"]].to_dict(
+      orient="records"
+    ),
+    )
+
   return statement
-  
+
 app = FastAPI()
 
 origins = [
@@ -93,7 +99,7 @@ app.add_middleware(
 
 @app.post("/api/statement")
 def generate_statement(file: Annotated[bytes, File()]):
-  print("Test")
+  
   rows = extract_table_from_pdf(BytesIO(file))
   df = generate_df(rows)
   
