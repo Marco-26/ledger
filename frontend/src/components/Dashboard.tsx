@@ -1,5 +1,3 @@
-"use client";
-
 import { useRef, type ChangeEvent } from "react";
 import { Upload } from "lucide-react";
 

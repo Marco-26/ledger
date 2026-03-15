@@ -1,6 +1,7 @@
 import { useCallback, useState } from "react";
 
 import { Dashboard } from "./components/Dashboard";
+import { Spinner } from "./components/ui/spinner";
 import type { IStatement } from "./data/StatementDtos";
 import { statementService } from "./service/StatementService";
 
@@ -35,10 +36,8 @@ function App() {
 
   if (isUploading) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="text-lg font-medium animate-pulse">
-          Loading financial statement...
-        </div>
+      <div className="flex h-screen items-center justify-center">
+        <Spinner className="size-10 text-foreground" />
       </div>
     );
   }
