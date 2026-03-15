@@ -15,7 +15,7 @@ import {
 import type { IStatement } from "@/data/StatementDtos";
 
 interface CashFlowChartProps {
-  data: IStatement;
+  data?: IStatement;
 }
 
 export function CashFlowChart({ data }: CashFlowChartProps) {
@@ -40,7 +40,7 @@ export function CashFlowChart({ data }: CashFlowChartProps) {
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig} className="h-[300px] w-full">
-          <BarChart data={data.transactionListFiltered}>
+          <BarChart data={data?.transactionListFiltered}>
             <CartesianGrid vertical={false} strokeDasharray="3 3" />
             <XAxis
               dataKey="date"

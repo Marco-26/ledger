@@ -10,7 +10,7 @@ import { formatCurrency } from "@/lib/utils";
 import type { IStatement } from "@/data/StatementDtos";
 
 interface TransactionHistoryProps {
-  data: IStatement;
+  data?: IStatement;
 }
 
 export function TransactionHistory({ data }: TransactionHistoryProps) {
@@ -47,7 +47,7 @@ export function TransactionHistory({ data }: TransactionHistoryProps) {
                     </tr>
                   </thead>
                   <tbody className="[&_tr:last-child]:border-0">
-                    {data.creditList.length > 0 ? (
+                    {data?.creditList && data.creditList.length > 0 ? (
                       data.creditList.map((t, i) => (
                         <tr
                           key={i}
@@ -94,7 +94,7 @@ export function TransactionHistory({ data }: TransactionHistoryProps) {
                     </tr>
                   </thead>
                   <tbody className="[&_tr:last-child]:border-0">
-                    {data.debitList.length > 0 ? (
+                    {data?.debitList && data.debitList.length > 0 ? (
                       data.debitList.map((t, i) => (
                         <tr
                           key={i}

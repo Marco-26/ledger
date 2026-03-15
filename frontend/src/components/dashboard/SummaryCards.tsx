@@ -4,7 +4,7 @@ import { formatCurrency, cn } from "@/lib/utils";
 import type { IStatement } from "@/data/StatementDtos";
 
 interface SummaryCardsProps {
-  data: IStatement;
+  data?: IStatement;
 }
 
 export function SummaryCards({ data }: SummaryCardsProps) {
@@ -17,7 +17,7 @@ export function SummaryCards({ data }: SummaryCardsProps) {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold text-emerald-600">
-            {formatCurrency(data.creditTotal)}
+            {formatCurrency(data?.creditTotal)}
           </div>
           <p className="text-xs text-muted-foreground">
             Total credit transactions
@@ -31,7 +31,7 @@ export function SummaryCards({ data }: SummaryCardsProps) {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold text-rose-600">
-            {formatCurrency(data.debitTotal)}
+            {formatCurrency(data?.debitTotal)}
           </div>
           <p className="text-xs text-muted-foreground">
             Total debit transactions
@@ -47,10 +47,12 @@ export function SummaryCards({ data }: SummaryCardsProps) {
           <div
             className={cn(
               "text-2xl font-bold",
-              data.netBalance >= 0 ? "text-primary" : "text-rose-600",
+              data?.netBalance && data.netBalance >= 0
+                ? "text-primary"
+                : "text-rose-600",
             )}
           >
-            {formatCurrency(data.netBalance)}
+            {formatCurrency(data?.netBalance)}
           </div>
           <p className="text-xs text-muted-foreground">Current balance</p>
         </CardContent>

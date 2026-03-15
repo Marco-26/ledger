@@ -10,7 +10,7 @@ import { formatCurrency } from "@/lib/utils";
 import type { IStatement } from "@/data/StatementDtos";
 
 interface TopTransactionsProps {
-  data: IStatement;
+  data?: IStatement;
 }
 
 export function TopTransactions({ data }: TopTransactionsProps) {
@@ -26,7 +26,7 @@ export function TopTransactions({ data }: TopTransactionsProps) {
           <CardDescription>Highest income sources.</CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4">
-          {data.topIncomes.length > 0 ? (
+          {data?.topIncomes && data.topIncomes.length > 0 ? (
             data.topIncomes.map((item, index) => (
               <div
                 key={index}
@@ -64,7 +64,7 @@ export function TopTransactions({ data }: TopTransactionsProps) {
           <CardDescription>Highest expense categories.</CardDescription>
         </CardHeader>
         <CardContent className="grid gap-4">
-          {data.topExpenses.length > 0 ? (
+          {data?.topExpenses && data.topExpenses.length > 0 ? (
             data.topExpenses.map((item, index) => (
               <div
                 key={index}
