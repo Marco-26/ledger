@@ -34,7 +34,7 @@ export function TopTransactions({ data }: TopTransactionsProps) {
               >
                 <div className="grid gap-1">
                   <p
-                    className="text-sm font-medium leading-none truncate max-w-[200px]"
+                    className="text-sm font-medium leading-none "
                     title={item.Description}
                   >
                     {item.Description}
@@ -72,7 +72,7 @@ export function TopTransactions({ data }: TopTransactionsProps) {
               >
                 <div className="grid gap-1">
                   <p
-                    className="text-sm font-medium leading-none truncate max-w-[200px]"
+                    className="text-sm font-medium leading-none truncate"
                     title={item.Description}
                   >
                     {item.Description}
