@@ -5,6 +5,13 @@ class Transaction():
   date: str
   credit: float
   debit: float
+  
+  def to_dict(self):
+    return {
+      "date": self.date,
+      "credit": self.credit,
+      "debit": self.debit
+    }
 
 @dataclass
 class MontlyStatement:
@@ -28,3 +35,16 @@ class MontlyStatement:
     self.transaction_list_filtered = transaction_list_filtered
     self.debit_list = debit_list
     self.credit_list = credit_list
+    
+  def to_dict(self):
+    return {
+      "debit_total": self.debit_total,
+      "credit_total": self.credit_total,
+      "net_balance": self.net_balance,
+      "number_of_transactions": self.number_of_transactions,
+      "top_expenses": self.top_expenses,
+      "top_incomes": self.top_incomes,
+      "transaction_list_filtered": [t.__dict__ for t in self.transaction_list_filtered],
+      "debit_list": self.debit_list,
+      "credit_list": self.credit_list
+    }

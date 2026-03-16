@@ -1,11 +1,12 @@
 from db.database import Base
 from sqlalchemy.orm import Mapped, mapped_column
+from datetime import datetime
 
 class Statement(Base):
   __tablename__ = "statements"
   
   id: Mapped[int] = mapped_column(primary_key=True)
-  date: Mapped[str] = mapped_column()
+  date: Mapped[str] = mapped_column(default=datetime.now) 
   debit_total: Mapped[float] = mapped_column()
   credit_total: Mapped[float] = mapped_column()
   net_balance: Mapped[float] = mapped_column()
