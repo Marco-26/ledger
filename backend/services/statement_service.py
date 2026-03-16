@@ -9,10 +9,10 @@ from utils.statement_pdf import extract_table_from_pdf
 
 
 class StatementService:
-    def __init__(self):
-        pass
+    def __init__(self, db:Session):
+        self.db=db
 
-    def generate_monthly_statement(self, file: bytes, db: Session) -> MontlyStatement:
+    def generate_monthly_statement(self, file: bytes) -> MontlyStatement:
         table = extract_table_from_pdf(file)
         df = build_statement_dataframe(table)
         df = normalize_statement_dataframe(df)
