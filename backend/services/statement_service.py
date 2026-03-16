@@ -5,6 +5,7 @@ import camelot
 import pandas as pd
 from schema.monthly_statement import MontlyStatement, Transaction
 from constants import DATE_PATTERN_REGEX, DECIMAL_CASE_ROUND, TOP_N_TRANSACTIONS
+from sqlalchemy.orm import Session
 
 
 class StatementService:
@@ -46,7 +47,7 @@ class StatementService:
         df["Debit"] = df["Debit"].fillna(0.0)
         return df
 
-    def generate_monthly_statement(self, file: bytes) -> MontlyStatement:
+    def generate_monthly_statement(self, file: bytes, db: Session) -> MontlyStatement:
         table = self.extract_table_from_pdf(file)
         df = self.generate_df(table)
         df = self.preprocess_data(df)
