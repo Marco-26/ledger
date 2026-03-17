@@ -14,10 +14,8 @@ def get_db():
     finally:
         db.close()
 
-
 def get_statement_service(db: Session = Depends(get_db)):
     return StatementService(db=db)
-
 
 @router.post("/api/statement")
 def generate_statement(

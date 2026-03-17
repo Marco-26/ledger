@@ -1,3 +1,4 @@
+from repository.statement_repository import StatementRepository
 from models.statement import Statement
 from schema.monthly_statement import MontlyStatement, Transaction
 from constants import DECIMAL_CASE_ROUND, TOP_N_TRANSACTIONS
@@ -7,14 +8,13 @@ from utils.statement_dataframe import (
     normalize_statement_dataframe,
 )
 from utils.statement_pdf import extract_table_from_pdf
-import json
-
 
 class StatementService:
     def __init__(self, db: Session):
         self.db = db
+        self.repository = StatementRepository(db)
 
-    def generate_monthly_statement(self, file: bytes) -> dict:
+    def generate_monthly_statement(self, file: bytes) -> Statement:
         table = extract_table_from_pdf(file)
         df = build_statement_dataframe(table)
         df = normalize_statement_dataframe(df)
@@ -55,24 +55,6 @@ class StatementService:
             ].to_dict(orient="records"),
         )
 
-        response_payload = monthly_statement.to_dict()
+        record = self.repository.create_statement(statement=monthly_statement)
 
-        statement = Statement(
-            debit_total=response_payload["debit_total"],
-            credit_total=response_payload["credit_total"],
-            net_balance=response_payload["net_balance"],
-            number_of_transactions=response_payload["number_of_transactions"],
-            top_expenses=json.dumps(response_payload["top_expenses"]),
-            top_incomes=json.dumps(response_payload["top_incomes"]),
-            transaction_list_filtered=json.dumps(
-                response_payload["transaction_list_filtered"]
-            ),
-            debit_list=json.dumps(response_payload["debit_list"]),
-            credit_list=json.dumps(response_payload["credit_list"]),
-        )
-
-        self.db.add(statement)
-        self.db.commit()
-        self.db.refresh(statement)
-
-        return response_payload
+        return record
