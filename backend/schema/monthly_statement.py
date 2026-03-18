@@ -1,11 +1,19 @@
 from pydantic import BaseModel
-import json
 
 class Transaction(BaseModel):
   date: str
   credit: float
   description: str | None
   debit: float
+  
+  @classmethod
+  def from_row(cls, row: dict) -> Transaction:
+    return cls(
+      date=row["Date"],
+      description=row["Description"],
+      debit=row.get("Debit", 0.0),
+      credit=row.get("Credit", 0.0),
+    )
 
 class MonthlyStatement(BaseModel):
   debit_total: float
