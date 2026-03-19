@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from typing import Dict, Any
 
 class Transaction(BaseModel):
   date: str
@@ -7,7 +8,7 @@ class Transaction(BaseModel):
   debit: float
   
   @classmethod
-  def from_row(cls, row: dict) -> Transaction:
+  def from_row(cls, row: Dict[str, Any]):
     return cls(
       date=row["Date"],
       description=row["Description"],
@@ -27,7 +28,7 @@ class MonthlyStatement(BaseModel):
   credit_list: list[Transaction] # List of daily credit totals, unfiltered
   
   @classmethod
-  def from_processed_df(cls, data: dict) -> MonthlyStatement:
+  def from_processed_df(cls, data: Dict[str, Any]):
     return cls(
       debit_total=data["total_debit"],
       credit_total=data["total_credit"],

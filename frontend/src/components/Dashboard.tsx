@@ -2,7 +2,7 @@ import { useRef, type ChangeEvent } from "react";
 import { Upload } from "lucide-react";
 
 import type { IStatement } from "@/data/StatementDtos";
-import { SummaryCards } from "@/components/dashboard/SummaryCards";
+import { SummaryCardsSection } from "@/components/dashboard/SummaryCards";
 import { CashFlowChart } from "@/components/dashboard/CashFlowChart";
 import { TopTransactions } from "@/components/dashboard/TopTransactions";
 import { TransactionHistory } from "@/components/dashboard/TransactionHistory";
@@ -71,7 +71,7 @@ export function Dashboard({
         </>
       </div>
 
-      <SummaryCards data={data} />
+      <SummaryCardsSection data={data} />
       <CashFlowChart data={data} />
       <TopTransactions data={data} />
       <TransactionHistory data={data} />
