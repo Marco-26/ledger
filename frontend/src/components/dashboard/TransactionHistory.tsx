@@ -53,10 +53,10 @@ export function TransactionHistory({ data }: TransactionHistoryProps) {
                           key={i}
                           className="border-b transition-colors hover:bg-muted/50"
                         >
-                          <td className="p-4 align-middle">{t.Date}</td>
-                          <td className="p-4 align-middle">{t.Description}</td>
+                          <td className="p-4 align-middle">{t.date}</td>
+                          <td className="p-4 align-middle">{t.description}</td>
                           <td className="p-4 align-middle text-right font-medium text-emerald-600">
-                            +{formatCurrency(t.Credit || 0)}
+                            +{formatCurrency(t.credit || 0)}
                           </td>
                         </tr>
                       ))
@@ -100,10 +100,10 @@ export function TransactionHistory({ data }: TransactionHistoryProps) {
                           key={i}
                           className="border-b transition-colors hover:bg-muted/50"
                         >
-                          <td className="p-4 align-middle">{t.Date}</td>
-                          <td className="p-4 align-middle">{t.Description}</td>
+                          <td className="p-4 align-middle">{t.date}</td>
+                          <td className="p-4 align-middle">{t.description}</td>
                           <td className="p-4 align-middle text-right font-medium text-rose-600">
-                            -{formatCurrency(t.Debit || 0)}
+                            -{formatCurrency(t.debit || 0)}
                           </td>
                         </tr>
                       ))

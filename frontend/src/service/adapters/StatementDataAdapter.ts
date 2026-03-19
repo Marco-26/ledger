@@ -1,18 +1,50 @@
-import type { IStatementResponse } from "@/data/StatementDaos";
-import type { IStatement } from "@/data/StatementDtos";
+import type {
+  IStatementResponse,
+  ITransactionResponse,
+} from "@/data/StatementDaos";
+import type { IStatement, ITransaction } from "@/data/StatementDtos";
 
 export class StatementDataAdapter {
+  convertDataToTransaction(
+    transactionResponse: ITransactionResponse,
+  ): ITransaction {
+    return {
+      date: transactionResponse.date,
+      description: transactionResponse.description,
+      credit: transactionResponse.credit,
+      debit: transactionResponse.debit,
+    };
+  }
+
+  convertDataToTransactionList(
+    transactionResponseList: ITransactionResponse[],
+  ): ITransaction[] {
+    return transactionResponseList.map((transactionResponse) =>
+      this.convertDataToTransaction(transactionResponse),
+    );
+  }
+
   convertToStatement(statementResponse: IStatementResponse): IStatement {
     return {
       debitTotal: statementResponse.debit_total,
       creditTotal: statementResponse.credit_total,
       netBalance: statementResponse.net_balance,
       numberOfTransactions: statementResponse.number_of_transactions,
-      topExpenses: statementResponse.top_expenses,
-      topIncomes: statementResponse.top_incomes,
-      transactionListFiltered: statementResponse.transaction_list_filtered,
-      creditList: statementResponse.credit_list,
-      debitList: statementResponse.debit_list,
+      topExpenses: this.convertDataToTransactionList(
+        statementResponse.top_expenses,
+      ),
+      topIncomes: this.convertDataToTransactionList(
+        statementResponse.top_incomes,
+      ),
+      transactionListFiltered: this.convertDataToTransactionList(
+        statementResponse.transaction_list_filtered,
+      ),
+      creditList: this.convertDataToTransactionList(
+        statementResponse.credit_list,
+      ),
+      debitList: this.convertDataToTransactionList(
+        statementResponse.debit_list,
+      ),
     };
   }
 }

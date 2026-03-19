@@ -35,14 +35,14 @@ export function TopTransactions({ data }: TopTransactionsProps) {
                 <div className="grid gap-1">
                   <p
                     className="text-sm font-medium leading-none "
-                    title={item.Description}
+                    title={item.description}
                   >
-                    {item.Description}
+                    {item.description}
                   </p>
-                  <p className="text-xs text-muted-foreground">{item.Date}</p>
+                  <p className="text-xs text-muted-foreground">{item.date}</p>
                 </div>
                 <div className="font-bold text-emerald-600">
-                  +{formatCurrency(item.Credit || 0)}
+                  +{formatCurrency(item.credit || 0)}
                 </div>
               </div>
             ))
@@ -73,14 +73,14 @@ export function TopTransactions({ data }: TopTransactionsProps) {
                 <div className="grid gap-1">
                   <p
                     className="text-sm font-medium leading-none truncate"
-                    title={item.Description}
+                    title={item.description}
                   >
-                    {item.Description}
+                    {item.description}
                   </p>
-                  <p className="text-xs text-muted-foreground">{item.Date}</p>
+                  <p className="text-xs text-muted-foreground">{item.date}</p>
                 </div>
                 <div className="font-bold text-rose-600">
-                  -{formatCurrency(item.Debit || 0)}
+                  -{formatCurrency(item.debit || 0)}
                 </div>
               </div>
             ))
