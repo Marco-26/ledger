@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 
-import { Dashboard } from "./components/Dashboard";
+import { Dashboard } from "./components/dashboard/Dashboard";
 import { Spinner } from "./components/ui/spinner";
 import type { IStatement } from "./data/StatementDtos";
 import { statementService } from "./service/StatementService";

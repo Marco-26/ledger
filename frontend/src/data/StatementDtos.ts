@@ -1,3 +1,8 @@
+export enum TransactionType {
+  INCOME = "income",
+  EXPENSE = "expense",
+}
+
 export interface ITransaction {
   date: string;
   credit: number;
