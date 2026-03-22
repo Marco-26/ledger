@@ -6,6 +6,7 @@ import { SummaryCardsSection } from "@/components/dashboard/SummaryCards";
 import { CashFlowChart } from "@/components/dashboard/CashFlowChart";
 import { TopTransactions } from "@/components/dashboard/TopTransactions";
 import { TransactionHistory } from "@/components/dashboard/TransactionHistory";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/button";
 
 interface DashboardProps {
@@ -49,7 +50,7 @@ export function Dashboard({
           ) : null}
         </div>
 
-        <>
+        <div className="flex items-center gap-2">
           <input
             ref={inputRef}
             type="file"
@@ -68,7 +69,9 @@ export function Dashboard({
             <Upload />
             {isUploading ? "Uploading..." : "Upload Statement"}
           </Button>
-        </>
+
+          <ThemeToggle />
+        </div>
       </div>
 
       <SummaryCardsSection data={data} />
