@@ -7,15 +7,10 @@ import { MonthNavigator } from "../core/MonthNavigator";
 
 interface IHeaderProps {
   isUploading: boolean;
-  uploadError?: string;
   onFileChange: (event: ChangeEvent<HTMLInputElement>) => void | Promise<void>;
 }
 
-export function Header({
-  isUploading,
-  uploadError,
-  onFileChange,
-}: IHeaderProps) {
+export function Header({ isUploading, onFileChange }: IHeaderProps) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   return (
@@ -28,9 +23,6 @@ export function Header({
           <p className="text-muted-foreground">
             Overview of your financial statement and recent activity.
           </p>
-          {uploadError ? (
-            <p className="text-sm text-destructive">{uploadError}</p>
-          ) : null}
         </div>
 
         <div className="flex items-center gap-2">

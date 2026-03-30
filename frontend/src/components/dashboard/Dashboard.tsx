@@ -9,14 +9,12 @@ import { Header } from "./Header";
 interface DashboardProps {
   data?: IStatement;
   isUploading: boolean;
-  uploadError?: string;
   onUploadStatement: (file: File) => void | Promise<void>;
 }
 
 export function Dashboard({
   data,
   isUploading,
-  uploadError,
   onUploadStatement,
 }: DashboardProps) {
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
@@ -32,11 +30,7 @@ export function Dashboard({
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/40 p-4 md:p-8 space-y-8">
-      <Header
-        isUploading={isUploading}
-        uploadError={uploadError}
-        onFileChange={handleFileChange}
-      />
+      <Header isUploading={isUploading} onFileChange={handleFileChange} />
       <SummaryCardsSection data={data} />
       <CashFlowChart data={data} />
       <TopTransactions data={data} />
