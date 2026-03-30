@@ -19,3 +19,4 @@ frontend/pnpm-debug.log*
 frontend/lerna-debug.log*
 
 backend/.venv/
+backend/dev.db
