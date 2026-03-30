@@ -14,6 +14,7 @@ const UI = {
     "November",
     "December",
   ],
+  THEME_STORAGE_KEY: "ledger-ui-theme",
 };
 
 export const Constants = {

@@ -1,17 +1,16 @@
-import { Constants } from "@/utils/Constants";
-import { ThemeProviderContext, type Theme } from "@/utils/useTheme";
+import { Theme, ThemeProviderContext } from "@/utils/useTheme";
 import { useEffect, useState } from "react";
 
 type ThemeProviderProps = {
   children: React.ReactNode;
   defaultTheme?: Theme;
-  storageKey?: string;
+  storageKey: string;
 };
 
 export function ThemeProvider({
   children,
-  defaultTheme = "system",
-  storageKey = Constants.UI.UI_THEME_STORAGE_KEY,
+  defaultTheme,
+  storageKey,
   ...props
 }: ThemeProviderProps) {
   const [theme, setTheme] = useState<Theme>(
@@ -21,13 +20,13 @@ export function ThemeProvider({
   useEffect(() => {
     const root = window.document.documentElement;
 
-    root.classList.remove("light", "dark");
+    root.classList.remove(Theme.Light, Theme.Dark);
 
-    if (theme === "system") {
+    if (theme === Theme.System) {
       const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
         .matches
-        ? "dark"
-        : "light";
+        ? Theme.Dark
+        : Theme.Light;
 
       root.classList.add(systemTheme);
       return;
