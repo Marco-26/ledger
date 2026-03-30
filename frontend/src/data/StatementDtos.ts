@@ -11,6 +11,7 @@ export interface ITransaction {
 }
 
 export interface IStatement {
+  date: string;
   debitTotal: number;
   creditTotal: number;
   netBalance: number;

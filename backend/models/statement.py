@@ -1,13 +1,13 @@
 from db.database import Base
 from sqlalchemy.orm import Mapped, mapped_column
-from datetime import datetime
-from sqlalchemy import JSON
+from sqlalchemy import JSON, Date
+from datetime import date
 
 class Statement(Base):
   __tablename__ = "statements"
   
   id: Mapped[int] = mapped_column(primary_key=True)
-  date: Mapped[str] = mapped_column(default=datetime.now) 
+  date: Mapped[date] = mapped_column(Date, default=lambda: date.today().replace(day=1))
   debit_total: Mapped[float] = mapped_column()
   credit_total: Mapped[float] = mapped_column()
   net_balance: Mapped[float] = mapped_column()

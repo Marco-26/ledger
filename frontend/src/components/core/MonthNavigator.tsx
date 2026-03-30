@@ -1,49 +1,35 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Constants } from "@/utils/Constants";
-import { useState } from "react";
+import type { Dayjs } from "dayjs";
 
 interface MonthNavigatorProps {
-  onChange: (month: Date) => void;
-  minMonth?: Date;
-  maxMonth?: Date;
+  onChange: (month: Dayjs) => void;
+  minMonth?: Dayjs;
+  maxMonth?: Dayjs;
+  selectedMonth: Dayjs;
 }
 
 export function MonthNavigator({
   onChange,
   minMonth,
   maxMonth,
+  selectedMonth,
 }: MonthNavigatorProps) {
-  const [monthSelected, setMonthSelected] = useState(new Date());
-
   const canGoPrevious =
     !minMonth ||
-    new Date(monthSelected.getFullYear(), monthSelected.getMonth() - 1) >=
-      new Date(minMonth.getFullYear(), minMonth.getMonth());
+    !selectedMonth.subtract(1, "month").isBefore(minMonth, "month");
 
   const canGoNext =
-    !maxMonth ||
-    new Date(monthSelected.getFullYear(), monthSelected.getMonth() + 1) <=
-      new Date(maxMonth.getFullYear(), maxMonth.getMonth());
+    !maxMonth || !selectedMonth.add(1, "month").isAfter(maxMonth, "month");
 
   const handlePrevious = () => {
     if (!canGoPrevious) return;
-    const newMonth = new Date(
-      monthSelected.getFullYear(),
-      monthSelected.getMonth() - 1,
-    );
-    setMonthSelected(newMonth);
-    onChange(newMonth);
+    onChange(selectedMonth.subtract(1, "month"));
   };
 
   const handleNext = () => {
     if (!canGoNext) return;
-    const newMonth = new Date(
-      monthSelected.getFullYear(),
-      monthSelected.getMonth() + 1,
-    );
-    setMonthSelected(newMonth);
-    onChange(newMonth);
+    onChange(selectedMonth.add(1, "month"));
   };
 
   return (
@@ -60,8 +46,7 @@ export function MonthNavigator({
       </Button>
 
       <span className="min-w-[130px] text-center text-base font-semibold tabular-nums">
-        {Constants.UI.MONTHS[monthSelected.getMonth()]}{" "}
-        {monthSelected.getFullYear()}
+        {selectedMonth.format("MMMM YYYY")}
       </span>
 
       <Button

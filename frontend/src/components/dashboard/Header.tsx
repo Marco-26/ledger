@@ -4,13 +4,21 @@ import { Upload } from "lucide-react";
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { MonthNavigator } from "../core/MonthNavigator";
+import type { Dayjs } from "dayjs";
 
 interface IHeaderProps {
   isUploading: boolean;
   onFileChange: (event: ChangeEvent<HTMLInputElement>) => void | Promise<void>;
+  onMonthChange: (month: string) => void;
+  selectedMonth: Dayjs;
 }
 
-export function Header({ isUploading, onFileChange }: IHeaderProps) {
+export function Header({
+  isUploading,
+  onFileChange,
+  onMonthChange,
+  selectedMonth,
+}: IHeaderProps) {
   const inputRef = useRef<HTMLInputElement>(null);
 
   return (
@@ -50,7 +58,8 @@ export function Header({ isUploading, onFileChange }: IHeaderProps) {
       </div>
 
       <MonthNavigator
-        onChange={(month: Date) => console.log("New data, ", month)}
+        onChange={(month) => onMonthChange(month.format("YYYY-MM-DD"))}
+        selectedMonth={selectedMonth}
       />
     </div>
   );

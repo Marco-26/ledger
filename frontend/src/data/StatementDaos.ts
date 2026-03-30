@@ -6,6 +6,7 @@ export interface ITransactionResponse {
 }
 
 export interface IStatementResponse {
+  date: string;
   debit_total: number;
   credit_total: number;
   net_balance: number;

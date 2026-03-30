@@ -25,3 +25,6 @@ class StatementService:
         record = self.repository.create_statement(statement=monthly_statement)
 
         return record
+    
+    def get_statement_via_date(self, date: str) -> Statement:
+        return self.repository.get_statement_via_date(date)

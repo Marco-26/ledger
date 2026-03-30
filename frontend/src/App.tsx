@@ -1,8 +1,12 @@
+import { useState } from "react";
 import { Dashboard } from "./components/dashboard/Dashboard";
 import { Spinner } from "./components/ui/spinner";
 import { useStatements } from "./hooks/useStatements";
+import dayjs from "dayjs";
 
 function App() {
+  const [monthSelected, setMonthSelected] = useState<string>();
+
   const { statement, isUploading, handleStatementUpload } = useStatements();
 
   if (isUploading) {
@@ -18,6 +22,8 @@ function App() {
       data={statement}
       isUploading={isUploading}
       onUploadStatement={handleStatementUpload}
+      onMonthChange={setMonthSelected}
+      selectedMonth={dayjs(monthSelected)}
     />
   );
 }

@@ -26,6 +26,7 @@ export class StatementDataAdapter {
 
   convertToStatement(statementResponse: IStatementResponse): IStatement {
     return {
+      date: statementResponse.date,
       debitTotal: statementResponse.debit_total,
       creditTotal: statementResponse.credit_total,
       netBalance: statementResponse.net_balance,
