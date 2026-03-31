@@ -1,7 +1,6 @@
 from repository.statement_repository import StatementRepository
 from models.statement import Statement
-from schema.monthly_statement import MonthlyStatement, Transaction
-from constants import DECIMAL_CASE_ROUND, TOP_N_TRANSACTIONS
+from schema.monthly_statement import MonthlyStatement
 from sqlalchemy.orm import Session
 from utils.statement_dataframe import (
     build_statement_dataframe,
@@ -9,6 +8,7 @@ from utils.statement_dataframe import (
     process_dataframe_data
 )
 from utils.statement_pdf import extract_table_from_pdf
+from datetime import date
 
 class StatementService:
     def __init__(self, db: Session):
@@ -26,5 +26,5 @@ class StatementService:
 
         return record
     
-    def get_statement_via_date(self, date: str) -> Statement:
+    def get_statement_via_date(self, date: date) -> Statement:
         return self.repository.get_statement_via_date(date)

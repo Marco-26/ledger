@@ -1,4 +1,4 @@
-import type { ITransaction, TransactionType } from "@/data/StatementDtos";
+import { TransactionType, type ITransaction } from "@/data/StatementDtos";
 import { formatCurrency } from "@/lib/utils";
 
 interface TransactionTableProps {
@@ -12,7 +12,7 @@ export function TransactionTable({
   type,
   emptyMessage,
 }: TransactionTableProps) {
-  const isIncome = type === "income";
+  const isIncome = type === TransactionType.INCOME;
   const amountColorClass = isIncome ? "text-emerald-600" : "text-rose-600";
   const amountPrefix = isIncome ? "+" : "-";
 
