@@ -1,5 +1,5 @@
 import { useRef, type ChangeEvent } from "react";
-import { Upload } from "lucide-react";
+import { Loader, Upload } from "lucide-react";
 
 import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { Button } from "@/components/ui/button";
@@ -46,12 +46,18 @@ export function Header({
           <Button
             type="button"
             size="lg"
-            className="w-full md:ml-auto md:w-auto hover:cursor-pointer"
+            className="w-full md:ml-auto md:w-auto hover:cursor-pointer min-w-50"
             onClick={() => inputRef.current?.click()}
             disabled={isUploading}
           >
-            <Upload />
-            {isUploading ? "Uploading..." : "Upload Statement"}
+            {isUploading ? (
+              <Loader />
+            ) : (
+              <>
+                <Upload />
+                <span>Upload Statement</span>
+              </>
+            )}
           </Button>
 
           <ThemeToggle />
