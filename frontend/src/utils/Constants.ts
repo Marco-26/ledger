@@ -15,8 +15,17 @@ const UI = {
     "December",
   ],
   THEME_STORAGE_KEY: "ledger-ui-theme",
+  DATE_FORMAT: "YYYY-MM-DD",
+};
+
+const API = {
+  QUERY_PARAMS: {
+    DATE: "date",
+  },
+  GENERATE_STATEMENT_FORMDATA_KEY: "file",
 };
 
 export const Constants = {
   UI: UI,
+  API: API,
 };

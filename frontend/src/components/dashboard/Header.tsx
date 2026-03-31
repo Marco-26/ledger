@@ -5,6 +5,7 @@ import { ThemeToggle } from "@/components/theme/ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { MonthNavigator } from "../core/MonthNavigator";
 import type { Dayjs } from "dayjs";
+import { Constants } from "@/utils/Constants";
 
 interface IHeaderProps {
   isUploading: boolean;
@@ -58,7 +59,9 @@ export function Header({
       </div>
 
       <MonthNavigator
-        onChange={(month) => onMonthChange(month.date(1).format("YYYY-MM-DD"))}
+        onChange={(month) =>
+          onMonthChange(month.date(1).format(Constants.UI.DATE_FORMAT))
+        }
         selectedMonth={selectedMonth}
       />
     </div>

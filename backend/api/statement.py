@@ -22,8 +22,9 @@ def get_statement_service(db: Session = Depends(get_db)):
 def generate_statement(
     file: Annotated[bytes, File()],
     service: StatementService = Depends(get_statement_service),
+    date: date = Query(...)
 ):
-    return service.generate_monthly_statement(file)
+    return service.generate_monthly_statement(file,date)
 
 @router.get("/api/statement")
 def get_statement(date: date = Query(...), service: StatementService = Depends(get_statement_service)):

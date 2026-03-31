@@ -1,16 +1,21 @@
 import { apiClient } from "./client";
 import type { IStatement } from "@/data/StatementDtos";
 import StatementDataAdapter from "./adapters/StatementDataAdapter";
+import { Constants } from "@/utils/Constants";
 
 export class StatementService {
   readonly baseURL = "/statement";
 
-  public async generateStatement(file: File): Promise<IStatement> {
+  public async generateStatement(
+    file: File,
+    date: string,
+  ): Promise<IStatement> {
     try {
       const formData = new FormData();
-      formData.append("file", file);
+      formData.append(Constants.API.GENERATE_STATEMENT_FORMDATA_KEY, file);
 
-      const response = await apiClient.post(this.baseURL, formData, {
+      const url = `${this.baseURL}?${Constants.API.QUERY_PARAMS.DATE}=${encodeURIComponent(date)}`;
+      const response = await apiClient.post(url, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -27,7 +32,7 @@ export class StatementService {
 
   public async fetchStatement(date: string): Promise<IStatement> {
     try {
-      const url = `${this.baseURL}?date=${encodeURIComponent(date)}`;
+      const url = `${this.baseURL}?${Constants.API.QUERY_PARAMS.DATE}=${encodeURIComponent(date)}`;
       const response = await apiClient.get(url);
 
       const statement = StatementDataAdapter.convertToStatement(response.data);

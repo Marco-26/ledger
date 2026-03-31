@@ -15,14 +15,14 @@ class StatementService:
         self.db = db
         self.repository = StatementRepository(db)
 
-    def generate_monthly_statement(self, file: bytes) -> Statement:
+    def generate_monthly_statement(self, file: bytes, date:date) -> Statement:
         table = extract_table_from_pdf(file)
         df = build_statement_dataframe(table)
         df = normalize_statement_dataframe(df)
         processed_df = process_dataframe_data(df)
         monthly_statement = MonthlyStatement.from_processed_df(processed_df)
 
-        record = self.repository.create_statement(statement=monthly_statement)
+        record = self.repository.create_statement(statement=monthly_statement, date=date)
 
         return record
     

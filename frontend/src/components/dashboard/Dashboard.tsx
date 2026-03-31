@@ -6,11 +6,12 @@ import { TopTransactions } from "@/components/dashboard/TopTransactions";
 import { TransactionHistory } from "@/components/dashboard/TransactionHistory";
 import { Header } from "./Header";
 import type { Dayjs } from "dayjs";
+import { Constants } from "@/utils/Constants";
 
 interface DashboardProps {
   data?: IStatement;
   isUploading: boolean;
-  onUploadStatement: (file: File) => void | Promise<void>;
+  onUploadStatement: (file: File, date: string) => void | Promise<void>;
   onMonthChange: (month: string) => void;
   selectedMonth: Dayjs;
 }
@@ -29,7 +30,10 @@ export function Dashboard({
       return;
     }
 
-    await onUploadStatement(file);
+    await onUploadStatement(
+      file,
+      selectedMonth.date(1).format(Constants.UI.DATE_FORMAT),
+    );
     event.target.value = "";
   };
 

@@ -6,17 +6,17 @@ export function useStatements() {
   const [statement, setStatement] = useState<IStatement>();
   const [isUploading, setIsUploading] = useState(false);
 
-  const uploadStatement = useCallback(async (file: File) => {
-    const data = await statementService.generateStatement(file);
+  const uploadStatement = useCallback(async (file: File, date: string) => {
+    const data = await statementService.generateStatement(file, date);
     setStatement(data);
   }, []);
 
   const handleStatementUpload = useCallback(
-    async (file: File) => {
+    async (file: File, date: string) => {
       setIsUploading(true);
 
       try {
-        await uploadStatement(file);
+        await uploadStatement(file, date);
       } catch (error) {
         console.error("Error generating statement:", error);
       } finally {
