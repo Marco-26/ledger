@@ -26,9 +26,20 @@ export function useStatements() {
     [uploadStatement],
   );
 
+  const fetchStatement = useCallback(async (month: string) => {
+    try {
+      const data = await statementService.fetchStatement(month);
+      setStatement(data);
+    } catch (error) {
+      setStatement(undefined);
+      console.error("Error fetching statement:", error);
+    }
+  }, []);
+
   return {
     statement,
     isUploading,
     handleStatementUpload,
+    fetchStatement,
   };
 }

@@ -7,7 +7,8 @@ import dayjs from "dayjs";
 function App() {
   const [monthSelected, setMonthSelected] = useState<string>();
 
-  const { statement, isUploading, handleStatementUpload } = useStatements();
+  const { statement, isUploading, handleStatementUpload, fetchStatement } =
+    useStatements();
 
   if (isUploading) {
     return (
@@ -17,12 +18,17 @@ function App() {
     );
   }
 
+  const handleMonthChange = (month: string) => {
+    setMonthSelected(month);
+    fetchStatement(month);
+  };
+
   return (
     <Dashboard
       data={statement}
       isUploading={isUploading}
       onUploadStatement={handleStatementUpload}
-      onMonthChange={setMonthSelected}
+      onMonthChange={handleMonthChange}
       selectedMonth={dayjs(monthSelected)}
     />
   );

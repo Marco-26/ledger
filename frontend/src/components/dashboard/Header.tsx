@@ -58,7 +58,7 @@ export function Header({
       </div>
 
       <MonthNavigator
-        onChange={(month) => onMonthChange(month.format("YYYY-MM-DD"))}
+        onChange={(month) => onMonthChange(month.date(1).format("YYYY-MM-DD"))}
         selectedMonth={selectedMonth}
       />
     </div>

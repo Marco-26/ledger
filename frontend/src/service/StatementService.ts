@@ -24,6 +24,20 @@ export class StatementService {
       return Promise.reject(error);
     }
   }
+
+  public async fetchStatement(date: string): Promise<IStatement> {
+    try {
+      const url = `${this.baseURL}?date=${encodeURIComponent(date)}`;
+      const response = await apiClient.get(url);
+
+      const statement = StatementDataAdapter.convertToStatement(response.data);
+
+      return statement;
+    } catch (error) {
+      console.error("Error in StatementService.fetchStatement:", error);
+      return Promise.reject(error);
+    }
+  }
 }
 
 export const statementService = new StatementService();
