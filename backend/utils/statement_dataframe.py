@@ -30,9 +30,12 @@ def normalize_statement_dataframe(data: pd.DataFrame) -> pd.DataFrame:
 
 def _df_to_transactions(df: pd.DataFrame) -> list[Transaction]:
     """Convert DataFrame rows to Transaction objects. Use debit/credit to override with fixed values."""
-    return [
-        Transaction.from_row(row) for row in df.to_dict(orient="records")
-    ]
+    return [Transaction.from_row(row) for row in df.to_dict(orient="records")]
+
+
+def _df_to_daily_transactions(df: pd.DataFrame) -> list[Transaction]:
+    daily = df.groupby("Date", as_index=False)[["Debit", "Credit"]].sum()
+    return [Transaction.from_row(row) for row in daily.to_dict(orient="records")]
 
 
 def _get_top_transactions(df: pd.DataFrame, column: str, n: int) -> pd.DataFrame:
@@ -61,7 +64,7 @@ def process_dataframe_data(df: pd.DataFrame) -> dict:
         "total_debit": total_debit,
         "total_credit": total_credit,
         "net_balance": total_credit - total_debit,
-        "transaction_list_filtered": _df_to_transactions(
+        "transaction_list_filtered": _df_to_daily_transactions(
             df[["Date", "Description", "Debit", "Credit"]]
         ),
         "debit_list": _df_to_transactions(debits_df),
