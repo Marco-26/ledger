@@ -30,6 +30,8 @@ export function CashFlowChart({ data }: CashFlowChartProps) {
     },
   } satisfies ChartConfig;
 
+  const chartDataAvailable = (data?.transactionListFiltered ?? []).length > 0;
+
   return (
     <Card>
       <CardHeader>
@@ -49,7 +51,9 @@ export function CashFlowChart({ data }: CashFlowChartProps) {
               axisLine={false}
               tickFormatter={(value) => value.slice(0, 5)} // Shorten date if needed
             />
-            <ChartTooltip content={<ChartTooltipContent />} />
+            {chartDataAvailable && (
+              <ChartTooltip content={<ChartTooltipContent />} />
+            )}
             <Bar
               dataKey="credit"
               fill="var(--color-credit)"
