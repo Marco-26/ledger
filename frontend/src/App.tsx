@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Dashboard } from "./components/dashboard/Dashboard";
 import { useStatements } from "./hooks/useStatements";
 import dayjs from "dayjs";
+import { Toaster } from "sonner";
 
 function App() {
   const [monthSelected, setMonthSelected] = useState<string>();
@@ -15,13 +16,16 @@ function App() {
   };
 
   return (
-    <Dashboard
-      data={statement}
-      isUploading={isUploading}
-      onUploadStatement={handleStatementUpload}
-      onMonthChange={handleMonthChange}
-      selectedMonth={dayjs(monthSelected)}
-    />
+    <>
+      <Toaster />
+      <Dashboard
+        data={statement}
+        isUploading={isUploading}
+        onUploadStatement={handleStatementUpload}
+        onMonthChange={handleMonthChange}
+        selectedMonth={dayjs(monthSelected)}
+      />
+    </>
   );
 }
 
