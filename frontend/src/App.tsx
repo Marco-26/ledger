@@ -6,7 +6,7 @@ import { Toaster } from "sonner";
 
 function App() {
   const [selectedMonth, setSelectedMonth] = useState<string>(
-    dayjs().format("YYYY-MM"),
+    dayjs().date(1).format("YYYY-MM-DD"),
   );
 
   const { data, isUploading, uploadStatement } = useStatements({

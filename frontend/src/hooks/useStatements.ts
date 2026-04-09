@@ -1,5 +1,6 @@
 import type { IStatement } from "@/data/StatementDtos";
 import { statementService } from "@/service/StatementService";
+import { Constants } from "@/utils/Constants";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { useEffect } from "react";
@@ -21,7 +22,7 @@ export function useStatements({ selectedMonth }: IUseStatementsProps) {
   };
 
   const { data, error } = useQuery({
-    queryKey: ["statements", selectedMonth],
+    queryKey: [Constants.API.TANSTACK_QUERIES.STATEMENTS, selectedMonth],
     queryFn: () => fetchStatement(selectedMonth),
     retry: (failureCount, error) => {
       if (
@@ -42,6 +43,7 @@ export function useStatements({ selectedMonth }: IUseStatementsProps) {
     isPending: isUploading,
     error: uploadError,
   } = useMutation({
+    mutationKey: [Constants.API.TANSTACK_QUERIES.UPLOAD],
     mutationFn: ({
       statementFile,
       date,
@@ -49,8 +51,10 @@ export function useStatements({ selectedMonth }: IUseStatementsProps) {
       statementFile: File;
       date: string;
     }) => statementService.generateStatement(statementFile, date),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["statements"] });
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: [Constants.API.TANSTACK_QUERIES.STATEMENTS, variables.date],
+      });
     },
     onError: (error) => {
       toast.error(error.message);
