@@ -1,5 +1,5 @@
 import { TransactionType, type ITransaction } from "@/data/StatementDtos";
-import { formatCurrency } from "@/lib/utils";
+import { cn, formatCurrency } from "@/lib/utils";
 import {
   Table,
   TableBody,
@@ -21,33 +21,48 @@ export function TransactionTable({
   emptyMessage,
 }: TransactionTableProps) {
   const isIncome = type === TransactionType.INCOME;
-  const amountColorClass = isIncome ? "text-emerald-600" : "text-rose-600";
+  const amountColorClass = isIncome ? "text-[var(--income)]" : "text-[var(--expense)]";
   const amountPrefix = isIncome ? "+" : "-";
 
   const getAmount = (transaction: ITransaction) =>
     isIncome ? transaction.credit : transaction.debit;
 
   return (
-    <div className="rounded-md border max-h-96 overflow-y-auto [scrollbar-width:thin] [scrollbar-color:theme(colors.muted.foreground)_transparent]">
+    <div className="rounded-lg border border-border overflow-hidden max-h-96 overflow-y-auto [scrollbar-width:thin] [scrollbar-color:var(--border)_transparent]">
       <Table>
-        <TableHeader className="sticky top-0 bg-background z-10">
-          <TableRow>
-            <TableHead>Date</TableHead>
-            <TableHead>Description</TableHead>
-            <TableHead className="text-right">Amount</TableHead>
+        <TableHeader className="sticky top-0 bg-muted/80 backdrop-blur-sm z-10">
+          <TableRow className="border-b border-border hover:bg-transparent">
+            <TableHead className="text-xs font-medium tracking-[0.12em] uppercase text-muted-foreground h-9 w-28">
+              Date
+            </TableHead>
+            <TableHead className="text-xs font-medium tracking-[0.12em] uppercase text-muted-foreground h-9">
+              Description
+            </TableHead>
+            <TableHead className="text-xs font-medium tracking-[0.12em] uppercase text-muted-foreground h-9 text-right w-32">
+              Amount
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {transactions && transactions.length > 0 ? (
             transactions.map((transaction, index) => (
-              <TableRow key={index}>
-                <TableCell>{transaction.date}</TableCell>
-                <TableCell>{transaction.description}</TableCell>
+              <TableRow
+                key={index}
+                className="border-b border-border/50 hover:bg-muted/40 transition-colors"
+              >
+                <TableCell className="font-numeric text-xs text-muted-foreground py-3 w-28">
+                  {transaction.date}
+                </TableCell>
+                <TableCell className="text-sm py-3">
+                  {transaction.description}
+                </TableCell>
                 <TableCell
-                  className={`text-right font-medium ${amountColorClass}`}
+                  className={cn(
+                    "font-numeric text-right text-sm font-medium py-3 tabular-nums w-32",
+                    amountColorClass,
+                  )}
                 >
-                  {amountPrefix}
-                  {formatCurrency(getAmount(transaction) || 0)}
+                  {amountPrefix}{formatCurrency(getAmount(transaction) || 0)}
                 </TableCell>
               </TableRow>
             ))
@@ -55,7 +70,7 @@ export function TransactionTable({
             <TableRow>
               <TableCell
                 colSpan={3}
-                className="text-center text-muted-foreground"
+                className="text-center text-sm text-muted-foreground py-12"
               >
                 {emptyMessage}
               </TableCell>

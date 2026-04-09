@@ -1,5 +1,4 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import type { Dayjs } from "dayjs";
 
 interface MonthNavigatorProps {
@@ -33,32 +32,32 @@ export function MonthNavigator({
   };
 
   return (
-    <div className="flex items-center gap-1 rounded-lg bg-muted px-1 py-0.5 justify-between">
-      <Button
-        variant="ghost"
-        size="icon-sm"
+    <div className="flex items-center gap-0 w-full rounded-lg border border-border bg-muted/40 overflow-hidden">
+      <button
         onClick={handlePrevious}
         disabled={!canGoPrevious}
         aria-label="Previous month"
-        className="hover:cursor-pointer"
+        className="flex h-9 w-10 shrink-0 items-center justify-center text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-30 disabled:pointer-events-none"
       >
-        <ChevronLeft />
-      </Button>
+        <ChevronLeft className="h-3.5 w-3.5" />
+      </button>
 
-      <span className="min-w-[130px] text-center text-base font-semibold tabular-nums">
+      <div className="h-9 w-px bg-border shrink-0" />
+
+      <span className="font-numeric flex-1 text-center text-sm font-medium px-3 tabular-nums">
         {selectedMonth.format("MMMM YYYY")}
       </span>
 
-      <Button
-        variant="ghost"
-        size="icon-sm"
+      <div className="h-9 w-px bg-border shrink-0" />
+
+      <button
         onClick={handleNext}
         disabled={!canGoNext}
         aria-label="Next month"
-        className="hover:cursor-pointer"
+        className="flex h-9 w-10 shrink-0 items-center justify-center text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-30 disabled:pointer-events-none"
       >
-        <ChevronRight />
-      </Button>
+        <ChevronRight className="h-3.5 w-3.5" />
+      </button>
     </div>
   );
 }

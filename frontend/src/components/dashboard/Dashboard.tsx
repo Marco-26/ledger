@@ -38,17 +38,35 @@ export function Dashboard({
   };
 
   return (
-    <div className="flex min-h-screen w-full flex-col bg-muted/40 p-4 md:p-8 space-y-8">
-      <Header
-        isUploading={isUploading}
-        onFileChange={handleFileChange}
-        onMonthChange={onMonthChange}
-        selectedMonth={selectedMonth}
-      />
-      <SummaryCardsSection data={data} />
-      <CashFlowChart data={data} />
-      <TopTransactions data={data} />
-      <TransactionHistory data={data} />
+    <div className="relative min-h-screen w-full bg-background bg-grid">
+      <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-[var(--income)] to-transparent opacity-60" />
+
+      <div className="mx-auto max-w-7xl px-4 py-8 md:px-8 md:py-10 space-y-8">
+        <div className="animate-fade-up delay-0">
+          <Header
+            isUploading={isUploading}
+            onFileChange={handleFileChange}
+            onMonthChange={onMonthChange}
+            selectedMonth={selectedMonth}
+          />
+        </div>
+
+        <div className="animate-fade-up delay-1">
+          <SummaryCardsSection data={data} />
+        </div>
+
+        <div className="animate-fade-up delay-2">
+          <CashFlowChart data={data} />
+        </div>
+
+        <div className="animate-fade-up delay-3">
+          <TopTransactions data={data} />
+        </div>
+
+        <div className="animate-fade-up delay-4 pb-12">
+          <TransactionHistory data={data} />
+        </div>
+      </div>
     </div>
   );
 }

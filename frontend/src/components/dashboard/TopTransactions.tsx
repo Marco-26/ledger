@@ -12,14 +12,16 @@ export function TopTransactions({ data }: TopTransactionsProps) {
       <TopTransactionsCard
         data={data?.topIncomes}
         title="Top Earnings"
-        description="Highest income sources."
-        icon={<TrendingUp className="h-5 w-5 text-emerald-500" />}
+        description="Highest income sources this period"
+        icon={<TrendingUp className="h-3.5 w-3.5 text-[var(--income)]" />}
+        variant="income"
       />
       <TopTransactionsCard
         data={data?.topExpenses}
         title="Top Spending"
-        description="Highest expense categories."
-        icon={<TrendingDown className="h-5 w-5 text-rose-500" />}
+        description="Highest expense categories this period"
+        icon={<TrendingDown className="h-3.5 w-3.5 text-[var(--expense)]" />}
+        variant="expense"
       />
     </div>
   );

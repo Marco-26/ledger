@@ -1,4 +1,4 @@
-import { ArrowUp, ArrowDown, Wallet } from "lucide-react";
+import { ArrowUp, ArrowDown, Scale } from "lucide-react";
 import type { IStatement } from "@/data/StatementDtos";
 import SummaryCard from "../core/SummaryCard";
 
@@ -14,23 +14,21 @@ export function SummaryCardsSection({ data }: SummaryCardsProps) {
         value={data?.creditTotal}
         description="Total credit transactions"
         icon={ArrowUp}
-        iconColor="text-emerald-500"
-        valueColor="text-emerald-600"
+        variant="income"
       />
       <SummaryCard
         title="Money Out"
         value={data?.debitTotal}
         description="Total debit transactions"
         icon={ArrowDown}
-        iconColor="text-rose-500"
-        valueColor="text-rose-600"
+        variant="expense"
       />
       <SummaryCard
-        title="Net Revenue"
+        title="Net Balance"
         value={data?.netBalance}
-        description="Current balance"
-        icon={Wallet}
-        valuePositive={data?.netBalance !== undefined && data.netBalance >= 0}
+        description="Income minus expenses"
+        icon={Scale}
+        variant="neutral"
       />
     </div>
   );
