@@ -31,6 +31,6 @@ def get_statement(date: date = Query(...), service: StatementService = Depends(g
     statement =  service.get_statement_via_date(date)
     
     if not statement:
-        raise HTTPException(status_code=400, detail="Statement not found")
+        raise HTTPException(status_code=404, detail="Statement not found")
     
     return statement

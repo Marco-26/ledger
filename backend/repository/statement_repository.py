@@ -13,7 +13,7 @@ class StatementRepository:
     if record:
       self.db.delete(record)
       
-    new_record = Statement(**statement.model_dump())
+    new_record = Statement(**statement.model_dump(), date = date)
     self.db.add(new_record)
     self.db.commit()
     self.db.refresh(new_record)
