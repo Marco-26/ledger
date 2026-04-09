@@ -10,38 +10,23 @@ export class StatementService {
     file: File,
     date: string,
   ): Promise<IStatement> {
-    try {
-      const formData = new FormData();
-      formData.append(Constants.API.GENERATE_STATEMENT_FORMDATA_KEY, file);
+    const formData = new FormData();
+    formData.append(Constants.API.GENERATE_STATEMENT_FORMDATA_KEY, file);
 
-      const url = `${this.baseURL}?${Constants.API.QUERY_PARAMS.DATE}=${encodeURIComponent(date)}`;
-      const response = await apiClient.post(url, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+    const url = `${this.baseURL}?${Constants.API.QUERY_PARAMS.DATE}=${encodeURIComponent(date)}`;
+    const response = await apiClient.post(url, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
 
-      const statement = StatementDataAdapter.convertToStatement(response.data);
-
-      return statement;
-    } catch (error) {
-      console.error("Error in StatementService.generateStatement:", error);
-      return Promise.reject(error);
-    }
+    return StatementDataAdapter.convertToStatement(response.data);
   }
 
   public async fetchStatement(date: string): Promise<IStatement> {
-    try {
-      const url = `${this.baseURL}?${Constants.API.QUERY_PARAMS.DATE}=${encodeURIComponent(date)}`;
-      const response = await apiClient.get(url);
-
-      const statement = StatementDataAdapter.convertToStatement(response.data);
-
-      return statement;
-    } catch (error) {
-      console.error("Error in StatementService.fetchStatement:", error);
-      return Promise.reject(error);
-    }
+    const url = `${this.baseURL}?${Constants.API.QUERY_PARAMS.DATE}=${encodeURIComponent(date)}`;
+    const response = await apiClient.get(url);
+    return StatementDataAdapter.convertToStatement(response.data);
   }
 }
 

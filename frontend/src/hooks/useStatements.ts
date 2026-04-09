@@ -1,57 +1,73 @@
 import type { IStatement } from "@/data/StatementDtos";
 import { statementService } from "@/service/StatementService";
-import { useCallback, useEffect, useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { AxiosError } from "axios";
+import { useEffect } from "react";
 import { toast } from "sonner";
 
-export function useStatements() {
-  const [statement, setStatement] = useState<IStatement>();
-  const [isUploading, setIsUploading] = useState(false);
-  const [error, setError] = useState<string>("");
+interface IUseStatementsProps {
+  selectedMonth?: string;
+}
 
-  const uploadStatement = useCallback(async (file: File, date: string) => {
-    const data = await statementService.generateStatement(file, date);
-    setStatement(data);
-  }, []);
+export function useStatements({ selectedMonth }: IUseStatementsProps) {
+  const queryClient = useQueryClient();
 
-  const handleStatementUpload = useCallback(
-    async (file: File, date: string) => {
-      setIsUploading(true);
-
-      try {
-        await uploadStatement(file, date);
-      } catch (error) {
-        console.error("Error generating statement:", error);
-        setError("Error generating statement, please try again later");
-      } finally {
-        setIsUploading(false);
-      }
-    },
-    [uploadStatement],
-  );
-
-  const fetchStatement = useCallback(async (month: string) => {
-    try {
-      const data = await statementService.fetchStatement(month);
-      setStatement(data);
-    } catch (error) {
-      setStatement(undefined);
-      setError("Error fetching statement, please try again later");
-      console.error("Error fetching statement:", error);
+  const fetchStatement = (month?: string): Promise<IStatement> => {
+    if (!month) {
+      return Promise.reject();
     }
-  }, []);
+
+    return statementService.fetchStatement(month);
+  };
+
+  const { data, error } = useQuery({
+    queryKey: ["statements", selectedMonth],
+    queryFn: () => fetchStatement(selectedMonth),
+    retry: (failureCount, error) => {
+      if (
+        error instanceof AxiosError &&
+        error.response?.status &&
+        error.response.status < 500
+      ) {
+        toast.error("No statement available for this month");
+        return false;
+      }
+      return failureCount < 3;
+    },
+    enabled: !!selectedMonth,
+  });
+
+  const {
+    mutateAsync: uploadStatement,
+    isPending: isUploading,
+    error: uploadError,
+  } = useMutation({
+    mutationFn: ({
+      statementFile,
+      date,
+    }: {
+      statementFile: File;
+      date: string;
+    }) => statementService.generateStatement(statementFile, date),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["statements"] });
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
 
   useEffect(() => {
-    if (error) {
-      toast.error(error);
-      setError("");
+    if (uploadError) {
+      toast.error(uploadError.message);
     }
-  }, [error]);
+  }, [uploadError]);
 
   return {
-    statement,
+    data,
     error,
     isUploading,
-    handleStatementUpload,
+    uploadStatement,
     fetchStatement,
   };
 }

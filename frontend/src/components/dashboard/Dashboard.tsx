@@ -11,7 +11,7 @@ import { Constants } from "@/utils/Constants";
 interface DashboardProps {
   data?: IStatement;
   isUploading: boolean;
-  onUploadStatement: (file: File, date: string) => void | Promise<void>;
+  onUploadStatement: (file: File, date: string) => void;
   onMonthChange: (month: string) => void;
   selectedMonth: Dayjs;
 }
@@ -23,14 +23,14 @@ export function Dashboard({
   onMonthChange,
   selectedMonth,
 }: DashboardProps) {
-  const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
 
     if (!file) {
       return;
     }
 
-    await onUploadStatement(
+    onUploadStatement(
       file,
       selectedMonth.date(1).format(Constants.UI.DATE_FORMAT),
     );

@@ -5,25 +5,25 @@ import dayjs from "dayjs";
 import { Toaster } from "sonner";
 
 function App() {
-  const [monthSelected, setMonthSelected] = useState<string>();
+  const [selectedMonth, setSelectedMonth] = useState<string>(
+    dayjs().format("YYYY-MM"),
+  );
 
-  const { statement, isUploading, handleStatementUpload, fetchStatement } =
-    useStatements();
-
-  const handleMonthChange = (month: string) => {
-    setMonthSelected(month);
-    fetchStatement(month);
-  };
+  const { data, isUploading, uploadStatement } = useStatements({
+    selectedMonth: selectedMonth,
+  });
 
   return (
     <>
       <Toaster />
       <Dashboard
-        data={statement}
+        data={data}
         isUploading={isUploading}
-        onUploadStatement={handleStatementUpload}
-        onMonthChange={handleMonthChange}
-        selectedMonth={dayjs(monthSelected)}
+        onUploadStatement={(file, date) =>
+          uploadStatement({ statementFile: file, date: date })
+        }
+        onMonthChange={setSelectedMonth}
+        selectedMonth={dayjs(selectedMonth)}
       />
     </>
   );
