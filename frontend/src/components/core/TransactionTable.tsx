@@ -1,5 +1,13 @@
 import { TransactionType, type ITransaction } from "@/data/StatementDtos";
 import { formatCurrency } from "@/lib/utils";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 interface TransactionTableProps {
   transactions?: ITransaction[];
@@ -20,54 +28,41 @@ export function TransactionTable({
     isIncome ? transaction.credit : transaction.debit;
 
   return (
-    <div className="rounded-md border">
-      <div className="relative w-full overflow-auto">
-        <table className="w-full caption-bottom text-sm">
-          <thead className="[&_tr]:border-b">
-            <tr className="border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted">
-              <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
-                Date
-              </th>
-              <th className="h-12 px-4 text-left align-middle font-medium text-muted-foreground">
-                Description
-              </th>
-              <th className="h-12 px-4 text-right align-middle font-medium text-muted-foreground">
-                Amount
-              </th>
-            </tr>
-          </thead>
-          <tbody className="[&_tr:last-child]:border-0">
-            {transactions && transactions.length > 0 ? (
-              transactions.map((transaction, index) => (
-                <tr
-                  key={index}
-                  className="border-b transition-colors hover:bg-muted/50"
+    <div className="rounded-md border max-h-96 overflow-y-auto [scrollbar-width:thin] [scrollbar-color:theme(colors.muted.foreground)_transparent]">
+      <Table>
+        <TableHeader className="sticky top-0 bg-background z-10">
+          <TableRow>
+            <TableHead>Date</TableHead>
+            <TableHead>Description</TableHead>
+            <TableHead className="text-right">Amount</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {transactions && transactions.length > 0 ? (
+            transactions.map((transaction, index) => (
+              <TableRow key={index}>
+                <TableCell>{transaction.date}</TableCell>
+                <TableCell>{transaction.description}</TableCell>
+                <TableCell
+                  className={`text-right font-medium ${amountColorClass}`}
                 >
-                  <td className="p-4 align-middle">{transaction.date}</td>
-                  <td className="p-4 align-middle">
-                    {transaction.description}
-                  </td>
-                  <td
-                    className={`p-4 align-middle text-right font-medium ${amountColorClass}`}
-                  >
-                    {amountPrefix}
-                    {formatCurrency(getAmount(transaction) || 0)}
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td
-                  colSpan={3}
-                  className="p-4 text-center text-muted-foreground"
-                >
-                  {emptyMessage}
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+                  {amountPrefix}
+                  {formatCurrency(getAmount(transaction) || 0)}
+                </TableCell>
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell
+                colSpan={3}
+                className="text-center text-muted-foreground"
+              >
+                {emptyMessage}
+              </TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
     </div>
   );
 }
