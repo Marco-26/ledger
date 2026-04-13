@@ -14,9 +14,10 @@ def build_statement_dataframe(rows: list) -> pd.DataFrame:
     df.columns = STATEMENT_COLUMNS
     return df
 
-
 def normalize_statement_dataframe(data: pd.DataFrame) -> pd.DataFrame:
     df = data.copy()
+
+    df["Date"] = pd.to_datetime(df["Date"], format="%d-%m-%y").dt.date
 
     for column in NUMERIC_COLUMNS:
         df[column] = df[column].str.replace(".", "", regex=False)
@@ -44,6 +45,21 @@ def _get_top_transactions(df: pd.DataFrame, column: str, n: int) -> pd.DataFrame
         df.loc[df[column] > 0, ["Date", "Description", column]]
         .sort_values(by=column, ascending=False)
         .head(n)
+    )
+
+
+def transactions_to_dataframe(transactions: list) -> pd.DataFrame:
+    return pd.DataFrame(
+        [
+            {
+                "Date": t.transaction_date,
+                "Description": t.transaction_description,
+                "Debit": t.transaction_debit or 0.0,
+                "Credit": t.transaction_credit or 0.0,
+                "Balance": t.transaction_balance,
+            }
+            for t in transactions
+        ]
     )
 
 

@@ -1,9 +1,10 @@
 from pydantic import BaseModel
 from typing import Dict, Any
+from datetime import date as Date
 
 
 class Transaction(BaseModel):
-    date: str
+    date: Date
     credit: float
     description: str | None
     debit: float
