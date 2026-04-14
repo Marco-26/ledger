@@ -2,35 +2,34 @@ from pydantic import BaseModel
 from typing import Dict, Any
 from datetime import date as Date
 
-
-class Transaction(BaseModel):
+class TransactionDto(BaseModel):
     date: Date
     credit: float
-    description: str | None
+    description: str | None = None
     debit: float
 
     @classmethod
     def from_row(cls, row: Dict[str, Any]):
         return cls(
-            date=row["Date"],
-            description=row.get("Description"),
-            debit=row.get("Debit", 0.0),
-            credit=row.get("Credit", 0.0),
+            date = row["Date"],
+            description = row.get("Description"),
+            debit = row.get("Debit", 0.0),
+            credit = row.get("Credit", 0.0),
         )
 
-
-class MonthlyStatement(BaseModel):
+class StatementDto(BaseModel):
+    date:Date
     debit_total: float
     credit_total: float
     net_balance: float
     number_of_transactions: int
-    top_expenses: list[Transaction]
-    top_incomes: list[Transaction]
+    top_expenses: list[TransactionDto]
+    top_incomes: list[TransactionDto]
     transaction_list_filtered: list[
-        Transaction
+        TransactionDto
     ]  # List of daily debit and credit totals, filtered to be used in graph
-    debit_list: list[Transaction]  # List of daily debit totals, unfiltered
-    credit_list: list[Transaction]  # List of daily credit totals, unfiltered
+    debit_list: list[TransactionDto]  # List of daily debit totals, unfiltered
+    credit_list: list[TransactionDto]  # List of daily credit totals, unfiltered
 
     @classmethod
     def from_processed_df(cls, data: Dict[str, Any]):

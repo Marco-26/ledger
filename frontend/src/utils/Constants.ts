@@ -14,7 +14,6 @@ const UI = {
     "November",
     "December",
   ],
-  THEME_STORAGE_KEY: "ledger-ui-theme",
   DATE_FORMAT: "YYYY-MM-DD",
 };
 

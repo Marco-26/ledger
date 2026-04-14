@@ -1,5 +1,5 @@
 from datetime import date
-from models.statement import Statement, Transaction
+from backend.db.models.statement import Statement, Transaction
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 
@@ -11,14 +11,13 @@ class StatementRepository:
   def create_statement(
     self, transactions: list[Transaction], date: date
   ) -> Statement:
-    with self.db.begin():
+    try:
       record = self.get_statement_via_date(date)
       if record:
         self.db.delete(record)
 
       new_record = Statement(date_uploaded=date)
       self.db.add(new_record)
-      self.db.flush()
 
       transactions = [
         Transaction(
@@ -33,6 +32,10 @@ class StatementRepository:
       ]
 
       self.db.add_all(transactions)
+      self.db.commit()
+    except Exception:
+      self.db.rollback()
+      raise
 
     return new_record
 

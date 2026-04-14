@@ -17,7 +17,7 @@ if config.config_file_name is not None:
 # add your model's MetaData object here
 # for 'autogenerate' support
 from db.database import Base
-import models.statement  # noqa: F401 — ensures models are registered with Base
+import db.models.statement  # noqa: F401 — ensures models are registered with Base
 
 target_metadata = Base.metadata
 

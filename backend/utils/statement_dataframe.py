@@ -1,12 +1,10 @@
 import pandas as pd
 
 from constants import TOP_N_TRANSACTIONS
-from schema.monthly_statement import Transaction
-
+from adapters.statement_dto_adapters import df_to_daily_transactions, df_to_transactions
 
 STATEMENT_COLUMNS = ["Date", "Description", "Debit", "Credit", "Balance"]
 NUMERIC_COLUMNS = ["Debit", "Credit", "Balance"]
-
 
 def build_statement_dataframe(rows: list) -> pd.DataFrame:
     df = pd.DataFrame(rows)
@@ -28,17 +26,6 @@ def normalize_statement_dataframe(data: pd.DataFrame) -> pd.DataFrame:
     df["Debit"] = df["Debit"].fillna(0.0)
     return df
 
-
-def _df_to_transactions(df: pd.DataFrame) -> list[Transaction]:
-    """Convert DataFrame rows to Transaction objects. Use debit/credit to override with fixed values."""
-    return [Transaction.from_row(row) for row in df.to_dict(orient="records")]
-
-
-def _df_to_daily_transactions(df: pd.DataFrame) -> list[Transaction]:
-    daily = df.groupby("Date", as_index=False)[["Debit", "Credit"]].sum()
-    return [Transaction.from_row(row) for row in daily.to_dict(orient="records")]
-
-
 def _get_top_transactions(df: pd.DataFrame, column: str, n: int) -> pd.DataFrame:
     """Get top N transactions sorted by column descending."""
     return (
@@ -46,22 +33,6 @@ def _get_top_transactions(df: pd.DataFrame, column: str, n: int) -> pd.DataFrame
         .sort_values(by=column, ascending=False)
         .head(n)
     )
-
-
-def transactions_to_dataframe(transactions: list) -> pd.DataFrame:
-    return pd.DataFrame(
-        [
-            {
-                "Date": t.transaction_date,
-                "Description": t.transaction_description,
-                "Debit": t.transaction_debit or 0.0,
-                "Credit": t.transaction_credit or 0.0,
-                "Balance": t.transaction_balance,
-            }
-            for t in transactions
-        ]
-    )
-
 
 def process_dataframe_data(df: pd.DataFrame) -> dict:
     total_debit = df["Debit"].sum()
@@ -74,15 +45,15 @@ def process_dataframe_data(df: pd.DataFrame) -> dict:
     credits_df = df.loc[df["Credit"] > 0, ["Date", "Description", "Credit"]]
 
     return {
-        "top_expenses": _df_to_transactions(top_expenses_df),
-        "top_incomes": _df_to_transactions(top_incomes_df),
+        "top_expenses": df_to_transactions(top_expenses_df),
+        "top_incomes": df_to_transactions(top_incomes_df),
         "transactions": len(df),
         "total_debit": total_debit,
         "total_credit": total_credit,
         "net_balance": total_credit - total_debit,
-        "transaction_list_filtered": _df_to_daily_transactions(
+        "transaction_list_filtered": df_to_daily_transactions(
             df[["Date", "Description", "Debit", "Credit"]]
         ),
-        "debit_list": _df_to_transactions(debits_df),
-        "credit_list": _df_to_transactions(credits_df),
+        "debit_list": df_to_transactions(debits_df),
+        "credit_list": df_to_transactions(credits_df),
     }
