@@ -8,6 +8,7 @@ from utils.statement_dataframe import (
 )
 from utils.statement_pdf import extract_table_from_pdf
 from datetime import date
+from mappers.transaction_mapper import TransactionMapper
 
 class StatementService:
     def __init__(self, db: Session):
@@ -17,6 +18,9 @@ class StatementService:
     def generate_monthly_statement(self, file: bytes, date: date) -> StatementDto:
         table = extract_table_from_pdf(file)
         df = normalize_statement_dataframe(build_statement_dataframe(table))
-        self.repository.create_statement(df, date)
+        
+        transactions = TransactionMapper.from_df(df)
+        
+        self.repository.create_statement(transactions, date)
         
         return compute_statement_dto(df, date)

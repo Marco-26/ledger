@@ -8,27 +8,16 @@ class StatementRepository:
   def __init__(self, db: Session) -> None:
     self.db = db
 
-  def create_statement(self, df: pd.DataFrame, date: date) -> Statement:
+  def create_statement(self, transactions: list[Transaction], date: date) -> Statement:
     try:
       record = self.get_statement_via_date(date)
       if record:
         self.db.delete(record)
 
       new_record = Statement(date_uploaded=date)
+      new_record.transactions = transactions
       self.db.add(new_record)
-
-      transactions = [
-        Transaction(
-          statement=new_record,
-          transaction_date=row["Date"],
-          transaction_description=row["Description"],
-          transaction_debit=row["Debit"],
-          transaction_credit=row["Credit"],
-          transaction_balance=row["Balance"],
-        )
-        for row in df.to_dict(orient="records")
-      ]
-
+      
       self.db.add_all(transactions)
       self.db.commit()
 

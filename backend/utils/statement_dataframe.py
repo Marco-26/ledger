@@ -34,12 +34,8 @@ def _get_top_transactions(df: pd.DataFrame, column: str, n: int) -> pd.DataFrame
         .head(n)
     )
 
-def _df_to_transactions(df: pd.DataFrame) -> list[TransactionDto]:
+def _df_to_transactions_dto(df: pd.DataFrame) -> list[TransactionDto]:
     return [TransactionDto.from_row(row) for row in df.to_dict(orient="records")]
-
-def _df_to_daily_transactions(df: pd.DataFrame) -> list[TransactionDto]:
-    daily = df.groupby("Date", as_index=False)[["Debit", "Credit"]].sum()
-    return [TransactionDto.from_row(row) for row in daily.to_dict(orient="records")]
 
 def compute_statement_dto(df: pd.DataFrame, statement_date: date) -> StatementDto:
     debit_total = df["Debit"].sum()
@@ -50,6 +46,9 @@ def compute_statement_dto(df: pd.DataFrame, statement_date: date) -> StatementDt
 
     debits_df = df.loc[df["Debit"] > 0, ["Date", "Description", "Debit"]]
     credits_df = df.loc[df["Credit"] > 0, ["Date", "Description", "Credit"]]
+    
+    transactions_df = df[["Date", "Description", "Debit", "Credit"]]
+    daily_transactions = transactions_df.groupby("Date", as_index=False)[["Debit", "Credit"]].sum()
 
     return StatementDto(
         date=statement_date,
@@ -57,11 +56,9 @@ def compute_statement_dto(df: pd.DataFrame, statement_date: date) -> StatementDt
         credit_total=credit_total,
         net_balance=credit_total - debit_total,
         number_of_transactions=len(df),
-        top_expenses=_df_to_transactions(top_expenses_df),
-        top_incomes=_df_to_transactions(top_incomes_df),
-        transaction_list_filtered=_df_to_daily_transactions(
-            df[["Date", "Description", "Debit", "Credit"]]
-        ),
-        debit_list=_df_to_transactions(debits_df),
-        credit_list=_df_to_transactions(credits_df),
+        top_expenses=_df_to_transactions_dto(top_expenses_df),
+        top_incomes=_df_to_transactions_dto(top_incomes_df),
+        transaction_list_filtered=_df_to_transactions_dto(daily_transactions),
+        debit_list=_df_to_transactions_dto(debits_df),
+        credit_list=_df_to_transactions_dto(credits_df),
     )
