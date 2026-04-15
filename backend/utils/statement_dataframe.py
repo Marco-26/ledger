@@ -1,7 +1,7 @@
 import pandas as pd
-
+from datetime import date
 from constants import TOP_N_TRANSACTIONS
-from adapters.statement_dto_adapters import df_to_daily_transactions, df_to_transactions
+from dtos.statement_dto import TransactionDto, StatementDto
 
 STATEMENT_COLUMNS = ["Date", "Description", "Debit", "Credit", "Balance"]
 NUMERIC_COLUMNS = ["Debit", "Credit", "Balance"]
@@ -34,9 +34,16 @@ def _get_top_transactions(df: pd.DataFrame, column: str, n: int) -> pd.DataFrame
         .head(n)
     )
 
-def process_dataframe_data(df: pd.DataFrame) -> dict:
-    total_debit = df["Debit"].sum()
-    total_credit = df["Credit"].sum()
+def _df_to_transactions(df: pd.DataFrame) -> list[TransactionDto]:
+    return [TransactionDto.from_row(row) for row in df.to_dict(orient="records")]
+
+def _df_to_daily_transactions(df: pd.DataFrame) -> list[TransactionDto]:
+    daily = df.groupby("Date", as_index=False)[["Debit", "Credit"]].sum()
+    return [TransactionDto.from_row(row) for row in daily.to_dict(orient="records")]
+
+def compute_statement_dto(df: pd.DataFrame, statement_date: date) -> StatementDto:
+    debit_total = df["Debit"].sum()
+    credit_total = df["Credit"].sum()
 
     top_expenses_df = _get_top_transactions(df, "Debit", TOP_N_TRANSACTIONS)
     top_incomes_df = _get_top_transactions(df, "Credit", TOP_N_TRANSACTIONS)
@@ -44,16 +51,17 @@ def process_dataframe_data(df: pd.DataFrame) -> dict:
     debits_df = df.loc[df["Debit"] > 0, ["Date", "Description", "Debit"]]
     credits_df = df.loc[df["Credit"] > 0, ["Date", "Description", "Credit"]]
 
-    return {
-        "top_expenses": df_to_transactions(top_expenses_df),
-        "top_incomes": df_to_transactions(top_incomes_df),
-        "transactions": len(df),
-        "total_debit": total_debit,
-        "total_credit": total_credit,
-        "net_balance": total_credit - total_debit,
-        "transaction_list_filtered": df_to_daily_transactions(
+    return StatementDto(
+        date=statement_date,
+        debit_total=debit_total,
+        credit_total=credit_total,
+        net_balance=credit_total - debit_total,
+        number_of_transactions=len(df),
+        top_expenses=_df_to_transactions(top_expenses_df),
+        top_incomes=_df_to_transactions(top_incomes_df),
+        transaction_list_filtered=_df_to_daily_transactions(
             df[["Date", "Description", "Debit", "Credit"]]
         ),
-        "debit_list": df_to_transactions(debits_df),
-        "credit_list": df_to_transactions(credits_df),
-    }
+        debit_list=_df_to_transactions(debits_df),
+        credit_list=_df_to_transactions(credits_df),
+    )
