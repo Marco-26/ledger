@@ -21,6 +21,10 @@ class StatementService:
         
         transactions = TransactionMapper.from_df(df)
         
+        record = self.repository.get_statement_via_date(date)
+        if record:
+            self.repository.delete_statement(record)
+        
         self.repository.create_statement(transactions, date)
         
         return compute_statement_dto(df, date)

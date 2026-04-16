@@ -1,5 +1,4 @@
 from datetime import date
-import pandas as pd
 from db.models.statement import Statement, Transaction
 from sqlalchemy.orm import Session
 from sqlalchemy import select
@@ -10,10 +9,6 @@ class StatementRepository:
 
   def create_statement(self, transactions: list[Transaction], date: date) -> Statement:
     try:
-      record = self.get_statement_via_date(date)
-      if record:
-        self.db.delete(record)
-
       new_record = Statement(date_uploaded=date)
       new_record.transactions = transactions
      
@@ -29,3 +24,8 @@ class StatementRepository:
   def get_statement_via_date(self, date: date) -> Statement | None:
     stmt = select(Statement).where(Statement.date_uploaded == date)
     return self.db.execute(stmt).unique().scalar_one_or_none()
+  
+  def delete_statement(self, statement: Statement):
+    self.db.delete(statement)
+    self.db.commit()
+    
