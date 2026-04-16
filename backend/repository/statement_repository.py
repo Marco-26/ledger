@@ -16,9 +16,8 @@ class StatementRepository:
 
       new_record = Statement(date_uploaded=date)
       new_record.transactions = transactions
+     
       self.db.add(new_record)
-      
-      self.db.add_all(transactions)
       self.db.commit()
 
     except Exception:

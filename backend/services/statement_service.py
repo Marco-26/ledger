@@ -24,3 +24,13 @@ class StatementService:
         self.repository.create_statement(transactions, date)
         
         return compute_statement_dto(df, date)
+    
+    def get_monthly_statement(self, date:date) -> StatementDto | None:
+        statement = self.repository.get_statement_via_date(date)
+        if not statement:
+            return None
+        
+        df = TransactionMapper.from_orm_to_df(statement.transactions)
+        return compute_statement_dto(df, date)
+        
+        
