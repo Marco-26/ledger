@@ -31,7 +31,7 @@ class StatementService:
     
     def get_monthly_statement(self, date:date) -> StatementDto | None:
         statement = self.repository.get_statement_via_date(date)
-        if not statement:
+        if not statement or not statement.transactions:
             return None
         
         df = TransactionMapper.from_orm_to_df(statement.transactions)
