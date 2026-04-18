@@ -28,7 +28,7 @@ def generate_statement(
 
 @router.get("/api/statement")
 def get_statement(date: date = Query(...), service: StatementService = Depends(get_statement_service)):
-    statement =  service.get_statement_via_date(date)
+    statement = service.get_monthly_statement(date)
     
     if not statement:
         raise HTTPException(status_code=404, detail="Statement not found")

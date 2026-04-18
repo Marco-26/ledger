@@ -12,10 +12,9 @@ createRoot(document.getElementById("root")!).render(
   <QueryClientProvider client={queryClient}>
     <ThemeProvider
       defaultTheme={Theme.System}
-      storageKey={Constants.UI.THEME_STORAGE_KEY}
+      storageKey={Constants.UI.UI_THEME_STORAGE_KEY}
     >
       <App />
     </ThemeProvider>
-    ,
   </QueryClientProvider>,
 );

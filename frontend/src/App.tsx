@@ -15,7 +15,7 @@ function App() {
 
   return (
     <>
-      <Toaster />
+      <Toaster position="top-right" />
       <Dashboard
         data={data}
         isUploading={isUploading}

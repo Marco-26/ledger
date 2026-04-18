@@ -37,7 +37,7 @@ export function MonthNavigator({
         onClick={handlePrevious}
         disabled={!canGoPrevious}
         aria-label="Previous month"
-        className="flex h-9 w-10 shrink-0 items-center justify-center text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-30 disabled:pointer-events-none"
+        className="flex h-9 w-10 shrink-0 items-center justify-center text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-30 disabled:pointer-events-none hover:cursor-pointer"
       >
         <ChevronLeft className="h-3.5 w-3.5" />
       </button>
@@ -54,7 +54,7 @@ export function MonthNavigator({
         onClick={handleNext}
         disabled={!canGoNext}
         aria-label="Next month"
-        className="flex h-9 w-10 shrink-0 items-center justify-center text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-30 disabled:pointer-events-none"
+        className="flex h-9 w-10 shrink-0 items-center justify-center text-muted-foreground transition-colors hover:bg-muted hover:text-foreground disabled:opacity-30 disabled:pointer-events-none hover:cursor-pointer"
       >
         <ChevronRight className="h-3.5 w-3.5" />
       </button>

@@ -3,7 +3,6 @@ import { statementService } from "@/service/StatementService";
 import { Constants } from "@/utils/Constants";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
-import { useEffect } from "react";
 import { toast } from "sonner";
 
 interface IUseStatementsProps {
@@ -38,11 +37,7 @@ export function useStatements({ selectedMonth }: IUseStatementsProps) {
     enabled: !!selectedMonth,
   });
 
-  const {
-    mutateAsync: uploadStatement,
-    isPending: isUploading,
-    error: uploadError,
-  } = useMutation({
+  const { mutateAsync: uploadStatement, isPending: isUploading } = useMutation({
     mutationKey: [Constants.API.TANSTACK_QUERIES.UPLOAD],
     mutationFn: ({
       statementFile,
@@ -61,17 +56,10 @@ export function useStatements({ selectedMonth }: IUseStatementsProps) {
     },
   });
 
-  useEffect(() => {
-    if (uploadError) {
-      toast.error(uploadError.message);
-    }
-  }, [uploadError]);
-
   return {
     data,
     error,
     isUploading,
     uploadStatement,
-    fetchStatement,
   };
 }

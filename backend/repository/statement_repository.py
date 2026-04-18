@@ -1,6 +1,5 @@
 from datetime import date
-from schema.monthly_statement import MonthlyStatement
-from models.statement import Statement
+from db.models.statement import Statement, Transaction
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 
@@ -8,19 +7,25 @@ class StatementRepository:
   def __init__(self, db: Session) -> None:
     self.db = db
 
-  def create_statement(self, statement: MonthlyStatement, date:date) -> Statement:
-    record = self.get_statement_via_date(date)
-    if record:
-      self.db.delete(record)
-      
-    new_record = Statement(**statement.model_dump(), date = date)
-    self.db.add(new_record)
-    self.db.commit()
-    self.db.refresh(new_record)
-    
+  def create_statement(self, transactions: list[Transaction], date: date) -> Statement:
+    try:
+      new_record = Statement(date_uploaded=date)
+      new_record.transactions = transactions
+     
+      self.db.add(new_record)
+      self.db.commit()
+
+    except Exception:
+      self.db.rollback()
+      raise
+
     return new_record
+
+  def get_statement_via_date(self, date: date) -> Statement | None:
+    stmt = select(Statement).where(Statement.date_uploaded == date)
+    return self.db.execute(stmt).unique().scalar_one_or_none()
   
-  def get_statement_via_date(self, date:date):
-    stmt = select(Statement).where(Statement.date == date)
-    record = self.db.execute(stmt).scalar_one_or_none()
-    return record
+  def delete_statement(self, statement: Statement):
+    self.db.delete(statement)
+    self.db.commit()
+    
