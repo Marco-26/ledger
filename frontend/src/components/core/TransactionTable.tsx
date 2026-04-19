@@ -21,7 +21,9 @@ export function TransactionTable({
   emptyMessage,
 }: TransactionTableProps) {
   const isIncome = type === TransactionType.INCOME;
-  const amountColorClass = isIncome ? "text-[var(--income)]" : "text-[var(--expense)]";
+  const amountColorClass = isIncome
+    ? "text-[var(--income)]"
+    : "text-[var(--expense)]";
   const amountPrefix = isIncome ? "+" : "-";
 
   const getAmount = (transaction: ITransaction) =>
@@ -51,7 +53,7 @@ export function TransactionTable({
                 className="border-b border-border/50 hover:bg-muted/40 transition-colors"
               >
                 <TableCell className="font-numeric text-xs text-muted-foreground py-3 w-28">
-                  {transaction.date}
+                  {transaction.date.format("DD-MM-YYYY")}
                 </TableCell>
                 <TableCell className="text-sm py-3">
                   {transaction.description}
@@ -62,7 +64,8 @@ export function TransactionTable({
                     amountColorClass,
                   )}
                 >
-                  {amountPrefix}{formatCurrency(getAmount(transaction) || 0)}
+                  {amountPrefix}
+                  {formatCurrency(getAmount(transaction) || 0)}
                 </TableCell>
               </TableRow>
             ))

@@ -3,13 +3,14 @@ import type {
   ITransactionResponse,
 } from "@/data/StatementDaos";
 import type { IStatement, ITransaction } from "@/data/StatementDtos";
+import dayjs from "dayjs";
 
 export class StatementDataAdapter {
   convertDataToTransaction(
     transactionResponse: ITransactionResponse,
   ): ITransaction {
     return {
-      date: transactionResponse.date,
+      date: dayjs(transactionResponse.date),
       description: transactionResponse.description,
       credit: transactionResponse.credit,
       debit: transactionResponse.debit,
@@ -26,7 +27,7 @@ export class StatementDataAdapter {
 
   convertToStatement(statementResponse: IStatementResponse): IStatement {
     return {
-      date: statementResponse.date,
+      date: dayjs(statementResponse.date),
       debitTotal: statementResponse.debit_total,
       creditTotal: statementResponse.credit_total,
       netBalance: statementResponse.net_balance,

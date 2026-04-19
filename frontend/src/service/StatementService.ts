@@ -6,10 +6,7 @@ import { Constants } from "@/utils/Constants";
 export class StatementService {
   readonly baseURL = "/statement";
 
-  public async generateStatement(
-    file: File,
-    date: string,
-  ): Promise<IStatement> {
+  public async postStatement(file: File, date: string): Promise<IStatement> {
     const formData = new FormData();
     formData.append(Constants.API.GENERATE_STATEMENT_FORMDATA_KEY, file);
 

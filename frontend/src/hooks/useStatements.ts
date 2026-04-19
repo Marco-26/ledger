@@ -3,21 +3,37 @@ import { statementService } from "@/service/StatementService";
 import { Constants } from "@/utils/Constants";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
+import dayjs from "dayjs";
 import { toast } from "sonner";
 
 interface IUseStatementsProps {
   selectedMonth?: string;
 }
 
+const verifyStatementDate = (statementDate: string, selectedMonth: string) => {
+  if (statementDate !== selectedMonth) {
+    toast.warning(
+      `Statement date (${dayjs(statementDate).format("MMMM YYYY")}) does not match the selected month (${dayjs(selectedMonth).format("MMMM YYYY")}).`,
+    );
+  }
+};
+
 export function useStatements({ selectedMonth }: IUseStatementsProps) {
   const queryClient = useQueryClient();
 
-  const fetchStatement = (month?: string): Promise<IStatement> => {
+  const fetchStatement = async (month?: string): Promise<IStatement> => {
     if (!month) {
       return Promise.reject();
     }
 
-    return statementService.fetchStatement(month);
+    const statement = await statementService.fetchStatement(month);
+
+    verifyStatementDate(
+      statement.transactionListFiltered[0].date.format(Constants.UI.DATE_FORMAT),
+      month,
+    );
+
+    return statement;
   };
 
   const { data, error } = useQuery({
@@ -45,7 +61,7 @@ export function useStatements({ selectedMonth }: IUseStatementsProps) {
     }: {
       statementFile: File;
       date: string;
-    }) => statementService.generateStatement(statementFile, date),
+    }) => statementService.postStatement(statementFile, date),
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({
         queryKey: [Constants.API.TANSTACK_QUERIES.STATEMENTS, variables.date],

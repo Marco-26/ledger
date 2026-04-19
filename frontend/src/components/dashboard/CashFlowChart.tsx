@@ -8,13 +8,26 @@ import {
 } from "@/components/ui/chart";
 import type { IStatement } from "@/data/StatementDtos";
 import { chartConfig } from "@/utils/chartUtils";
+import { useMemo } from "react";
 
 interface CashFlowChartProps {
   data?: IStatement;
 }
 
 export function CashFlowChart({ data }: CashFlowChartProps) {
-  const chartDataAvailable = (data?.transactionListFiltered ?? []).length > 0;
+  // need to turn the date into a string for the XAxis, reacharts doesn't work well with Dayjs objects as data keys
+  const formattedData = useMemo(() => {
+    if (!data) {
+      return [];
+    }
+
+    return data.transactionListFiltered.map((t) => ({
+      ...t,
+      date: t.date.format("DD-MM"),
+    }));
+  }, [data]);
+
+  const chartDataAvailable = formattedData.length > 0;
 
   return (
     <div className="rounded-xl border border-border bg-card overflow-hidden">
@@ -33,11 +46,7 @@ export function CashFlowChart({ data }: CashFlowChartProps) {
       <div className="p-5">
         {chartDataAvailable ? (
           <ChartContainer config={chartConfig} className="h-[280px] w-full">
-            <BarChart
-              data={data?.transactionListFiltered}
-              barCategoryGap="30%"
-              barGap={2}
-            >
+            <BarChart data={formattedData} barCategoryGap="30%" barGap={2}>
               <CartesianGrid
                 vertical={false}
                 strokeDasharray="none"
@@ -54,7 +63,7 @@ export function CashFlowChart({ data }: CashFlowChartProps) {
                   fill: "var(--muted-foreground)",
                   fontFamily: "DM Mono, monospace",
                 }}
-                tickFormatter={(value) => value.slice(0, 5)}
+                tickFormatter={(value) => value}
               />
               <YAxis
                 tickLine={false}

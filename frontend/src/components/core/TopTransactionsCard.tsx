@@ -75,7 +75,7 @@ export function TopTransactionsCard({
                   {item.description}
                 </p>
                 <p className="font-numeric text-xs text-muted-foreground mt-1">
-                  {item.date}
+                  {item.date.format("DD-MM-YYYY")}
                 </p>
               </div>
 
