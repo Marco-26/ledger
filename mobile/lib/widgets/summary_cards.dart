@@ -20,21 +20,30 @@ class SummaryCardsSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        SummaryCard(
-          title: 'Money In',
-          value: creditTotal,
-          description: 'Total credit transactions',
-          icon: Icons.arrow_upward,
-          variant: SummaryVariant.income,
+        Row(
+          children: [
+            Expanded(
+              child: SummaryCard(
+                title: 'Money In',
+                value: creditTotal,
+                description: 'Total credit transactions',
+                icon: Icons.arrow_upward,
+                variant: SummaryVariant.income,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: SummaryCard(
+                title: 'Money Out',
+                value: debitTotal,
+                description: 'Total debit transactions',
+                icon: Icons.arrow_downward,
+                variant: SummaryVariant.expense,
+              ),
+            ),
+          ],
         ),
-        const SizedBox(height: 12),
-        SummaryCard(
-          title: 'Money Out',
-          value: debitTotal,
-          description: 'Total debit transactions',
-          icon: Icons.arrow_downward,
-          variant: SummaryVariant.expense,
-        ),
+
         const SizedBox(height: 12),
         SummaryCard(
           title: 'Net Balance',
@@ -110,17 +119,13 @@ class SummaryCard extends StatelessWidget {
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(12),
-        child: Stack(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // Top accent bar
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              child: Container(height: 2, color: accentColor),
-            ),
+            Container(height: 2, color: accentColor),
             Padding(
-              padding: const EdgeInsets.fromLTRB(20, 22, 20, 20),
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 20),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -142,7 +147,7 @@ class SummaryCard extends StatelessWidget {
                         Text(
                           formatCurrency(value),
                           style: TextStyle(
-                            fontSize: 28,
+                            fontSize: 17,
                             fontWeight: FontWeight.w500,
                             letterSpacing: -0.5,
                             height: 1.0,
@@ -160,13 +165,13 @@ class SummaryCard extends StatelessWidget {
                   const SizedBox(width: 12),
                   // Icon
                   Container(
-                    width: 36,
-                    height: 36,
+                    width: 26,
+                    height: 26,
                     decoration: BoxDecoration(
                       color: iconBg,
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: Icon(icon, size: 16, color: iconColor),
+                    child: Icon(icon, size: 13, color: iconColor),
                   ),
                 ],
               ),
