@@ -10,7 +10,7 @@ export default function Header(){
           PERSONAL FINANCE
         </Text>
       <Text style={styles.title}
-      >LEDGER</Text>
+      >Ledger</Text>
     </SafeAreaView>
   )
 }
@@ -18,7 +18,7 @@ export default function Header(){
 const styles = StyleSheet.create({
   title: {
     fontFamily: "Playfair Display",
-    fontSize: 30,
+    fontSize: 38,
     color: '#fff'
   }
 })
