@@ -1,24 +1,28 @@
-import { Text, StyleSheet } from "react-native";
+import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import MonthNavigator from "@/components/month-navigator/MonthNavigator";
+import { styles } from "./HeaderStyles";
 import { Typography } from "@/styles/global";
 
-export default function Header(){
-  return(
-    <SafeAreaView style={{padding: 32}}>
-     <Text
-          style={Typography.label}>
-          PERSONAL FINANCE
-        </Text>
-      <Text style={styles.title}
-      >Ledger</Text>
-    </SafeAreaView>
-  )
+interface HeaderProps {
+  year: number;
+  month: number;
+  onMonthChange: (year: number, month: number) => void;
 }
 
-const styles = StyleSheet.create({
-  title: {
-    fontFamily: "Playfair Display",
-    fontSize: 38,
-    color: '#fff'
-  }
-})
+export default function Header({ year, month, onMonthChange }: HeaderProps) {
+  return (
+    <SafeAreaView edges={["top"]} style={styles.safeArea}>
+      <View style={styles.container}>
+        <View style={styles.brandRow}>
+          <Text style={Typography.label}>Personal Finance</Text>
+          <Text style={styles.title}>Ledger</Text>
+        </View>
+
+        <View style={styles.divider} />
+
+        <MonthNavigator year={year} month={month} onChange={onMonthChange} />
+      </View>
+    </SafeAreaView>
+  );
+}
