@@ -19,5 +19,21 @@ frontend/yarn-error.log*
 frontend/pnpm-debug.log*
 frontend/lerna-debug.log*
 
+mobile/node_modules/
+mobile/dist/
+mobile/dist-ssr/
+mobile/.vite/
+mobile/coverage/
+mobile/*.local
+mobile/.DS_Store
+mobile/.idea/
+mobile/.vscode/*
+mobile/.vscode/extensions.json
+mobile/npm-debug.log*
+mobile/yarn-debug.log*
+mobile/yarn-error.log*
+mobile/pnpm-debug.log*
+mobile/lerna-debug.log*
+
 backend/.venv/
 backend/dev.db
