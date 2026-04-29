@@ -3,6 +3,7 @@ import { formatCurrency } from "@/utils/format";
 import { Colors } from "@/styles/tokens";
 import { styles } from "./TransactionListStyles";
 import { TransactionType } from "@/utils/sharedTypes";
+import { useEffect } from "react";
 
 export interface Transaction {
   date: string;
@@ -22,11 +23,15 @@ export default function TransactionList({
   type,
   emptyMessage = "No transactions found.",
 }: TransactionListProps) {
-  const isIncome = type === "income";
+  const isIncome = type === TransactionType.INCOME;
   const amountColor = isIncome ? Colors.income : Colors.expense;
   const prefix = isIncome ? "+" : "-";
 
   const getAmount = (t: Transaction) => (isIncome ? t.credit : t.debit);
+
+  useEffect(() => {
+    console.log(transactions && transactions.length > 0)
+  }, [transactions]);
 
   return (
     <View style={styles.container}>
@@ -36,8 +41,8 @@ export default function TransactionList({
         <Text style={[styles.headerCell, styles.amountCol]}>Amount</Text>
       </View>
 
+      
       <ScrollView
-        style={styles.scroll}
         showsVerticalScrollIndicator={false}
         nestedScrollEnabled
       >

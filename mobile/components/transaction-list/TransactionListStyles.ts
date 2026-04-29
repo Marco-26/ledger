@@ -35,9 +35,6 @@ export const styles = StyleSheet.create({
     width: 90,
     textAlign: "right",
   },
-  scroll: {
-    flex: 1,
-  },
   row: {
     flexDirection: "row",
     alignItems: "center",
