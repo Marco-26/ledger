@@ -13,6 +13,7 @@ import TopTransactionsCard from "@/components/top-transactions-card/TopTransacti
 import TransactionList from "@/components/transaction-list/TransactionList";
 import SectionHeader from "@/components/section-header/SectionHeader";
 import { Colors, FontFamily, FontSize, Radius, Spacing } from "@/styles/tokens";
+import { TransactionType } from "@/utils/sharedTypes";
 
 // ─── Mock data ────────────────────────────────────────────────────────────────
 
@@ -66,7 +67,6 @@ export default function Index() {
     <View style={styles.screen}>
       <StatusBar barStyle="light-content" backgroundColor={Colors.background} />
 
-      {/* Sticky header (outside scroll) */}
       <Header
         year={year}
         month={month}
@@ -81,62 +81,57 @@ export default function Index() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        {/* ── Summary cards ── */}
         <View style={styles.summaryGrid}>
           <SummaryCard
             title="Money In"
             value={CREDIT_TOTAL}
             description="Total credit transactions"
             iconName="arrow-up"
-            variant="income"
+            variant={TransactionType.INCOME}
           />
           <SummaryCard
             title="Money Out"
             value={DEBIT_TOTAL}
             description="Total debit transactions"
             iconName="arrow-down"
-            variant="expense"
+            variant={TransactionType.EXPENSE}
           />
           <SummaryCard
             title="Net Balance"
             value={NET_BALANCE}
             description="Income minus expenses"
             iconName="scale"
-            variant="neutral"
+            variant={TransactionType.NEUTRAL}
           />
         </View>
 
-        {/* ── Top transactions ── */}
         <View style={styles.section}>
           <View style={styles.topTransGrid}>
             <TopTransactionsCard
               title="Top Earnings"
               description="Highest income sources"
               iconName="trending-up"
-              variant="income"
+              variant={TransactionType.INCOME}
               data={MOCK_TOP_INCOMES}
             />
             <TopTransactionsCard
               title="Top Spending"
               description="Highest expense categories"
               iconName="trending-down"
-              variant="expense"
+              variant={TransactionType.EXPENSE}
               data={MOCK_TOP_EXPENSES}
             />
           </View>
         </View>
 
-        {/* ── Transaction history ── */}
         <View style={styles.section}>
           <View style={styles.historyCard}>
-            {/* Card header */}
             <View style={styles.historyHeader}>
               <SectionHeader label="History" title="All Transactions" />
             </View>
 
             <View style={styles.historyDivider} />
 
-            {/* Tabs */}
             <View style={styles.tabsRow}>
               {(["income", "expenses"] as TxTab[]).map((tab) => (
                 <TouchableOpacity
@@ -167,13 +162,12 @@ export default function Index() {
               ))}
             </View>
 
-            {/* List */}
             <View style={styles.historyList}>
               <TransactionList
                 transactions={
                   activeTab === "income" ? MOCK_INCOME_LIST : MOCK_EXPENSE_LIST
                 }
-                type={activeTab === "income" ? "income" : "expense"}
+                type={activeTab === "income" ? TransactionType.INCOME : TransactionType.EXPENSE}
                 emptyMessage={
                   activeTab === "income"
                     ? "No income transactions found."
@@ -184,7 +178,6 @@ export default function Index() {
           </View>
         </View>
 
-        {/* Bottom spacer */}
         <View style={{ height: Spacing[8] }} />
       </ScrollView>
     </View>
