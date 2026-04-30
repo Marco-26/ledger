@@ -3,7 +3,6 @@ import { formatCurrency } from "@/utils/format";
 import { Colors } from "@/styles/tokens";
 import { styles } from "./TransactionListStyles";
 import { TransactionType } from "@/utils/sharedTypes";
-import { useEffect } from "react";
 
 export interface Transaction {
   date: string;
@@ -28,10 +27,6 @@ export default function TransactionList({
   const prefix = isIncome ? "+" : "-";
 
   const getAmount = (t: Transaction) => (isIncome ? t.credit : t.debit);
-
-  useEffect(() => {
-    console.log(transactions && transactions.length > 0)
-  }, [transactions]);
 
   return (
     <View style={styles.container}>
