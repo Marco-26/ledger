@@ -2,30 +2,30 @@ import { Text, TouchableOpacity, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { styles } from "./MonthNavigatorStyles";
 import { Colors } from "@/styles/tokens";
-import { MONTHS } from "@/utils/constants";
+import { Constants } from "@/utils/constants";
+import { Dayjs } from "dayjs";
 
 interface MonthNavigatorProps {
-  year: number;
-  month: number;
-  onChange: (year: number, month: number) => void;
+  selectedDate: Dayjs;
+  onChange: (newDate: Dayjs) => void;
 }
 
-export default function MonthNavigator({ year, month, onChange }: MonthNavigatorProps) {
+export default function MonthNavigator({
+  selectedDate,
+  onChange,
+}: MonthNavigatorProps) {
   const handlePrev = () => {
-    if (month === 0) {
-      onChange(year - 1, 11);
-    } else {
-      onChange(year, month - 1);
-    }
+    if (!selectedDate) return;
+    onChange(selectedDate.subtract(1, "month"));
   };
 
   const handleNext = () => {
-    if (month === 11) {
-      onChange(year + 1, 0);
-    } else {
-      onChange(year, month + 1);
-    }
+    if (!selectedDate) return;
+    onChange(selectedDate.add(1, "month"));
   };
+
+  const month = selectedDate.month();
+  const year = selectedDate.year();
 
   return (
     <View style={styles.container}>
@@ -34,13 +34,17 @@ export default function MonthNavigator({ year, month, onChange }: MonthNavigator
         onPress={handlePrev}
         activeOpacity={0.6}
       >
-        <Ionicons name="chevron-back" size={14} color={Colors.mutedForeground} />
+        <Ionicons
+          name="chevron-back"
+          size={14}
+          color={Colors.mutedForeground}
+        />
       </TouchableOpacity>
 
       <View style={styles.divider} />
 
       <Text style={styles.label}>
-        {MONTHS[month]} {year}
+        {Constants.UI.MONTHS[month]} {year}
       </Text>
 
       <View style={styles.divider} />
@@ -50,7 +54,11 @@ export default function MonthNavigator({ year, month, onChange }: MonthNavigator
         onPress={handleNext}
         activeOpacity={0.6}
       >
-        <Ionicons name="chevron-forward" size={14} color={Colors.mutedForeground} />
+        <Ionicons
+          name="chevron-forward"
+          size={14}
+          color={Colors.mutedForeground}
+        />
       </TouchableOpacity>
     </View>
   );

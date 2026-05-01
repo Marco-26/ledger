@@ -3,16 +3,10 @@ import { formatCurrency } from "@/utils/format";
 import { Colors } from "@/styles/tokens";
 import { styles } from "./TransactionListStyles";
 import { TransactionType } from "@/utils/sharedTypes";
-
-export interface Transaction {
-  date: string;
-  description: string;
-  credit: number;
-  debit: number;
-}
+import { ITransaction } from "@/data/StatementDtos";
 
 interface TransactionListProps {
-  transactions?: Transaction[];
+  transactions?: ITransaction[];
   type: TransactionType;
   emptyMessage?: string;
 }
@@ -26,7 +20,7 @@ export default function TransactionList({
   const amountColor = isIncome ? Colors.income : Colors.expense;
   const prefix = isIncome ? "+" : "-";
 
-  const getAmount = (t: Transaction) => (isIncome ? t.credit : t.debit);
+  const getAmount = (t: ITransaction) => (isIncome ? t.credit : t.debit);
 
   return (
     <View style={styles.container}>
@@ -36,11 +30,7 @@ export default function TransactionList({
         <Text style={[styles.headerCell, styles.amountCol]}>Amount</Text>
       </View>
 
-      
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        nestedScrollEnabled
-      >
+      <ScrollView showsVerticalScrollIndicator={false} nestedScrollEnabled>
         {transactions && transactions.length > 0 ? (
           transactions.map((t, i) => (
             <View
@@ -50,12 +40,21 @@ export default function TransactionList({
                 i < transactions.length - 1 && styles.rowBorder,
               ]}
             >
-              <Text style={[styles.dateText, styles.dateCol]}>{t.date}</Text>
+              <Text style={[styles.dateText, styles.dateCol]}>
+                {t.date.toString()}
+              </Text>
               <Text style={[styles.descText, { flex: 1 }]} numberOfLines={1}>
                 {t.description}
               </Text>
-              <Text style={[styles.amountText, styles.amountCol, { color: amountColor }]}>
-                {prefix}{formatCurrency(getAmount(t))}
+              <Text
+                style={[
+                  styles.amountText,
+                  styles.amountCol,
+                  { color: amountColor },
+                ]}
+              >
+                {prefix}
+                {formatCurrency(getAmount(t))}
               </Text>
             </View>
           ))

@@ -3,14 +3,14 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import MonthNavigator from "@/components/month-navigator/MonthNavigator";
 import { styles } from "./HeaderStyles";
 import { Typography } from "@/styles/global";
+import { Dayjs } from "dayjs";
 
 interface HeaderProps {
-  year: number;
-  month: number;
-  onMonthChange: (year: number, month: number) => void;
+  selectedDate: Dayjs;
+  onDateChange: (newDate: Dayjs) => void;
 }
 
-export default function Header({ year, month, onMonthChange }: HeaderProps) {
+export default function Header({ selectedDate, onDateChange }: HeaderProps) {
   return (
     <SafeAreaView edges={["top"]} style={styles.safeArea}>
       <View style={styles.container}>
@@ -21,7 +21,7 @@ export default function Header({ year, month, onMonthChange }: HeaderProps) {
 
         <View style={styles.divider} />
 
-        <MonthNavigator year={year} month={month} onChange={onMonthChange} />
+        <MonthNavigator selectedDate={selectedDate} onChange={onDateChange} />
       </View>
     </SafeAreaView>
   );
