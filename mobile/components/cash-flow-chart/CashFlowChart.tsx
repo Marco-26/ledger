@@ -35,19 +35,11 @@ function CashFlowChart({ transactions }: CashFlowChartProps) {
     };
   }, [transactions]);
 
-  if (!chartData) {
-    return (
-      <View style={styles.empty}>
-        <Text style={styles.emptyText}>No cash flow data for this month.</Text>
-      </View>
-    );
-  }
-
-  return (
+  return chartData ? (
     <View>
-      {/* Header */}
       <View style={styles.header}>
         <Text style={styles.label}>CASH FLOW</Text>
+
         <View style={styles.legend}>
           <View style={styles.legendItem}>
             <View
@@ -55,6 +47,7 @@ function CashFlowChart({ transactions }: CashFlowChartProps) {
             />
             <Text style={styles.legendText}>Income</Text>
           </View>
+
           <View style={styles.legendItem}>
             <View
               style={[styles.legendDot, { backgroundColor: Colors.expense }]}
@@ -88,10 +81,7 @@ function CashFlowChart({ transactions }: CashFlowChartProps) {
           fillShadowGradientToOpacity: 0,
           propsForLabels: {
             fontFamily: "Geist",
-            fontSize: "10",
-          },
-          propsForDots: {
-            r: "0",
+            fontSize: 10,
           },
         }}
         formatYLabel={(val) => {
@@ -101,6 +91,10 @@ function CashFlowChart({ transactions }: CashFlowChartProps) {
         }}
         style={styles.chart}
       />
+    </View>
+  ) : (
+    <View style={styles.empty}>
+      <Text style={styles.emptyText}>No cash flow data for this month.</Text>
     </View>
   );
 }
