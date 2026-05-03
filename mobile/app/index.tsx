@@ -40,6 +40,8 @@ export default function Index() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
+        <CashFlowChart transactions={data?.transactionListFiltered} />
+
         <View style={styles.summaryGrid}>
           <SummaryCard
             title="Money In"
@@ -63,8 +65,6 @@ export default function Index() {
             variant={TransactionType.NEUTRAL}
           />
         </View>
-
-        <CashFlowChart transactions={data?.transactionListFiltered} />
 
         <View style={styles.section}>
           <View style={styles.topTransGrid}>
