@@ -17,6 +17,7 @@ import { TransactionType } from "@/utils/sharedTypes";
 import { useStatements } from "@/hooks/useStatements";
 import dayjs, { Dayjs } from "dayjs";
 import { Constants } from "@/utils/constants";
+import CashFlowChart from "@/components/cash-flow-chart/CashFlowChart";
 
 type TxTab = "income" | "expenses";
 
@@ -62,6 +63,8 @@ export default function Index() {
             variant={TransactionType.NEUTRAL}
           />
         </View>
+
+        <CashFlowChart transactions={data?.transactionListFiltered} />
 
         <View style={styles.section}>
           <View style={styles.topTransGrid}>
