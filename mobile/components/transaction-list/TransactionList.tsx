@@ -4,6 +4,7 @@ import { Colors } from "@/styles/tokens";
 import { styles } from "./TransactionListStyles";
 import { TransactionType } from "@/utils/sharedTypes";
 import { ITransaction } from "@/data/StatementDtos";
+import { Constants } from "@/utils/constants";
 
 interface TransactionListProps {
   transactions?: ITransaction[];
@@ -41,7 +42,7 @@ export default function TransactionList({
               ]}
             >
               <Text style={[styles.dateText, styles.dateCol]}>
-                {t.date.toString()}
+                {t.date.format(Constants.UI.DATE_FORMAT_DISPLAY)}
               </Text>
               <Text style={[styles.descText, { flex: 1 }]} numberOfLines={1}>
                 {t.description}

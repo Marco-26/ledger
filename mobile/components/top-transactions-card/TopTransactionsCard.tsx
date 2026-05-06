@@ -5,6 +5,7 @@ import { getStyles } from "./TopTransactionsCardStyles";
 import { TransactionType } from "@/utils/sharedTypes";
 import { ICON_COLOR_MAPPER } from "@/styles/global";
 import { ITransaction } from "@/data/StatementDtos";
+import { Constants } from "@/utils/constants";
 
 interface TopTransactionsCardProps {
   title: string;
@@ -57,7 +58,9 @@ export default function TopTransactionsCard({
                 <Text style={styles.rowDescription} numberOfLines={1}>
                   {item.description}
                 </Text>
-                <Text style={styles.rowDate}>{item.date.toString()}</Text>
+                <Text style={styles.rowDate}>
+                  {item.date.format(Constants.UI.DATE_FORMAT_DISPLAY)}
+                </Text>
               </View>
               <Text
                 style={[
