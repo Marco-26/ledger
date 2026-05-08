@@ -9,6 +9,7 @@ from utils.statement_dataframe import (
 from utils.statement_pdf import extract_table_from_pdf
 from datetime import date
 from mappers.transaction_mapper import TransactionMapper
+from exceptions.domain import StatementNotFoundException
 
 class StatementService:
     def __init__(self, db: Session):
@@ -29,10 +30,11 @@ class StatementService:
         
         return compute_statement_dto(df, date)
     
-    def get_monthly_statement(self, date:date) -> StatementDto | None:
+    def get_monthly_statement(self, date:date) -> StatementDto:
         statement = self.repository.get_statement_via_date(date)
+        
         if not statement or not statement.transactions:
-            return None
+            raise StatementNotFoundException
         
         df = TransactionMapper.from_orm_to_df(statement.transactions)
         return compute_statement_dto(df, date)
