@@ -3,6 +3,7 @@ from datetime import date
 from constants import TOP_N_TRANSACTIONS
 from dtos.statement_dto import TransactionDto, StatementDto
 from enum import Enum
+from utils.generic_utils import calculate_growth
 
 class DFColumns(Enum):
     DATE = "Date"
@@ -48,7 +49,7 @@ def _get_top_transactions(df: pd.DataFrame, column: str, n: int) -> pd.DataFrame
 def _df_to_transactions_dto(df: pd.DataFrame) -> list[TransactionDto]:
     return [TransactionDto.from_row(row) for row in df.to_dict(orient="records")]
 
-def compute_statement_dto(df: pd.DataFrame, statement_date: date) -> StatementDto:
+def compute_statement_dto(df: pd.DataFrame, statement_date: date, previous_month_statement: StatementDto = None) -> StatementDto:
     debit_total = df[DFColumns.DEBIT.value].sum()
     credit_total = df[DFColumns.CREDIT.value].sum()
 
@@ -61,15 +62,41 @@ def compute_statement_dto(df: pd.DataFrame, statement_date: date) -> StatementDt
     transactions_df = df[[DFColumns.DATE.value, DFColumns.DESCRIPTION.value, DFColumns.DEBIT.value, DFColumns.CREDIT.value]]
     daily_transactions = transactions_df.groupby(DFColumns.DATE.value, as_index=False)[[DFColumns.DEBIT.value, DFColumns.CREDIT.value]].sum()
 
+    net_balance = credit_total - debit_total
+    
+    revenue_growth = 0
+    expenses_growth = 0
+    net_balance_growth = 0
+
+    if previous_month_statement is not None:
+        revenue_growth = calculate_growth(
+            credit_total,
+            previous_month_statement.credit_total
+        )
+
+        expenses_growth = calculate_growth(
+            debit_total,
+            previous_month_statement.debit_total
+        )
+
+        net_balance_growth = calculate_growth(
+            net_balance,
+            previous_month_statement.net_balance
+        )
+
+
     return StatementDto(
         date=statement_date,
         debit_total=debit_total,
         credit_total=credit_total,
-        net_balance=credit_total - debit_total,
+        net_balance=net_balance,
         number_of_transactions=len(df),
         top_expenses=_df_to_transactions_dto(top_expenses_df),
         top_incomes=_df_to_transactions_dto(top_incomes_df),
         transaction_list_filtered=_df_to_transactions_dto(daily_transactions),
         debit_list=_df_to_transactions_dto(debits_df),
         credit_list=_df_to_transactions_dto(credits_df),
+        revenue_growth=revenue_growth,
+        expenses_growth=expenses_growth,
+        net_balance_growth=net_balance_growth
     )

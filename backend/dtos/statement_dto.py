@@ -28,3 +28,8 @@ class StatementDto(BaseModel):
     transaction_list_filtered: list[TransactionDto]
     debit_list: list[TransactionDto]
     credit_list: list[TransactionDto]
+    
+    # metrics
+    revenue_growth: float
+    expenses_growth: float
+    net_balance_growth: float

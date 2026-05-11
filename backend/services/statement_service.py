@@ -7,6 +7,7 @@ from utils.statement_dataframe import (
     compute_statement_dto,
 )
 from utils.statement_pdf import extract_table_from_pdf
+from utils.generic_utils import get_previous_month
 from datetime import date
 from mappers.transaction_mapper import TransactionMapper
 from exceptions.domain import StatementNotFoundException
@@ -28,7 +29,11 @@ class StatementService:
         
         self.repository.create_statement(transactions, date)
         
-        return compute_statement_dto(df, date)
+        previous_month_date = get_previous_month(date)
+        
+        previous_month_statement = self.get_monthly_statement(previous_month_date)
+        
+        return compute_statement_dto(df, date, previous_month_statement)
     
     def get_monthly_statement(self, date:date) -> StatementDto:
         statement = self.repository.get_statement_via_date(date)
