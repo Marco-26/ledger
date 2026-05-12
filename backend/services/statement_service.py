@@ -40,76 +40,33 @@ class StatementService:
         credit_total = sum(t.transaction_credit or 0.0 for t in transactions)
         debit_total = sum(t.transaction_debit or 0.0 for t in transactions)
 
+        is_positive_amount = lambda value: (value or 0.0) > 0 
+        
         credit_list = [
-            TransactionMapper.from_statement_orm(
-                t.transaction_date,
-                t.transaction_credit or 0.0,
-                t.transaction_description,
-                t.transaction_debit or 0.0
-            )
-            for t in transactions
-            if (t.transaction_credit or 0.0) > 0
+            TransactionMapper.from_statement_orm(transaction)
+            for transaction in transactions
+            if is_positive_amount(transaction.transaction_credit)
         ]
 
         debit_list = [
-            TransactionMapper.from_statement_orm(
-                t.transaction_date,
-                t.transaction_credit or 0.0,
-                t.transaction_description,
-                t.transaction_debit or 0.0
-            )
-            for t in transactions
-            if (t.transaction_debit or 0.0) > 0
+            TransactionMapper.from_statement_orm(transaction)
+            for transaction in transactions
+            if is_positive_amount(transaction.transaction_debit)
         ]
 
         top_expenses = [
-            TransactionMapper.from_statement_orm(
-                t.transaction_date,
-                t.transaction_credit or 0.0,
-                t.transaction_description,
-                t.transaction_debit or 0.0
-            )
-            for t in top_transactions
-            if (t.transaction_debit or 0.0) > 0
+            TransactionMapper.from_statement_orm(transaction)
+            for transaction in top_transactions
+            if is_positive_amount(transaction.transaction_debit)
         ]
 
         top_incomes = [
-            TransactionMapper.from_statement_orm(
-                t.transaction_date,
-                t.transaction_credit or 0.0,
-                t.transaction_description,
-                t.transaction_debit or 0.0
-            )
-            for t in top_transactions
-            if (t.transaction_credit or 0.0) > 0
+            TransactionMapper.from_statement_orm(transaction)
+            for transaction in top_transactions
+            if is_positive_amount(transaction.transaction_credit)
         ]
-
-        # daily aggregation
-        daily_map = {}
-
-        for t in transactions:
-            day = t.transaction_date
-
-            if day not in daily_map:
-                daily_map[day] = {
-                    "date": day,
-                    "credit": 0.0,
-                    "debit": 0.0,
-                    "description": None
-                }
-
-            daily_map[day]["credit"] += t.transaction_credit or 0.0
-            daily_map[day]["debit"] += t.transaction_debit or 0.0
-
-        transaction_list_filtered = [
-            TransactionMapper.from_statement_orm(
-                v["date"],
-                v["credit"],
-                v["description"],
-                v["debit"]
-            )
-            for v in daily_map.values()
-        ]
+        
+        daily_transactions = [TransactionMapper.from_statement_orm(transaction) for transaction in self.repository.get_daily_transactions(date, end_date)]
 
         return StatementDTO(
             date=date,
@@ -119,7 +76,7 @@ class StatementService:
             number_of_transactions=len(transactions),
             top_expenses=top_expenses,
             top_incomes=top_incomes,
-            transaction_list_filtered=transaction_list_filtered,
+            transaction_list_filtered=daily_transactions,
             credit_list=credit_list,
             debit_list=debit_list
         )

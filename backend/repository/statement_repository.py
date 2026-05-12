@@ -48,3 +48,6 @@ class StatementRepository:
             .limit(TOP_N_TRANSACTIONS)
             .all()
         )
+        
+  def get_daily_transactions(self, start_date: date, end_date: date):
+        return self.db.query(Transaction).where(Transaction.transaction_date.between(start_date, end_date)).group_by(Transaction.transaction_date).all()

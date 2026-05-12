@@ -20,5 +20,5 @@ class TransactionMapper:
     } for t in transactions])
     
   @staticmethod
-  def from_statement_orm(date: date, credit: float, description: str , debit: float ) -> TransactionDTO:
-    return TransactionDTO(date=date, credit=credit, description=description, debit=debit)
+  def from_statement_orm(transaction: Transaction) -> TransactionDTO:
+    return TransactionDTO(date=transaction.transaction_date, credit=transaction.transaction_credit, description=transaction.transaction_description, debit=transaction.transaction_debit)
