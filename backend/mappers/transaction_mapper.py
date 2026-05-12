@@ -1,6 +1,8 @@
 import pandas as pd
 from db.models.statement import Transaction
 from utils.statement_dataframe import DFColumns
+from dtos.statement_dto import TransactionDTO
+from datetime import date
 
 class TransactionMapper:
   @staticmethod
@@ -16,3 +18,7 @@ class TransactionMapper:
       DFColumns.CREDIT.value: t.transaction_credit,
       DFColumns.BALANCE.value: t.transaction_balance,
     } for t in transactions])
+    
+  @staticmethod
+  def from_statement_orm(date: date, credit: float, description: str , debit: float ) -> TransactionDTO:
+    return TransactionDTO(date=date, credit=credit, description=description, debit=debit)
