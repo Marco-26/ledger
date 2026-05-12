@@ -31,32 +31,96 @@ class StatementService:
         
         return self.get_monthly_statement(date)
     
-    def get_monthly_statement(self, date:date) -> StatementDTO:
-        statement = self.repository.get_statement_via_date(date)
-        
-        if not statement or not statement.transactions:
-            raise StatementNotFoundException
-        
+    def get_monthly_statement(self, date: date) -> StatementDTO:
         end_date = utils.get_end_of_month(date)
-        
-        credit_transaction_list: list[TransactionDTO] = [TransactionMapper.from_statement_orm(transaction.transaction_date, transaction.transaction_credit or 0.0,transaction.transaction_description, transaction.transaction_debit or 0.0) for transaction in self.repository.get_credit_transaction_list(date, end_date)]
-        debit_transaction_list: list[TransactionDTO] = [TransactionMapper.from_statement_orm(transaction.transaction_date, transaction.transaction_credit or 0.0,transaction.transaction_description, transaction.transaction_debit or 0.0) for transaction in self.repository.get_debit_transaction_list(date, end_date)]
-        top_credit_transaction_list: list[TransactionDTO] = [TransactionMapper.from_statement_orm(transaction.transaction_date, transaction.transaction_credit or 0.0,transaction.transaction_description, transaction.transaction_debit or 0.0) for transaction in self.repository.get_top_credit_transactions(date, end_date)]
-        top_debit_transaction_list: list[TransactionDTO] = [TransactionMapper.from_statement_orm(transaction.transaction_date, transaction.transaction_credit or 0.0,transaction.transaction_description, transaction.transaction_debit or 0.0) for transaction in self.repository.get_top_debit_transactions(date, end_date)]
-        total_credit_value =  self.repository.get_total_credit_value(date, end_date)
-        total_debit_value =  self.repository.get_total_debit_value(date,end_date)
-        daily_transaction_list: list[TransactionDTO] = [TransactionMapper.from_statement_orm(transaction.transaction_date, transaction.transaction_credit or 0.0,transaction.transaction_description, transaction.transaction_debit or 0.0) for transaction in self.repository.get_daily_transactions(date, end_date)]
-        
+
+        transactions = self.repository.get_transactions(date, end_date)
+        top_transactions = self.repository.get_top_transactions(date, end_date)
+
+        credit_total = sum(t.transaction_credit or 0.0 for t in transactions)
+        debit_total = sum(t.transaction_debit or 0.0 for t in transactions)
+
+        credit_list = [
+            TransactionMapper.from_statement_orm(
+                t.transaction_date,
+                t.transaction_credit or 0.0,
+                t.transaction_description,
+                t.transaction_debit or 0.0
+            )
+            for t in transactions
+            if (t.transaction_credit or 0.0) > 0
+        ]
+
+        debit_list = [
+            TransactionMapper.from_statement_orm(
+                t.transaction_date,
+                t.transaction_credit or 0.0,
+                t.transaction_description,
+                t.transaction_debit or 0.0
+            )
+            for t in transactions
+            if (t.transaction_debit or 0.0) > 0
+        ]
+
+        top_expenses = [
+            TransactionMapper.from_statement_orm(
+                t.transaction_date,
+                t.transaction_credit or 0.0,
+                t.transaction_description,
+                t.transaction_debit or 0.0
+            )
+            for t in top_transactions
+            if (t.transaction_debit or 0.0) > 0
+        ]
+
+        top_incomes = [
+            TransactionMapper.from_statement_orm(
+                t.transaction_date,
+                t.transaction_credit or 0.0,
+                t.transaction_description,
+                t.transaction_debit or 0.0
+            )
+            for t in top_transactions
+            if (t.transaction_credit or 0.0) > 0
+        ]
+
+        # daily aggregation
+        daily_map = {}
+
+        for t in transactions:
+            day = t.transaction_date
+
+            if day not in daily_map:
+                daily_map[day] = {
+                    "date": day,
+                    "credit": 0.0,
+                    "debit": 0.0,
+                    "description": None
+                }
+
+            daily_map[day]["credit"] += t.transaction_credit or 0.0
+            daily_map[day]["debit"] += t.transaction_debit or 0.0
+
+        transaction_list_filtered = [
+            TransactionMapper.from_statement_orm(
+                v["date"],
+                v["credit"],
+                v["description"],
+                v["debit"]
+            )
+            for v in daily_map.values()
+        ]
+
         return StatementDTO(
             date=date,
-            debit_total=total_debit_value,
-            credit_total=total_credit_value,
-            net_balance=total_credit_value - total_debit_value,
-            number_of_transactions=10,
-            top_expenses=top_debit_transaction_list,
-            top_incomes=top_credit_transaction_list,
-            transaction_list_filtered=daily_transaction_list,
-            credit_list=credit_transaction_list,
-            debit_list=debit_transaction_list
+            debit_total=debit_total,
+            credit_total=credit_total,
+            net_balance=credit_total - debit_total,
+            number_of_transactions=len(transactions),
+            top_expenses=top_expenses,
+            top_incomes=top_incomes,
+            transaction_list_filtered=transaction_list_filtered,
+            credit_list=credit_list,
+            debit_list=debit_list
         )
         
