@@ -19,3 +19,8 @@ class StatementDTO(BaseModel):
     transaction_list_filtered: list[TransactionDTO]
     debit_list: list[TransactionDTO]
     credit_list: list[TransactionDTO]
+    
+    credit_total_growth_rate: float
+    debit_total_growth_rate: float
+    net_balance_total_growth_rate: float
+    
