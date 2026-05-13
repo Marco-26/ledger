@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Dict, Any, Optional
+from typing import Optional
 from datetime import date as Date
 
 class TransactionDTO(BaseModel):

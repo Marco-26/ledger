@@ -1,9 +1,8 @@
 from datetime import date
 from db.models.statement import Statement, Transaction
 from sqlalchemy.orm import Session
-from sqlalchemy import select, func, case
+from sqlalchemy import select
 from constants import TOP_N_TRANSACTIONS
-
 
 class StatementRepository:
   def __init__(self, db: Session) -> None:

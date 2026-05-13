@@ -1,7 +1,4 @@
 import pandas as pd
-from datetime import date
-from constants import TOP_N_TRANSACTIONS
-from dtos.statement_dto import TransactionDTO, StatementDTO
 from enum import Enum
 
 class DFColumns(Enum):

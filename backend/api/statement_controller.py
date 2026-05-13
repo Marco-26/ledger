@@ -3,7 +3,6 @@ from fastapi import APIRouter, File, Depends, Query
 from services.statement_service import StatementService
 from db.database import SessionLocal
 from sqlalchemy.orm import Session
-from fastapi import HTTPException
 from datetime import date
 
 router = APIRouter()
