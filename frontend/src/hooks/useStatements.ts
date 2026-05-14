@@ -29,7 +29,9 @@ export function useStatements({ selectedMonth }: IUseStatementsProps) {
     const statement = await statementService.fetchStatement(month);
 
     verifyStatementDate(
-      statement.transactionListFiltered[0].date.format(Constants.UI.DATE_FORMAT),
+      statement.transactionListFiltered[0].date.format(
+        Constants.UI.DATE_FORMAT,
+      ),
       month,
     );
 

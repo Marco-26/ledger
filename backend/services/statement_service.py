@@ -43,7 +43,11 @@ class StatementService:
     top_debit_transactions = self.repository.get_top_debit_transactions(date, end_date)
     daily_transactions = self.repository.get_daily_transactions(date, end_date)
     
-    return TransactionBuilder.build_statement(transactions=transactions, top_credit_transactions=top_credit_transactions, top_debit_transactions=top_debit_transactions, daily_transactions=daily_transactions, date=date)
+    previous_month = utils.get_previous_month_based_on_date(date)
+    previous_month_end = utils.get_end_of_month(previous_month)
+    previous_month_transactions = self.repository.get_transactions(previous_month, previous_month_end)
+    
+    return TransactionBuilder.build_statement(transactions=transactions, top_credit_transactions=top_credit_transactions, top_debit_transactions=top_debit_transactions, daily_transactions=daily_transactions, date=date, previous_month_transactions=previous_month_transactions)
         
         
         

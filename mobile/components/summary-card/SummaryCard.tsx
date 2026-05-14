@@ -1,15 +1,14 @@
-import { Text, View } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 import { formatCurrency } from "@/utils/format";
-import { getStyles } from "./SummaryCardStyles";
 import { TransactionType } from "@/utils/sharedTypes";
-import { ICON_COLOR_MAPPER } from "@/styles/global";
+import { Ionicons } from "@expo/vector-icons";
+import { Text, View } from "react-native";
+import { getStyles } from "./SummaryCardStyles";
 
 interface SummaryCardProps {
   title: string;
   value?: number;
+  growthRate?: number;
   description: string;
-  iconName: React.ComponentProps<typeof Ionicons>["name"];
   variant: TransactionType;
 }
 
@@ -17,11 +16,14 @@ export default function SummaryCard({
   title,
   value,
   description,
-  iconName,
   variant,
+  growthRate,
 }: SummaryCardProps) {
-
   const styles = getStyles(variant);
+
+  const isPositive = (growthRate ?? 0) >= 0;
+  const sign = isPositive ? "+" : "";
+  const absRate = Math.abs(growthRate ?? 0).toFixed(1);
 
   return (
     <View style={styles.card}>
@@ -36,9 +38,42 @@ export default function SummaryCard({
           <Text style={styles.description}>{description}</Text>
         </View>
 
-        <View style={styles.iconBadge}>
-          <Ionicons name={iconName} size={16} color={ICON_COLOR_MAPPER[variant]} />
-        </View>
+        {growthRate !== undefined && (
+          <View
+            style={[
+              styles.growthPill,
+              isPositive
+                ? styles.growthPillPositive
+                : styles.growthPillNegative,
+            ]}
+          >
+            <Text
+              style={[
+                styles.growthArrow,
+                isPositive
+                  ? styles.growthTextPositive
+                  : styles.growthTextNegative,
+              ]}
+            >
+              {isPositive ? (
+                <Ionicons name="arrow-up" />
+              ) : (
+                <Ionicons name="arrow-down" />
+              )}
+            </Text>
+            <Text
+              style={[
+                styles.growthText,
+                isPositive
+                  ? styles.growthTextPositive
+                  : styles.growthTextNegative,
+              ]}
+            >
+              {sign}
+              {absRate}%
+            </Text>
+          </View>
+        )}
       </View>
     </View>
   );
