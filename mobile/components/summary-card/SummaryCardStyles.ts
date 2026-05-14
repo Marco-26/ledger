@@ -1,5 +1,5 @@
-import { StyleSheet } from "react-native";
 import { Colors, FontFamily, FontSize, Radius, Spacing } from "@/styles/tokens";
+import { StyleSheet } from "react-native";
 
 type Variant = "income" | "expense" | "neutral";
 
@@ -23,6 +23,28 @@ const variantTokens = {
     border: Colors.border,
   },
 };
+
+/** Per-variant color values for use in dynamic inline styles */
+export const variantColors = {
+  income: {
+    income: Colors.income,
+    expense: Colors.expense,
+    incomeMuted: Colors.incomeMuted,
+    expenseMuted: Colors.expenseMuted,
+  },
+  expense: {
+    income: Colors.income,
+    expense: Colors.expense,
+    incomeMuted: Colors.incomeMuted,
+    expenseMuted: Colors.expenseMuted,
+  },
+  neutral: {
+    income: Colors.income,
+    expense: Colors.expense,
+    incomeMuted: Colors.incomeMuted,
+    expenseMuted: Colors.expenseMuted,
+  },
+} as const;
 
 export function getStyles(variant: Variant) {
   const t = variantTokens[variant];
@@ -75,12 +97,49 @@ export function getStyles(variant: Variant) {
       color: Colors.mutedForeground,
     },
     iconBadge: {
-      width: 36,
-      height: 36,
+      width: 50,
+      height: 50,
       borderRadius: Radius.md,
-      backgroundColor: t.iconBg,
       alignItems: "center",
       justifyContent: "center",
+    },
+    growthRate: {
+      fontSize: FontSize.sm,
+      fontFamily: FontFamily.mono,
+      color: Colors.foreground,
+      fontWeight: "600",
+    },
+    // ── Growth rate pill (top-right corner) ─────────────────────
+    growthPill: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 4,
+      paddingHorizontal: 9,
+      paddingVertical: 5,
+      borderRadius: 99,
+    },
+    growthPillPositive: {
+      backgroundColor: Colors.incomeMuted,
+    },
+    growthPillNegative: {
+      backgroundColor: Colors.expenseMuted,
+    },
+    growthArrow: {
+      fontSize: FontSize.sm,
+      fontWeight: "700",
+      lineHeight: 16,
+    },
+    growthText: {
+      fontSize: FontSize.sm,
+      fontFamily: FontFamily.mono,
+      fontWeight: "700",
+      letterSpacing: -0.3,
+    },
+    growthTextPositive: {
+      color: Colors.income,
+    },
+    growthTextNegative: {
+      color: Colors.expense,
     },
   });
 }

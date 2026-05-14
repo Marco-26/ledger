@@ -16,4 +16,7 @@ export interface IStatementResponse {
   transaction_list_filtered: ITransactionResponse[];
   credit_list: ITransactionResponse[];
   debit_list: ITransactionResponse[];
+  credit_total_growth_rate: number;
+  debit_total_growth_rate: number;
+  net_balance_total_growth_rate: number;
 }

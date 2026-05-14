@@ -1,3 +1,14 @@
+import CashFlowChart from "@/components/cash-flow-chart/CashFlowChart";
+import Header from "@/components/header/Header";
+import SectionHeader from "@/components/section-header/SectionHeader";
+import SummaryCard from "@/components/summary-card/SummaryCard";
+import TopTransactionsCard from "@/components/top-transactions-card/TopTransactionsCard";
+import TransactionList from "@/components/transaction-list/TransactionList";
+import { useStatements } from "@/hooks/useStatements";
+import { Colors, FontFamily, FontSize, Radius, Spacing } from "@/styles/tokens";
+import { Constants } from "@/utils/constants";
+import { TransactionType } from "@/utils/sharedTypes";
+import dayjs, { Dayjs } from "dayjs";
 import { useState } from "react";
 import {
   ScrollView,
@@ -7,17 +18,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import Header from "@/components/header/Header";
-import SummaryCard from "@/components/summary-card/SummaryCard";
-import TopTransactionsCard from "@/components/top-transactions-card/TopTransactionsCard";
-import TransactionList from "@/components/transaction-list/TransactionList";
-import SectionHeader from "@/components/section-header/SectionHeader";
-import { Colors, FontFamily, FontSize, Radius, Spacing } from "@/styles/tokens";
-import { TransactionType } from "@/utils/sharedTypes";
-import { useStatements } from "@/hooks/useStatements";
-import dayjs, { Dayjs } from "dayjs";
-import { Constants } from "@/utils/constants";
-import CashFlowChart from "@/components/cash-flow-chart/CashFlowChart";
 
 type TxTab = "income" | "expenses";
 
@@ -47,22 +47,22 @@ export default function Index() {
             title="Money In"
             value={data?.creditTotal}
             description="Total credit transactions"
-            iconName="arrow-up"
             variant={TransactionType.INCOME}
+            growthRate={data?.creditTotalGrowthRate}
           />
           <SummaryCard
             title="Money Out"
             value={data?.debitTotal}
             description="Total debit transactions"
-            iconName="arrow-down"
             variant={TransactionType.EXPENSE}
+            growthRate={data?.debitTotalGrowthRate}
           />
           <SummaryCard
             title="Net Balance"
             value={data?.netBalance}
             description="Income minus expenses"
-            iconName="scale"
             variant={TransactionType.NEUTRAL}
+            growthRate={data?.netBalanceTotalGrowthRate}
           />
         </View>
 
