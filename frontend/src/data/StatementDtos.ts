@@ -23,4 +23,7 @@ export interface IStatement {
   transactionListFiltered: ITransaction[];
   creditList: ITransaction[];
   debitList: ITransaction[];
+  creditTotalGrowthRate: number;
+  debitTotalGrowthRate: number;
+  netBalanceTotalGrowthRate: number;
 }

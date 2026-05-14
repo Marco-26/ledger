@@ -1,37 +1,34 @@
+import { Minus, TrendingDown, TrendingUp } from "lucide-react";
 import { cn, formatCurrency } from "@/lib/utils";
-import type { LucideIcon } from "lucide-react";
 
 interface SummaryCardProps {
   title: string;
   value: number | undefined;
   description: string;
-  icon: LucideIcon;
   variant?: "income" | "expense" | "neutral";
+  growthRate?: number;
 }
 
 function SummaryCard({
   title,
   value,
   description,
-  icon: Icon,
   variant = "neutral",
+  growthRate,
 }: SummaryCardProps) {
   const variantStyles = {
     income: {
       card: "border-[var(--income)]/20 bg-card",
-      iconWrapper: "bg-[var(--income-muted)] text-[var(--income)]",
       value: "text-[var(--income)]",
       accent: "bg-[var(--income)]",
     },
     expense: {
       card: "border-[var(--expense)]/20 bg-card",
-      iconWrapper: "bg-[var(--expense-muted)] text-[var(--expense)]",
       value: "text-[var(--expense)]",
       accent: "bg-[var(--expense)]",
     },
     neutral: {
       card: "border-border bg-card",
-      iconWrapper: "bg-muted text-foreground",
       value:
         value !== undefined && value >= 0
           ? "text-[var(--income)]"
@@ -71,14 +68,27 @@ function SummaryCard({
           <p className="text-xs text-muted-foreground">{description}</p>
         </div>
 
-        <div
-          className={cn(
-            "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg",
-            styles.iconWrapper,
-          )}
-        >
-          <Icon className="h-4 w-4" />
-        </div>
+        {growthRate !== undefined && (
+          <span
+            className={cn(
+              "flex items-center gap-1 rounded-md px-1.5 py-0.5 text-xs font-medium font-numeric",
+              growthRate === 0
+                ? "bg-muted text-muted-foreground"
+                : growthRate > 0
+                  ? "bg-[var(--income-muted)] text-[var(--income)]"
+                  : "bg-[var(--expense-muted)] text-[var(--expense)]",
+            )}
+          >
+            {growthRate === 0 ? (
+              <Minus className="h-3 w-3" />
+            ) : growthRate > 0 ? (
+              <TrendingUp className="h-3 w-3" />
+            ) : (
+              <TrendingDown className="h-3 w-3" />
+            )}
+            {Math.abs(growthRate).toFixed(1)}%
+          </span>
+        )}
       </div>
     </div>
   );

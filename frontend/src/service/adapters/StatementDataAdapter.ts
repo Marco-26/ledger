@@ -47,6 +47,10 @@ export class StatementDataAdapter {
       debitList: this.convertDataToTransactionList(
         statementResponse.debit_list,
       ),
+      creditTotalGrowthRate: statementResponse.credit_total_growth_rate,
+      debitTotalGrowthRate: statementResponse.debit_total_growth_rate,
+      netBalanceTotalGrowthRate:
+        statementResponse.net_balance_total_growth_rate,
     };
   }
 }
