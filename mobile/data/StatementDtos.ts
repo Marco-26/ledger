@@ -20,7 +20,7 @@ export interface IStatement {
   numberOfTransactions: number;
   topExpenses: ITransaction[];
   topIncomes: ITransaction[];
-  transactionListFiltered: ITransaction[];
+  dailyTransactions: ITransaction[];
   creditList: ITransaction[];
   debitList: ITransaction[];
   creditTotalGrowthRate: number;

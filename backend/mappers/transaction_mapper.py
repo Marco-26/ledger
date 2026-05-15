@@ -1,7 +1,8 @@
 import pandas as pd
 from db.models.statement import Transaction
 from utils.statement_dataframe import DFColumns
-from dtos.statement_dto import TransactionDTO
+from schemas.statement_dto import TransactionDTO, DailyTransactionDTO
+from domain.models import DailyTransaction
 
 class TransactionMapper:
   @staticmethod
@@ -11,3 +12,7 @@ class TransactionMapper:
   @staticmethod
   def from_statement_orm(transaction: Transaction) -> TransactionDTO:
     return TransactionDTO(date=transaction.transaction_date, credit=transaction.transaction_credit, description=transaction.transaction_description, debit=transaction.transaction_debit)
+
+  @staticmethod
+  def data_to_daily_transactions(daily_transaction: DailyTransaction) -> DailyTransactionDTO:
+      return DailyTransactionDTO(date=daily_transaction.date, credit=daily_transaction.credit, debit=daily_transaction.debit)

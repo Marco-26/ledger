@@ -38,8 +38,8 @@ export class StatementDataAdapter {
       topIncomes: this.convertDataToTransactionList(
         statementResponse.top_incomes,
       ),
-      transactionListFiltered: this.convertDataToTransactionList(
-        statementResponse.transaction_list_filtered,
+      dailyTransactions: this.convertDataToTransactionList(
+        statementResponse.daily_transactions,
       ),
       creditList: this.convertDataToTransactionList(
         statementResponse.credit_list,

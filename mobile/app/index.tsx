@@ -40,7 +40,7 @@ export default function Index() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <CashFlowChart transactions={data?.transactionListFiltered} />
+        <CashFlowChart transactions={data?.dailyTransactions} />
 
         <View style={styles.summaryGrid}>
           <SummaryCard

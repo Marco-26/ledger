@@ -8,6 +8,11 @@ class TransactionDTO(BaseModel):
     description: str | None = None
     debit: float
 
+class DailyTransactionDTO(BaseModel):
+    date: Date
+    credit: float
+    debit: float
+
 class StatementDTO(BaseModel):
     date: Optional[Date] = None
     debit_total: float
@@ -16,7 +21,7 @@ class StatementDTO(BaseModel):
     number_of_transactions: int
     top_expenses: list[TransactionDTO]
     top_incomes: list[TransactionDTO]
-    transaction_list_filtered: list[TransactionDTO]
+    daily_transactions: list[DailyTransactionDTO]
     debit_list: list[TransactionDTO]
     credit_list: list[TransactionDTO]
     

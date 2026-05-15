@@ -1,8 +1,9 @@
 from datetime import date
 from db.models.statement import Statement, Transaction
 from sqlalchemy.orm import Session
-from sqlalchemy import select
+from sqlalchemy import select, func
 from constants import TOP_N_TRANSACTIONS
+from domain.models import DailyTransaction
 
 class StatementRepository:
   def __init__(self, db: Session) -> None:
@@ -62,9 +63,12 @@ class StatementRepository:
     )
 
   def get_daily_transactions(self, start_date: date, end_date: date):
-    return (
-      self.db.query(Transaction)
-      .where(Transaction.transaction_date.between(start_date, end_date))
-      .group_by(Transaction.transaction_date)
-      .all()
-    )
+    response = self.db.query(
+      	Transaction.transaction_date.label("date"),
+      	func.sum(Transaction.transaction_credit).label("credit"),
+       	func.sum(Transaction.transaction_debit).label("debit")
+      ).where(Transaction.transaction_date.between(start_date, end_date)).group_by(Transaction.transaction_date).order_by(Transaction.transaction_date).all()
+    
+    return [DailyTransaction(row.date, row.credit, row.debit) for row in response]
+    
+  

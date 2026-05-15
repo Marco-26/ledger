@@ -13,7 +13,7 @@ export interface IStatementResponse {
   number_of_transactions: number;
   top_expenses: ITransactionResponse[];
   top_incomes: ITransactionResponse[];
-  transaction_list_filtered: ITransactionResponse[];
+  daily_transactions: ITransactionResponse[];
   credit_list: ITransactionResponse[];
   debit_list: ITransactionResponse[];
   credit_total_growth_rate: number;
