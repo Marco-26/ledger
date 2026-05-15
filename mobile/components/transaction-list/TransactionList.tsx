@@ -9,13 +9,11 @@ import { Constants } from "@/utils/constants";
 interface TransactionListProps {
   transactions?: ITransaction[];
   type: TransactionType;
-  emptyMessage?: string;
 }
 
 export default function TransactionList({
   transactions,
   type,
-  emptyMessage = "No transactions found.",
 }: TransactionListProps) {
   const isIncome = type === TransactionType.INCOME;
   const amountColor = isIncome ? Colors.income : Colors.expense;
@@ -61,7 +59,7 @@ export default function TransactionList({
           ))
         ) : (
           <View style={styles.empty}>
-            <Text style={styles.emptyText}>{emptyMessage}</Text>
+            <Text style={styles.emptyText}>No data available.</Text>
           </View>
         )}
       </ScrollView>

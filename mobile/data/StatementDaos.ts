@@ -10,7 +10,6 @@ export interface IStatementResponse {
   debit_total: number;
   credit_total: number;
   net_balance: number;
-  number_of_transactions: number;
   top_expenses: ITransactionResponse[];
   top_incomes: ITransactionResponse[];
   daily_transactions: ITransactionResponse[];
