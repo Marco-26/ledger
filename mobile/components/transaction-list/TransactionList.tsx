@@ -1,7 +1,7 @@
 import { Text, View, ScrollView } from "react-native";
 import { formatCurrency } from "@/utils/format";
 import { Colors } from "@/styles/tokens";
-import { styles } from "./TransactionListStyles";
+import { styles } from "./TransactionList.styles";
 import { TransactionType } from "@/utils/sharedTypes";
 import { ITransaction } from "@/data/StatementDtos";
 import { Constants } from "@/utils/constants";

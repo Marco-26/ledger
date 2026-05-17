@@ -1,7 +1,7 @@
 import { Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { formatCurrency } from "@/utils/format";
-import { getStyles } from "./TopTransactionsCardStyles";
+import { getStyles } from "./TopTransactionsCard.styles";
 import { TransactionType } from "@/utils/sharedTypes";
 import { ICON_COLOR_MAPPER } from "@/styles/global";
 import { ITransaction } from "@/data/StatementDtos";

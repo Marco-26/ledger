@@ -124,10 +124,8 @@ export function getStyles(variant: Variant) {
     growthPillNegative: {
       backgroundColor: Colors.expenseMuted,
     },
-    growthArrow: {
-      fontSize: FontSize.sm,
-      fontWeight: "700",
-      lineHeight: 16,
+    growthPillNeutral: {
+      backgroundColor: Colors.muted,
     },
     growthText: {
       fontSize: FontSize.sm,
@@ -140,6 +138,9 @@ export function getStyles(variant: Variant) {
     },
     growthTextNegative: {
       color: Colors.expense,
+    },
+    growthTextNeutral: {
+      color: Colors.mutedForeground,
     },
   });
 }

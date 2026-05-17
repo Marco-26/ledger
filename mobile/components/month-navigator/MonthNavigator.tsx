@@ -1,6 +1,6 @@
 import { Text, TouchableOpacity, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { styles } from "./MonthNavigatorStyles";
+import { styles } from "./MonthNavigator.styles";
 import { Colors } from "@/styles/tokens";
 import { Constants } from "@/utils/constants";
 import { Dayjs } from "dayjs";

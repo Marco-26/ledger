@@ -1,7 +1,7 @@
 import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import MonthNavigator from "@/components/month-navigator/MonthNavigator";
-import { styles } from "./HeaderStyles";
+import { styles } from "./Header.styles";
 import { Typography } from "@/styles/global";
 import { Dayjs } from "dayjs";
 
