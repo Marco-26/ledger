@@ -1,50 +1,25 @@
 import { StyleSheet } from "react-native";
-import { Colors, FontFamily, FontSize, Radius, Spacing } from "@/styles/tokens";
+import { Colors, FontFamily, FontSize, Spacing } from "@/styles/tokens";
 
 export const styles = StyleSheet.create({
   container: {
-    backgroundColor: Colors.card,
-    borderRadius: Radius.xl,
-    borderWidth: 1,
-    borderColor: Colors.border,
     overflow: "hidden",
     maxHeight: 320,
   },
-  headerRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: Spacing[4],
-    paddingVertical: Spacing[2],
-    backgroundColor: Colors.muted,
-    borderBottomWidth: 1,
-    borderBottomColor: Colors.border,
-    gap: Spacing[3],
-  },
-  headerCell: {
-    fontSize: FontSize.xs,
-    fontFamily: FontFamily.sans,
-    color: Colors.mutedForeground,
-    fontWeight: "500",
-    letterSpacing: 1.2,
-    textTransform: "uppercase",
-  },
-  dateCol: {
-    width: 76,
-  },
-  amountCol: {
-    width: 90,
-    textAlign: "right",
-  },
   row: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: "column",
     paddingHorizontal: Spacing[4],
     paddingVertical: 11,
-    gap: Spacing[3],
+    gap: Spacing[1],
   },
   rowBorder: {
     borderBottomWidth: 1,
     borderBottomColor: Colors.border,
+  },
+  rowMeta: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   dateText: {
     fontSize: FontSize.xs,
@@ -57,7 +32,7 @@ export const styles = StyleSheet.create({
     color: Colors.foreground,
   },
   amountText: {
-    fontSize: FontSize.sm,
+    fontSize: FontSize.xs,
     fontFamily: FontFamily.mono,
     fontWeight: "600",
     textAlign: "right",

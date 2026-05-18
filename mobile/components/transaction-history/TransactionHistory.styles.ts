@@ -62,8 +62,7 @@ export const styles = StyleSheet.create({
     letterSpacing: 0.3,
   },
   historyList: {
-    paddingHorizontal: Spacing[4],
-    paddingBottom: Spacing[4],
+    paddingBottom: Spacing[2],
   },
   container: {
     gap: Spacing[1],
