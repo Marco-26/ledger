@@ -2,7 +2,8 @@ import { formatCurrency } from "@/utils/format";
 import { TransactionType } from "@/utils/sharedTypes";
 import { Ionicons } from "@expo/vector-icons";
 import { Text, View } from "react-native";
-import { getStyles } from "./SummaryCardStyles";
+import { getStyles } from "./SummaryCard.styles";
+import { Colors, FontSize } from "@/styles/tokens";
 
 interface SummaryCardProps {
   title: string;
@@ -21,59 +22,54 @@ export default function SummaryCard({
 }: SummaryCardProps) {
   const styles = getStyles(variant);
 
-  const isPositive = (growthRate ?? 0) >= 0;
+  const rate = growthRate ?? 0;
+  const isNeutral = rate === 0;
+  const isPositive = rate > 0;
   const sign = isPositive ? "+" : "";
-  const absRate = Math.abs(growthRate ?? 0).toFixed(1);
+  const absRate = Math.abs(rate).toFixed(1);
+
+  const pillStyle = isNeutral
+    ? styles.growthPillNeutral
+    : isPositive
+      ? styles.growthPillPositive
+      : styles.growthPillNegative;
+
+  const pillTextColor = isNeutral
+    ? Colors.mutedForeground
+    : isPositive
+      ? Colors.income
+      : Colors.expense;
 
   return (
     <View style={styles.card}>
       <View style={styles.accentBar} />
 
-      <View style={styles.row}>
-        <View style={styles.textGroup}>
+      <View style={styles.content}>
+        <View style={styles.topRow}>
           <Text style={styles.title}>{title}</Text>
-          <Text style={styles.value}>
-            {value !== undefined ? formatCurrency(value) : "—"}
-          </Text>
-          <Text style={styles.description}>{description}</Text>
+
+          {growthRate !== undefined && (
+            <View style={[styles.growthPill, pillStyle]}>
+              {!isNeutral && (
+                <Ionicons
+                  name={isPositive ? "arrow-up" : "arrow-down"}
+                  size={FontSize.xs}
+                  color={pillTextColor}
+                />
+              )}
+              <Text style={[styles.growthText, { color: pillTextColor }]}>
+                {sign}
+                {absRate}%
+              </Text>
+            </View>
+          )}
         </View>
 
-        {growthRate !== undefined && (
-          <View
-            style={[
-              styles.growthPill,
-              isPositive
-                ? styles.growthPillPositive
-                : styles.growthPillNegative,
-            ]}
-          >
-            <Text
-              style={[
-                styles.growthArrow,
-                isPositive
-                  ? styles.growthTextPositive
-                  : styles.growthTextNegative,
-              ]}
-            >
-              {isPositive ? (
-                <Ionicons name="arrow-up" />
-              ) : (
-                <Ionicons name="arrow-down" />
-              )}
-            </Text>
-            <Text
-              style={[
-                styles.growthText,
-                isPositive
-                  ? styles.growthTextPositive
-                  : styles.growthTextNegative,
-              ]}
-            >
-              {sign}
-              {absRate}%
-            </Text>
-          </View>
-        )}
+        <Text style={styles.value}>
+          {value !== undefined ? formatCurrency(value) : "—"}
+        </Text>
+
+        <Text style={styles.description}>{description}</Text>
       </View>
     </View>
   );

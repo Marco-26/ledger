@@ -3,7 +3,7 @@ import React, { useMemo } from "react";
 import { Dimensions, Text, View } from "react-native";
 import { LineChart } from "react-native-chart-kit";
 import { ITransaction } from "@/data/StatementDtos";
-import { styles } from "./CashFlowChartStyles";
+import { styles } from "./CashFlowChart.styles";
 
 interface CashFlowChartProps {
   transactions?: ITransaction[];

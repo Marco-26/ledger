@@ -1,7 +1,7 @@
 import { Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { formatCurrency } from "@/utils/format";
-import { getStyles } from "./TopTransactionsCardStyles";
+import { getStyles } from "./TopTransactionsCard.styles";
 import { TransactionType } from "@/utils/sharedTypes";
 import { ICON_COLOR_MAPPER } from "@/styles/global";
 import { ITransaction } from "@/data/StatementDtos";
@@ -22,19 +22,15 @@ export default function TopTransactionsCard({
   variant,
   data,
 }: TopTransactionsCardProps) {
-  const isIncome = variant === "income";
+  const isIncome = variant === TransactionType.INCOME;
   const styles = getStyles(variant);
+  const accentColor = ICON_COLOR_MAPPER[variant];
 
   return (
     <View style={styles.card}>
-      {/* Header */}
       <View style={styles.header}>
         <View style={styles.iconBadge}>
-          <Ionicons
-            name={iconName}
-            size={14}
-            color={ICON_COLOR_MAPPER[variant]}
-          />
+          <Ionicons name={iconName} size={15} color={accentColor} />
         </View>
         <View style={styles.headerText}>
           <Text style={styles.title}>{title}</Text>
@@ -44,33 +40,27 @@ export default function TopTransactionsCard({
 
       <View style={styles.divider} />
 
-      {/* Rows */}
       <View style={styles.list}>
         {data && data.length > 0 ? (
           data.map((item, index) => (
-            <View key={index} style={styles.row}>
-              <Text
-                style={[styles.rank, { color: ICON_COLOR_MAPPER[variant] }]}
-              >
-                {index + 1}
-              </Text>
-              <View style={styles.rowContent}>
-                <Text style={styles.rowDescription} numberOfLines={1}>
-                  {item.description}
-                </Text>
-                <Text style={styles.rowDate}>
-                  {item.date.format(Constants.UI.DATE_FORMAT_DISPLAY)}
+            <View key={index}>
+              <View style={styles.row}>
+                <View style={styles.rankBadge}>
+                  <Text style={styles.rank}>{index + 1}</Text>
+                </View>
+                <View style={styles.rowContent}>
+                  <Text style={styles.rowDescription} numberOfLines={1}>
+                    {item.description}
+                  </Text>
+                  <Text style={styles.rowDate}>
+                    {item.date.format(Constants.UI.DATE_FORMAT_DISPLAY)}
+                  </Text>
+                </View>
+                <Text style={styles.rowAmount}>
+                  {isIncome ? "+" : "-"}{formatCurrency(isIncome ? item.credit : item.debit)}
                 </Text>
               </View>
-              <Text
-                style={[
-                  styles.rowAmount,
-                  { color: ICON_COLOR_MAPPER[variant] },
-                ]}
-              >
-                {isIncome ? "+" : "-"}
-                {formatCurrency(isIncome ? item.credit : item.debit)}
-              </Text>
+              {index < data.length - 1 && <View style={styles.rowSeparator} />}
             </View>
           ))
         ) : (

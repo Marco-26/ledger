@@ -17,7 +17,6 @@ export interface IStatement {
   debitTotal: number;
   creditTotal: number;
   netBalance: number;
-  numberOfTransactions: number;
   topExpenses: ITransaction[];
   topIncomes: ITransaction[];
   dailyTransactions: ITransaction[];
