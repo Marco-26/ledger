@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
-
 import { styles } from "./TransactionHistory.styles";
 import { Colors } from "@/styles/tokens";
 import TransactionList from "../transaction-list/TransactionList";
@@ -21,38 +20,41 @@ export function TransactionHistory({ data }: ITransactionHistory) {
   return (
     <View style={styles.historyCard}>
       <View style={styles.historyHeader}>
-        <Text style={styles.label}>HISTORY</Text>
+        <Text style={styles.eyebrow}>History</Text>
         <Text style={styles.title}>All Transactions</Text>
       </View>
 
       <View style={styles.historyDivider} />
 
       <View style={styles.tabsRow}>
-        {(["income", "expenses"] as Tabs[]).map((tab) => (
-          <TouchableOpacity
-            key={tab}
-            style={[
-              styles.tab,
-              activeTab === tab && styles.tabActive,
-              activeTab === tab && {
-                borderColor: tab === "income" ? Colors.income : Colors.expense,
-              },
-            ]}
-            onPress={() => setActiveTab(tab)}
-            activeOpacity={0.7}
-          >
-            <Text
-              style={[
-                styles.tabText,
-                activeTab === tab && {
-                  color: tab === "income" ? Colors.income : Colors.expense,
-                },
-              ]}
+        {(["income", "expenses"] as Tabs[]).map((tab) => {
+          const isActive = activeTab === tab;
+          const tabAccentColor =
+            isActive
+              ? tab === "income"
+                ? Colors.income
+                : Colors.expense
+              : undefined;
+
+          return (
+            <TouchableOpacity
+              key={tab}
+              style={[styles.tab, isActive && styles.tabActive]}
+              onPress={() => setActiveTab(tab)}
+              activeOpacity={0.7}
             >
-              {tab === "income" ? "Income" : "Expenses"}
-            </Text>
-          </TouchableOpacity>
-        ))}
+              <Text
+                style={[
+                  styles.tabText,
+                  isActive && styles.tabTextActive,
+                  isActive && tabAccentColor ? { color: tabAccentColor } : undefined,
+                ]}
+              >
+                {tab === "income" ? "Income" : "Expenses"}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
 
         <View style={styles.countBadge}>
           <Text style={styles.countBadgeText}>

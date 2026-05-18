@@ -14,15 +14,8 @@ export default function MonthNavigator({
   selectedDate,
   onChange,
 }: MonthNavigatorProps) {
-  const handlePrev = () => {
-    if (!selectedDate) return;
-    onChange(selectedDate.subtract(1, "month"));
-  };
-
-  const handleNext = () => {
-    if (!selectedDate) return;
-    onChange(selectedDate.add(1, "month"));
-  };
+  const handlePrev = () => onChange(selectedDate.subtract(1, "month"));
+  const handleNext = () => onChange(selectedDate.add(1, "month"));
 
   const month = selectedDate.month();
   const year = selectedDate.year();
@@ -32,33 +25,26 @@ export default function MonthNavigator({
       <TouchableOpacity
         style={styles.chevronBtn}
         onPress={handlePrev}
-        activeOpacity={0.6}
+        activeOpacity={0.5}
       >
-        <Ionicons
-          name="chevron-back"
-          size={14}
-          color={Colors.mutedForeground}
-        />
+        <Ionicons name="chevron-back" size={15} color={Colors.mutedForeground} />
       </TouchableOpacity>
 
       <View style={styles.divider} />
 
-      <Text style={styles.label}>
-        {Constants.UI.MONTHS[month]} {year}
-      </Text>
+      <View style={styles.labelContainer}>
+        <Text style={styles.label}>{Constants.UI.MONTHS[month]}</Text>
+        <Text style={styles.yearLabel}>{year}</Text>
+      </View>
 
       <View style={styles.divider} />
 
       <TouchableOpacity
         style={styles.chevronBtn}
         onPress={handleNext}
-        activeOpacity={0.6}
+        activeOpacity={0.5}
       >
-        <Ionicons
-          name="chevron-forward"
-          size={14}
-          color={Colors.mutedForeground}
-        />
+        <Ionicons name="chevron-forward" size={15} color={Colors.mutedForeground} />
       </TouchableOpacity>
     </View>
   );

@@ -41,15 +41,14 @@ export default function TransactionList({
                   {t.date.format(Constants.UI.DATE_FORMAT_DISPLAY)}
                 </Text>
                 <Text style={[styles.amountText, { color: amountColor }]}>
-                  {prefix}
-                  {formatCurrency(getAmount(t))}
+                  {prefix}{formatCurrency(getAmount(t))}
                 </Text>
               </View>
             </View>
           ))
         ) : (
           <View style={styles.empty}>
-            <Text style={styles.emptyText}>No data available.</Text>
+            <Text style={styles.emptyText}>No transactions found.</Text>
           </View>
         )}
       </ScrollView>

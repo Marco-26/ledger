@@ -28,13 +28,13 @@ export default function SummaryCard({
   const sign = isPositive ? "+" : "";
   const absRate = Math.abs(rate).toFixed(1);
 
-  const styleBasedOnGrowth = isNeutral
+  const pillStyle = isNeutral
     ? styles.growthPillNeutral
     : isPositive
       ? styles.growthPillPositive
       : styles.growthPillNegative;
 
-  const iconColor = isNeutral
+  const pillTextColor = isNeutral
     ? Colors.mutedForeground
     : isPositive
       ? Colors.income
@@ -44,30 +44,32 @@ export default function SummaryCard({
     <View style={styles.card}>
       <View style={styles.accentBar} />
 
-      <View style={styles.row}>
-        <View style={styles.textGroup}>
+      <View style={styles.content}>
+        <View style={styles.topRow}>
           <Text style={styles.title}>{title}</Text>
-          <Text style={styles.value}>
-            {value !== undefined ? formatCurrency(value) : "—"}
-          </Text>
-          <Text style={styles.description}>{description}</Text>
+
+          {growthRate !== undefined && (
+            <View style={[styles.growthPill, pillStyle]}>
+              {!isNeutral && (
+                <Ionicons
+                  name={isPositive ? "arrow-up" : "arrow-down"}
+                  size={FontSize.xs}
+                  color={pillTextColor}
+                />
+              )}
+              <Text style={[styles.growthText, { color: pillTextColor }]}>
+                {sign}
+                {absRate}%
+              </Text>
+            </View>
+          )}
         </View>
 
-        {growthRate !== undefined && (
-          <View style={[styles.growthPill, styleBasedOnGrowth]}>
-            {!isNeutral && (
-              <Ionicons
-                name={isPositive ? "arrow-up" : "arrow-down"}
-                size={FontSize.sm}
-                color={iconColor}
-              />
-            )}
-            <Text style={[styles.growthText, { color: iconColor }]}>
-              {sign}
-              {absRate}%
-            </Text>
-          </View>
-        )}
+        <Text style={styles.value}>
+          {value !== undefined ? formatCurrency(value) : "—"}
+        </Text>
+
+        <Text style={styles.description}>{description}</Text>
       </View>
     </View>
   );

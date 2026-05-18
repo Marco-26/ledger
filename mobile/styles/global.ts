@@ -7,7 +7,7 @@ export const Typography = StyleSheet.create({
     fontSize: FontSize.xs,
     color: Colors.mutedForeground,
     fontFamily: FontFamily.sans,
-    letterSpacing: 1.8,
+    letterSpacing: 1.6,
     textTransform: "uppercase",
     fontWeight: "500",
   },
@@ -34,7 +34,7 @@ export const Typography = StyleSheet.create({
 });
 
 export const ICON_COLOR_MAPPER: Record<TransactionType, string> = {
-  income: Colors.income,
-  expense : Colors.expense,
-  neutral: Colors.mutedForeground
-}
+  income:  Colors.income,
+  expense: Colors.expense,
+  neutral: Colors.brand,
+};

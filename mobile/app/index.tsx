@@ -55,30 +55,26 @@ export default function Index() {
           />
         </View>
 
-        <View style={styles.section}>
-          <View style={styles.topTransGrid}>
-            <TopTransactionsCard
-              title="Top Earnings"
-              description="Highest income sources"
-              iconName="trending-up"
-              variant={TransactionType.INCOME}
-              data={data?.topIncomes}
-            />
-            <TopTransactionsCard
-              title="Top Spending"
-              description="Highest expense categories"
-              iconName="trending-down"
-              variant={TransactionType.EXPENSE}
-              data={data?.topExpenses}
-            />
-          </View>
+        <View style={styles.topTransGrid}>
+          <TopTransactionsCard
+            title="Top Earnings"
+            description="Highest income sources"
+            iconName="trending-up"
+            variant={TransactionType.INCOME}
+            data={data?.topIncomes}
+          />
+          <TopTransactionsCard
+            title="Top Spending"
+            description="Highest expense categories"
+            iconName="trending-down"
+            variant={TransactionType.EXPENSE}
+            data={data?.topExpenses}
+          />
         </View>
 
-        <View style={styles.section}>
-          <TransactionHistory data={data} />
-        </View>
+        <TransactionHistory data={data} />
 
-        <View style={{ height: Spacing[8] }} />
+        <View style={{ height: Spacing[10] }} />
       </ScrollView>
     </View>
   );
@@ -93,14 +89,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingHorizontal: Spacing[5],
-    paddingTop: Spacing[4],
+    paddingHorizontal: Spacing[4],
+    paddingTop: Spacing[3],
     gap: Spacing[4],
   },
   summaryGrid: {
-    gap: Spacing[3],
-  },
-  section: {
     gap: Spacing[3],
   },
   topTransGrid: {

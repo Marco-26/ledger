@@ -3,8 +3,12 @@ import { Colors, FontFamily, FontSize, Radius, Spacing } from "@/styles/tokens";
 import { TransactionType } from "@/utils/sharedTypes";
 
 export function getStyles(variant: TransactionType) {
-  const isIncome = variant === "income";
-  const iconBg = isIncome ? Colors.incomeMuted : Colors.expenseMuted;
+  const isIncome = variant === TransactionType.INCOME;
+  const accentColor = isIncome ? Colors.income : Colors.expense;
+  const accentBg    = isIncome ? Colors.incomeMuted : Colors.expenseMuted;
+  const accentBorder = isIncome
+    ? "rgba(61,214,140,0.2)"
+    : "rgba(240,107,107,0.2)";
 
   return StyleSheet.create({
     card: {
@@ -19,13 +23,16 @@ export function getStyles(variant: TransactionType) {
       alignItems: "center",
       gap: Spacing[3],
       paddingHorizontal: Spacing[4],
-      paddingVertical: Spacing[3],
+      paddingTop: Spacing[4],
+      paddingBottom: Spacing[3],
     },
     iconBadge: {
-      width: 30,
-      height: 30,
+      width: 32,
+      height: 32,
       borderRadius: Radius.sm,
-      backgroundColor: iconBg,
+      backgroundColor: accentBg,
+      borderWidth: 1,
+      borderColor: accentBorder,
       alignItems: "center",
       justifyContent: "center",
     },
@@ -49,22 +56,28 @@ export function getStyles(variant: TransactionType) {
       backgroundColor: Colors.border,
     },
     list: {
-      padding: Spacing[2],
-      gap: 2,
+      paddingVertical: Spacing[2],
     },
     row: {
       flexDirection: "row",
       alignItems: "center",
+      paddingHorizontal: Spacing[4],
+      paddingVertical: Spacing[3],
       gap: Spacing[3],
-      paddingHorizontal: Spacing[3],
-      paddingVertical: 10,
-      borderRadius: Radius.md,
+    },
+    rankBadge: {
+      width: 20,
+      height: 20,
+      borderRadius: Radius.xs,
+      backgroundColor: accentBg,
+      alignItems: "center",
+      justifyContent: "center",
     },
     rank: {
-      fontSize: FontSize.xs,
+      fontSize: FontSize["2xs"],
       fontFamily: FontFamily.mono,
-      fontWeight: "500",
-      width: 14,
+      fontWeight: "700",
+      color: accentColor,
     },
     rowContent: {
       flex: 1,
@@ -84,7 +97,13 @@ export function getStyles(variant: TransactionType) {
     rowAmount: {
       fontSize: FontSize.sm,
       fontFamily: FontFamily.mono,
-      fontWeight: "600",
+      fontWeight: "700",
+      color: accentColor,
+    },
+    rowSeparator: {
+      height: 1,
+      backgroundColor: Colors.border,
+      marginHorizontal: Spacing[4],
     },
     empty: {
       paddingVertical: Spacing[6],

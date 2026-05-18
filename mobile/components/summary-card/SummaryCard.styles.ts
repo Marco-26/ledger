@@ -5,44 +5,28 @@ type Variant = "income" | "expense" | "neutral";
 
 const variantTokens = {
   income: {
-    accentBar: Colors.income,
-    iconBg: Colors.incomeMuted,
-    value: Colors.income,
-    border: "rgba(74,222,128,0.2)",
+    accentColor: Colors.income,
+    valueColor: Colors.income,
+    border: "rgba(61,214,140,0.15)",
+    glowColor: Colors.income,
+    pillBg: Colors.incomeMuted,
+    pillBorder: "rgba(61,214,140,0.25)",
   },
   expense: {
-    accentBar: Colors.expense,
-    iconBg: Colors.expenseMuted,
-    value: Colors.expense,
-    border: "rgba(248,113,113,0.2)",
+    accentColor: Colors.expense,
+    valueColor: Colors.expense,
+    border: "rgba(240,107,107,0.15)",
+    glowColor: Colors.expense,
+    pillBg: Colors.expenseMuted,
+    pillBorder: "rgba(240,107,107,0.25)",
   },
   neutral: {
-    accentBar: "rgba(255,255,255,0.15)",
-    iconBg: Colors.muted,
-    value: Colors.foreground,
-    border: Colors.border,
-  },
-};
-
-/** Per-variant color values for use in dynamic inline styles */
-export const variantColors = {
-  income: {
-    income: Colors.income,
-    expense: Colors.expense,
-    incomeMuted: Colors.incomeMuted,
-    expenseMuted: Colors.expenseMuted,
-  },
-  expense: {
-    income: Colors.income,
-    expense: Colors.expense,
-    incomeMuted: Colors.incomeMuted,
-    expenseMuted: Colors.expenseMuted,
-  },
-  neutral: {
-    income: Colors.income,
-    expense: Colors.expense,
-    incomeMuted: Colors.incomeMuted,
-    expenseMuted: Colors.expenseMuted,
+    accentColor: Colors.brand,
+    valueColor: Colors.foreground,
+    border: "rgba(200,169,110,0.15)",
+    glowColor: Colors.brand,
+    pillBg: Colors.brandMuted,
+    pillBorder: "rgba(200,169,110,0.25)",
   },
 } as const;
 
@@ -56,91 +40,79 @@ export function getStyles(variant: Variant) {
       borderWidth: 1,
       borderColor: t.border,
       overflow: "hidden",
-      padding: Spacing[5],
+      flexDirection: "row",
     },
     accentBar: {
-      position: "absolute",
-      top: 0,
-      left: 0,
-      right: 0,
-      height: 2,
-      backgroundColor: t.accentBar,
+      width: 3,
+      backgroundColor: t.accentColor,
     },
-    row: {
+    content: {
+      flex: 1,
+      padding: Spacing[4],
+      gap: Spacing[2],
+    },
+    topRow: {
       flexDirection: "row",
       alignItems: "flex-start",
-      gap: Spacing[3],
-      marginTop: Spacing[1],
-    },
-    textGroup: {
-      flex: 1,
-      gap: Spacing[2],
+      justifyContent: "space-between",
     },
     title: {
       fontSize: FontSize.xs,
       fontFamily: FontFamily.sans,
       color: Colors.mutedForeground,
-      letterSpacing: 1.4,
+      letterSpacing: 1.6,
       textTransform: "uppercase",
       fontWeight: "500",
     },
     value: {
-      fontSize: FontSize["2xl"],
+      fontSize: FontSize["3xl"],
       fontFamily: FontFamily.mono,
-      color: t.value,
+      color: t.valueColor,
       fontWeight: "500",
       letterSpacing: -0.5,
+      lineHeight: FontSize["3xl"] * 1.1,
     },
     description: {
       fontSize: FontSize.xs,
       fontFamily: FontFamily.sans,
       color: Colors.mutedForeground,
+      marginTop: Spacing[1],
     },
-    iconBadge: {
-      width: 50,
-      height: 50,
-      borderRadius: Radius.md,
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    growthRate: {
-      fontSize: FontSize.sm,
-      fontFamily: FontFamily.mono,
-      color: Colors.foreground,
-      fontWeight: "600",
-    },
-    // ── Growth rate pill (top-right corner) ─────────────────────
     growthPill: {
       flexDirection: "row",
       alignItems: "center",
-      gap: 4,
-      paddingHorizontal: 9,
+      gap: 3,
+      paddingHorizontal: Spacing[2],
       paddingVertical: 5,
-      borderRadius: 99,
+      borderRadius: Radius.full,
+      borderWidth: 1,
+      backgroundColor: t.pillBg,
+      borderColor: t.pillBorder,
     },
     growthPillPositive: {
       backgroundColor: Colors.incomeMuted,
+      borderColor: "rgba(61,214,140,0.25)",
     },
     growthPillNegative: {
       backgroundColor: Colors.expenseMuted,
+      borderColor: "rgba(240,107,107,0.25)",
     },
     growthPillNeutral: {
       backgroundColor: Colors.muted,
+      borderColor: Colors.border,
     },
     growthText: {
-      fontSize: FontSize.sm,
+      fontSize: FontSize.xs,
       fontFamily: FontFamily.mono,
       fontWeight: "700",
-      letterSpacing: -0.3,
-    },
-    growthTextPositive: {
-      color: Colors.income,
-    },
-    growthTextNegative: {
-      color: Colors.expense,
-    },
-    growthTextNeutral: {
-      color: Colors.mutedForeground,
+      letterSpacing: -0.2,
     },
   });
 }
+
+/** Per-variant color values for use in dynamic inline styles */
+export const variantColors = {
+  income: { value: Colors.income },
+  expense: { value: Colors.expense },
+  neutral: { value: Colors.foreground },
+} as const;
