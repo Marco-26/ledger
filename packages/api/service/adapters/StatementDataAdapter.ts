@@ -1,8 +1,8 @@
 import type {
   IStatementResponse,
   ITransactionResponse,
-} from "@/data/StatementDaos";
-import type { IStatement, ITransaction } from "@/data/StatementDtos";
+} from "../../data/StatementDaos";
+import type { IStatement, ITransaction } from "../../data/StatementDtos";
 import dayjs from "dayjs";
 
 export class StatementDataAdapter {
@@ -31,15 +31,14 @@ export class StatementDataAdapter {
       debitTotal: statementResponse.debit_total,
       creditTotal: statementResponse.credit_total,
       netBalance: statementResponse.net_balance,
-      numberOfTransactions: statementResponse.number_of_transactions,
       topExpenses: this.convertDataToTransactionList(
         statementResponse.top_expenses,
       ),
       topIncomes: this.convertDataToTransactionList(
         statementResponse.top_incomes,
       ),
-      transactionListFiltered: this.convertDataToTransactionList(
-        statementResponse.transaction_list_filtered,
+      dailyTransactions: this.convertDataToTransactionList(
+        statementResponse.daily_transactions,
       ),
       creditList: this.convertDataToTransactionList(
         statementResponse.credit_list,

@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Dashboard } from "./components/dashboard/Dashboard";
-import { useStatements } from "./hooks/useStatements";
 import dayjs from "dayjs";
 import { Toaster } from "sonner";
+import { useStatements } from "@ledger/api";
 
 function App() {
   const [selectedMonth, setSelectedMonth] = useState<string>(

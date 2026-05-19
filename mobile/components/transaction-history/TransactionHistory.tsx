@@ -3,7 +3,7 @@ import { Text, TouchableOpacity, View } from "react-native";
 import { styles } from "./TransactionHistory.styles";
 import { Colors } from "@/styles/tokens";
 import TransactionList from "../transaction-list/TransactionList";
-import { IStatement, TransactionType } from "@/data/StatementDtos";
+import { IStatement, TransactionType } from "@ledger/api";
 
 type Tabs = "income" | "expenses";
 
@@ -29,12 +29,11 @@ export function TransactionHistory({ data }: ITransactionHistory) {
       <View style={styles.tabsRow}>
         {(["income", "expenses"] as Tabs[]).map((tab) => {
           const isActive = activeTab === tab;
-          const tabAccentColor =
-            isActive
-              ? tab === "income"
-                ? Colors.income
-                : Colors.expense
-              : undefined;
+          const tabAccentColor = isActive
+            ? tab === "income"
+              ? Colors.income
+              : Colors.expense
+            : undefined;
 
           return (
             <TouchableOpacity
@@ -47,7 +46,9 @@ export function TransactionHistory({ data }: ITransactionHistory) {
                 style={[
                   styles.tabText,
                   isActive && styles.tabTextActive,
-                  isActive && tabAccentColor ? { color: tabAccentColor } : undefined,
+                  isActive && tabAccentColor
+                    ? { color: tabAccentColor }
+                    : undefined,
                 ]}
               >
                 {tab === "income" ? "Income" : "Expenses"}

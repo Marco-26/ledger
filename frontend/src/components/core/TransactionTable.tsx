@@ -1,4 +1,4 @@
-import { TransactionType, type ITransaction } from "@/data/StatementDtos";
+import { TransactionType, type ITransaction } from "@ledger/api";
 import { cn, formatCurrency } from "@/lib/utils";
 import {
   Table,

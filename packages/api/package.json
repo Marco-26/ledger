@@ -1,0 +1,12 @@
+{
+  "name": "@ledger/api",
+  "version": "1.0.0",
+  "private": "true",
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "peerDependencies": {
+    "dayjs": "*",
+    "@tanstack/react-query": "^5.97.0",
+    "axios": "^1.13.6"
+  }
+}

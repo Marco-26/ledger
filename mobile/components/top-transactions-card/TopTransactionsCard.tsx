@@ -4,7 +4,7 @@ import { formatCurrency } from "@/utils/format";
 import { getStyles } from "./TopTransactionsCard.styles";
 import { TransactionType } from "@/utils/sharedTypes";
 import { ICON_COLOR_MAPPER } from "@/styles/global";
-import { ITransaction } from "@/data/StatementDtos";
+import { ITransaction } from "@ledger/api";
 import { Constants } from "@/utils/constants";
 
 interface TopTransactionsCardProps {
@@ -57,7 +57,8 @@ export default function TopTransactionsCard({
                   </Text>
                 </View>
                 <Text style={styles.rowAmount}>
-                  {isIncome ? "+" : "-"}{formatCurrency(isIncome ? item.credit : item.debit)}
+                  {isIncome ? "+" : "-"}
+                  {formatCurrency(isIncome ? item.credit : item.debit)}
                 </Text>
               </View>
               {index < data.length - 1 && <View style={styles.rowSeparator} />}

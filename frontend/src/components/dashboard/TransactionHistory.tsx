@@ -1,5 +1,5 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { TransactionType, type IStatement } from "@/data/StatementDtos";
+import { TransactionType, type IStatement } from "@ledger/api";
 import { TransactionTable } from "../core/TransactionTable";
 
 interface TransactionHistoryProps {

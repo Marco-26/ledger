@@ -3,7 +3,7 @@ import { formatCurrency } from "@/utils/format";
 import { Colors } from "@/styles/tokens";
 import { styles } from "./TransactionList.styles";
 import { TransactionType } from "@/utils/sharedTypes";
-import { ITransaction } from "@/data/StatementDtos";
+import { ITransaction } from "@ledger/api";
 import { Constants } from "@/utils/constants";
 
 interface TransactionListProps {
@@ -41,7 +41,8 @@ export default function TransactionList({
                   {t.date.format(Constants.UI.DATE_FORMAT_DISPLAY)}
                 </Text>
                 <Text style={[styles.amountText, { color: amountColor }]}>
-                  {prefix}{formatCurrency(getAmount(t))}
+                  {prefix}
+                  {formatCurrency(getAmount(t))}
                 </Text>
               </View>
             </View>
