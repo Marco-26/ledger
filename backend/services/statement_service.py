@@ -10,7 +10,7 @@ from datetime import date
 from mappers.transaction_mapper import TransactionMapper
 from utils import utils
 from domain.transaction_builder import TransactionBuilder
-from exceptions.domain import StatementWrongDateSelected
+from exceptions.domain import StatementWrongDateSelected, StatementNotFoundException
 
 class StatementService:
   def __init__(self, db: Session):
@@ -39,6 +39,10 @@ class StatementService:
     end_date = utils.get_end_of_month(date)
 
     transactions = self.repository.get_transactions(date, end_date)
+
+    if not transactions or len(transactions) == 0:
+    	raise StatementNotFoundException()
+
     top_credit_transactions = self.repository.get_top_credit_transactions(date, end_date)
     top_debit_transactions = self.repository.get_top_debit_transactions(date, end_date)
     daily_transactions = self.repository.get_daily_transactions(date, end_date)

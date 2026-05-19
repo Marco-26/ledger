@@ -42,7 +42,6 @@ export const styles = StyleSheet.create({
     marginLeft: -26,
   },
   empty: {
-    height: CHART_HEIGHT,
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: Spacing[5],
