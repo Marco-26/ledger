@@ -1,6 +1,7 @@
 import { Colors, FontFamily, FontSize, Spacing } from "@/styles/tokens";
 import { StyleSheet } from "react-native";
-import { CHART_HEIGHT } from "./CashFlowChart";
+
+export const CHART_HEIGHT = 180;
 
 export const styles = StyleSheet.create({
   header: {

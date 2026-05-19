@@ -2,15 +2,14 @@ import { Colors } from "@/styles/tokens";
 import React, { useMemo } from "react";
 import { Dimensions, Text, View } from "react-native";
 import { LineChart } from "react-native-chart-kit";
-import { ITransaction } from "@/data/StatementDtos";
-import { styles } from "./CashFlowChart.styles";
+import { ITransaction } from "@ledger/api";
+import { styles, CHART_HEIGHT } from "./CashFlowChart.styles";
 
 interface CashFlowChartProps {
   transactions?: ITransaction[];
 }
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
-export const CHART_HEIGHT = 180;
 
 function CashFlowChart({ transactions }: CashFlowChartProps) {
   const chartData = useMemo(() => {

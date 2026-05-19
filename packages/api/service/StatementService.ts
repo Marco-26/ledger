@@ -1,7 +1,7 @@
 import { apiClient } from "./client";
-import type { IStatement } from "@/data/StatementDtos";
+import type { IStatement } from "../data/StatementDtos";
 import StatementDataAdapter from "./adapters/StatementDataAdapter";
-import { Constants } from "@/utils/constants";
+import { Constants } from "../utils/constants";
 
 export class StatementService {
   readonly baseURL = "/statement";

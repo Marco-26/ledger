@@ -6,7 +6,7 @@ import {
   ChartLegend,
   ChartLegendContent,
 } from "@/components/ui/chart";
-import type { IStatement } from "@/data/StatementDtos";
+import type { IStatement } from "@ledger/api";
 import { chartConfig } from "@/utils/chartUtils";
 import { useMemo } from "react";
 
@@ -21,7 +21,7 @@ export function CashFlowChart({ data }: CashFlowChartProps) {
       return [];
     }
 
-    return data.transactionListFiltered.map((t) => ({
+    return data.dailyTransactions.map((t) => ({
       ...t,
       date: t.date.format("DD-MM"),
     }));

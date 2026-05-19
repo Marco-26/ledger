@@ -1,21 +1,12 @@
-import type { IStatement } from "@/data/StatementDtos";
-import { statementService } from "@/service/StatementService";
-import { Constants } from "@/utils/constants";
+import type { IStatement } from "../data/StatementDtos";
+import { statementService } from "../service/StatementService";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
-import dayjs from "dayjs";
+import { Constants } from "../utils/constants";
 
 interface IUseStatementsProps {
   selectedMonth?: string;
 }
-
-const verifyStatementDate = (statementDate: string, selectedMonth: string) => {
-  if (statementDate !== selectedMonth) {
-    // toast.warning(
-    //   `Statement date (${dayjs(statementDate).format("MMMM YYYY")}) does not match the selected month (${dayjs(selectedMonth).format("MMMM YYYY")}).`,
-    // );
-  }
-};
 
 export function useStatements({ selectedMonth }: IUseStatementsProps) {
   const queryClient = useQueryClient();
@@ -26,11 +17,6 @@ export function useStatements({ selectedMonth }: IUseStatementsProps) {
     }
 
     const statement = await statementService.fetchStatement(month);
-
-    verifyStatementDate(
-      statement.dailyTransactions[0].date.format(Constants.UI.DATE_FORMAT),
-      month,
-    );
 
     return statement;
   };
@@ -44,7 +30,6 @@ export function useStatements({ selectedMonth }: IUseStatementsProps) {
         error.response?.status &&
         error.response.status < 500
       ) {
-        // toast.error("No statement available for this month");
         return false;
       }
       return failureCount < 3;
@@ -67,7 +52,7 @@ export function useStatements({ selectedMonth }: IUseStatementsProps) {
       });
     },
     onError: (error) => {
-      // toast.error(error.message);
+      console.error(error);
     },
   });
 
