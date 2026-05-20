@@ -18,40 +18,40 @@ export function TransactionHistory({ data }: TransactionHistoryProps) {
         </h2>
       </div>
 
-      <div className="p-5">
-        <Tabs defaultValue="expenses" className="w-full">
+      <Tabs defaultValue="expenses" className="w-full">
+        <div className="px-5 py-3 border-b border-border">
           <TabsList className="h-8 p-0.5 bg-muted/60 rounded-lg border border-border/60 w-auto inline-flex gap-0.5">
             <TabsTrigger
               value="income"
-              className="text-xs px-4 h-7 font-medium tracking-wide rounded-md data-[state=active]:bg-card data-[state=active]:text-[var(--income)] data-[state=active]:shadow-sm transition-all"
+              className="hover:cursor-pointer text-xs px-4 h-7 font-medium tracking-wide rounded-md data-[state=active]:bg-card data-[state=active]:text-[var(--income)] data-[state=active]:shadow-sm transition-all"
             >
               Income
             </TabsTrigger>
             <TabsTrigger
               value="expenses"
-              className="text-xs px-4 h-7 font-medium tracking-wide rounded-md data-[state=active]:bg-card data-[state=active]:text-[var(--expense)] data-[state=active]:shadow-sm transition-all"
+              className="hover:cursor-pointer text-xs px-4 h-7 font-medium tracking-wide rounded-md data-[state=active]:bg-card data-[state=active]:text-[var(--expense)] data-[state=active]:shadow-sm transition-all"
             >
               Expenses
             </TabsTrigger>
           </TabsList>
+        </div>
 
-          <TabsContent value="income" className="mt-4">
-            <TransactionTable
-              transactions={data?.creditList}
-              type={TransactionType.INCOME}
-              emptyMessage="No income transactions found."
-            />
-          </TabsContent>
+        <TabsContent value="income" className="mt-0">
+          <TransactionTable
+            transactions={data?.creditList}
+            type={TransactionType.INCOME}
+            emptyMessage="No income transactions found."
+          />
+        </TabsContent>
 
-          <TabsContent value="expenses" className="mt-4">
-            <TransactionTable
-              transactions={data?.debitList}
-              type={TransactionType.EXPENSE}
-              emptyMessage="No expense transactions found."
-            />
-          </TabsContent>
-        </Tabs>
-      </div>
+        <TabsContent value="expenses" className="mt-0">
+          <TransactionTable
+            transactions={data?.debitList}
+            type={TransactionType.EXPENSE}
+            emptyMessage="No expense transactions found."
+          />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

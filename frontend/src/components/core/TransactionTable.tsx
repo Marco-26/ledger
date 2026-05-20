@@ -1,13 +1,5 @@
 import { TransactionType, type ITransaction } from "@ledger/api";
 import { cn, formatCurrency } from "@/lib/utils";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 
 interface TransactionTableProps {
   transactions?: ITransaction[];
@@ -29,58 +21,43 @@ export function TransactionTable({
   const getAmount = (transaction: ITransaction) =>
     isIncome ? transaction.credit : transaction.debit;
 
+  if (!transactions || transactions.length === 0) {
+    return (
+      <div className="py-12 text-center text-sm text-muted-foreground">
+        {emptyMessage}
+      </div>
+    );
+  }
+
   return (
-    <div className="rounded-lg border border-border overflow-hidden max-h-96 overflow-y-auto [scrollbar-width:thin] [scrollbar-color:var(--border)_transparent]">
-      <Table>
-        <TableHeader className="sticky top-0 bg-muted/80 backdrop-blur-sm z-10">
-          <TableRow className="border-b border-border hover:bg-transparent">
-            <TableHead className="text-xs font-medium tracking-[0.12em] uppercase text-muted-foreground h-9 w-28">
-              Date
-            </TableHead>
-            <TableHead className="text-xs font-medium tracking-[0.12em] uppercase text-muted-foreground h-9">
-              Description
-            </TableHead>
-            <TableHead className="text-xs font-medium tracking-[0.12em] uppercase text-muted-foreground h-9 text-right w-32">
-              Amount
-            </TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {transactions && transactions.length > 0 ? (
-            transactions.map((transaction, index) => (
-              <TableRow
-                key={index}
-                className="border-b border-border/50 hover:bg-muted/40 transition-colors"
-              >
-                <TableCell className="font-numeric text-xs text-muted-foreground py-3 w-28">
-                  {transaction.date.format("DD-MM-YYYY")}
-                </TableCell>
-                <TableCell className="text-sm py-3">
-                  {transaction.description}
-                </TableCell>
-                <TableCell
-                  className={cn(
-                    "font-numeric text-right text-sm font-medium py-3 tabular-nums w-32",
-                    amountColorClass,
-                  )}
-                >
-                  {amountPrefix}
-                  {formatCurrency(getAmount(transaction) || 0)}
-                </TableCell>
-              </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell
-                colSpan={3}
-                className="text-center text-sm text-muted-foreground py-12"
-              >
-                {emptyMessage}
-              </TableCell>
-            </TableRow>
+    <div className="max-h-96 overflow-y-auto [scrollbar-width:thin] [scrollbar-color:var(--border)_transparent]">
+      {transactions.map((transaction, index) => (
+        <div
+          key={index}
+          className={cn(
+            "flex flex-col gap-1 px-5 py-3 hover:bg-muted/40 transition-colors",
+            index < transactions.length - 1 && "border-b border-border/50",
           )}
-        </TableBody>
-      </Table>
+        >
+          <span className="text-sm text-foreground truncate">
+            {transaction.description}
+          </span>
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-muted-foreground tabular-nums">
+              {transaction.date.format("DD-MM-YYYY")}
+            </span>
+            <span
+              className={cn(
+                "text-sm font-medium tabular-nums",
+                amountColorClass,
+              )}
+            >
+              {amountPrefix}
+              {formatCurrency(getAmount(transaction) || 0)}
+            </span>
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
