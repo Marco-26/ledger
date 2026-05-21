@@ -22,7 +22,8 @@ Ledger is a full-stack application with a Python backend and a React frontend.
 ```
 ledger/
 ├── backend/     # FastAPI + SQLite
-└── frontend/    # React + Vite + shadcn/ui
+├── frontend/    # React + Vite + shadcn/ui
+└── mobile/      # React Native + Expo
 ```
 
 ### Backend
@@ -37,14 +38,32 @@ Built with **FastAPI**. When a PDF is uploaded, the backend:
 
 ```
 backend/
-├── api/            # HTTP route handlers
-├── services/       # Business logic
-├── repository/     # Database access layer
-├── models/         # SQLAlchemy ORM models
-├── schema/         # Pydantic DTOs
-├── utils/          # PDF extraction and DataFrame processing
-├── alembic/        # Database migrations
-└── main.py         # FastAPI app entrypoint
+├── db/
+│   ├── database.py       # SQLAlchemy engine, session factory, get_db()
+│   └── models/
+│       └── statement.py  # ORM models (Statement, Transaction)
+├── statements/
+│   ├── controller.py     # Route handlers (POST /api/statement, GET /api/statement)
+│   ├── service.py        # Orchestration: PDF parsing, validation, persistence
+│   └── repository.py     # All database queries
+├── domain/
+│   ├── models.py         # Domain dataclasses (DailyTransaction)
+│   └── transaction_builder.py  # Assembles StatementDTO from query results
+├── mappers/
+│   └── transaction_mapper.py   # ORM → DTO and DataFrame → ORM conversions
+├── schemas/
+│   └── statement_dto.py  # Pydantic response DTOs
+├── exceptions/
+│   ├── domain.py         # Domain exception classes
+│   └── handlers.py       # FastAPI exception handlers
+├── utils/
+│   ├── date_utils.py     # Date helpers (end of month, previous month)
+│   ├── revenue_utils.py  # Financial calculations (totals, growth rate)
+│   ├── statement_dataframe.py  # DataFrame building and normalisation
+│   └── statement_pdf.py  # PDF table extraction via Camelot
+├── alembic/              # Database migrations
+├── constants.py          # App-wide constants
+└── main.py               # FastAPI app entrypoint, CORS, router registration
 ```
 
 ### Frontend
@@ -65,6 +84,32 @@ frontend/src/
 │   └── client.ts                   # Axios instance
 └── lib/
     └── utils.ts        # cn() helper and formatCurrency()
+```
+
+### Mobile
+
+Built with **React Native** and **Expo**. Shares the same backend API and mirrors the web dashboard feature set in a native mobile interface. Uses **TanStack Query** for data fetching and **dayjs** for date handling.
+
+```
+mobile/
+├── app/
+│   ├── _layout.tsx     # Root layout: fonts, splash screen, QueryClientProvider
+│   └── index.tsx       # Main screen: data fetching and component composition
+├── components/
+│   ├── header/         # App title and month navigator
+│   ├── month-navigator/# Prev/next month controls
+│   ├── summary-card/   # Money In, Money Out, Net Balance cards with growth rate
+│   ├── cash-flow-chart/# Line chart of daily credit vs debit (react-native-chart-kit)
+│   ├── top-transactions-card/  # Top 3 income and expense transactions
+│   ├── transaction-history/    # Tabbed income/expense transaction list
+│   └── transaction-list/       # Scrollable list of individual transactions
+├── styles/
+│   ├── tokens.ts       # Design tokens: colors, typography, spacing, radius
+│   └── global.ts       # Shared Typography styles and icon color map
+└── utils/
+    ├── constants.ts    # Month names, date formats, API/TanStack Query keys
+    ├── sharedTypes.ts  # TransactionType enum (income, expense, neutral)
+    └── format.ts       # formatCurrency() using Intl (EUR, pt-PT locale)
 ```
 
 ### Data flow
@@ -92,6 +137,7 @@ React state → Dashboard renders charts and tables
 | Frontend  | React 19, TypeScript, Vite                    |
 | Styling   | Tailwind CSS v4, shadcn/ui, Radix UI          |
 | Charts    | Recharts                                      |
+| Mobile    | React Native, Expo, TanStack Query            |
 | HTTP      | Axios                                         |
 
 ## Getting Started
@@ -115,4 +161,13 @@ cd frontend
 npm install
 npm start
 # Runs on http://localhost:5173
+```
+
+### Mobile
+
+```bash
+cd mobile
+npm install
+npx expo start
+# Scan the QR code with Expo Go, or press i for iOS simulator / a for Android emulator
 ```
