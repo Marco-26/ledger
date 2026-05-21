@@ -1,8 +1,17 @@
 import pandas as pd
+from typing import Callable
 from db.models.statement import Transaction
 from utils.statement_dataframe import DFColumns
 from schemas.statement_dto import TransactionDTO, DailyTransactionDTO
 from domain.models import DailyTransaction
+
+
+def map_transactions(
+    transactions: list[Transaction], predicate: Callable[[Transaction], bool]
+) -> list[TransactionDTO]:
+    return [
+        TransactionMapper.from_statement_orm(t) for t in transactions if predicate(t)
+    ]
 
 
 class TransactionMapper:
@@ -29,7 +38,7 @@ class TransactionMapper:
         )
 
     @staticmethod
-    def data_to_daily_transactions(
+    def from_daily_transaction(
         daily_transaction: DailyTransaction,
     ) -> DailyTransactionDTO:
         return DailyTransactionDTO(

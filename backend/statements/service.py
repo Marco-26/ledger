@@ -9,7 +9,7 @@ from utils.statement_pdf import extract_table_from_pdf
 from datetime import date
 from mappers.transaction_mapper import TransactionMapper
 from utils import date_utils
-from domain.transaction_builder import TransactionBuilder
+from domain.transaction_builder import build_statement
 from exceptions.domain import StatementWrongDateSelected, StatementNotFoundException
 
 
@@ -27,6 +27,7 @@ class StatementService:
         transactions = TransactionMapper.from_df(df)
         statement_date = transactions[0].transaction_date
 
+        # if the user wants to upload a statement from february into january, for example.
         if (statement_date.year, statement_date.month) != (
             user_selected_date.year,
             user_selected_date.month,
@@ -48,28 +49,23 @@ class StatementService:
 
         transactions = self.repository.get_transactions(date, end_date)
 
-        if not transactions or len(transactions) == 0:
+        if not transactions:
             raise StatementNotFoundException()
-
-        top_credit_transactions = self.repository.get_top_credit_transactions(
-            date, end_date
-        )
-        top_debit_transactions = self.repository.get_top_debit_transactions(
-            date, end_date
-        )
-        daily_transactions = self.repository.get_daily_transactions(date, end_date)
 
         previous_month = date_utils.get_previous_month_based_on_date(date)
         previous_month_end = date_utils.get_end_of_month(previous_month)
-        previous_month_transactions = self.repository.get_transactions(
-            previous_month, previous_month_end
-        )
 
-        return TransactionBuilder.build_statement(
+        return build_statement(
             transactions=transactions,
-            top_credit_transactions=top_credit_transactions,
-            top_debit_transactions=top_debit_transactions,
-            daily_transactions=daily_transactions,
-            date=date,
-            previous_month_transactions=previous_month_transactions,
+            top_credit_transactions=self.repository.get_top_credit_transactions(
+                date, end_date
+            ),
+            top_debit_transactions=self.repository.get_top_debit_transactions(
+                date, end_date
+            ),
+            daily_transactions=self.repository.get_daily_transactions(date, end_date),
+            statement_date=date,
+            previous_month_transactions=self.repository.get_transactions(
+                previous_month, previous_month_end
+            ),
         )
