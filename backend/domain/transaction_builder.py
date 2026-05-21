@@ -2,8 +2,9 @@ from db.models.statement import Transaction
 from schemas.statement_dto import StatementDTO
 from mappers.transaction_mapper import TransactionMapper
 from datetime import date
-from utils import utils
+from utils import revenue_utils
 from domain.models import DailyTransaction
+
 
 class TransactionBuilder:
     @staticmethod
@@ -31,17 +32,23 @@ class TransactionBuilder:
         date: date,
         previous_month_transactions: list[Transaction],
     ) -> StatementDTO:
-        credit_total, debit_total, net_balance = TransactionBuilder._calculate_totals(transactions)
-        
-        (credit_total_previous_month, debit_total_previous_month, net_balance_total_previous_month) = TransactionBuilder._calculate_totals(previous_month_transactions)
+        credit_total, debit_total, net_balance = TransactionBuilder._calculate_totals(
+            transactions
+        )
 
-        credit_growth_rate = utils.calculate_revenue_growth_rate(
+        (
+            credit_total_previous_month,
+            debit_total_previous_month,
+            net_balance_total_previous_month,
+        ) = TransactionBuilder._calculate_totals(previous_month_transactions)
+
+        credit_growth_rate = revenue_utils.calculate_revenue_growth_rate(
             credit_total, credit_total_previous_month
         )
-        debit_growth_rate = utils.calculate_revenue_growth_rate(
+        debit_growth_rate = revenue_utils.calculate_revenue_growth_rate(
             debit_total, debit_total_previous_month
         )
-        net_balance_growth_rate = utils.calculate_revenue_growth_rate(
+        net_balance_growth_rate = revenue_utils.calculate_revenue_growth_rate(
             net_balance, net_balance_total_previous_month
         )
 

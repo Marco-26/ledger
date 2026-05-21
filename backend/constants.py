@@ -1,3 +1,3 @@
-DATE_PATTERN_REGEX = r'\d{2}-\d{2}-\d{2}'
+DATE_PATTERN_REGEX = r"\d{2}-\d{2}-\d{2}"
 TOP_N_TRANSACTIONS = 3
 DATABASE_URL = "sqlite:///./dev.db"

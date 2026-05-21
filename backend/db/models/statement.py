@@ -24,7 +24,7 @@ class Transaction(Base):
     __tablename__ = "transactions"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    statement_id = mapped_column(
+    statement_id: Mapped[int] = mapped_column(
         ForeignKey("statements.id", ondelete="CASCADE"), nullable=False
     )
     statement = relationship("Statement", back_populates="transactions")
