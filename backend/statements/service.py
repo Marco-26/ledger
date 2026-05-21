@@ -1,4 +1,4 @@
-from repository.statement_repository import StatementRepository
+from statements.repository import StatementRepository
 from schemas.statement_dto import StatementDTO
 from sqlalchemy.orm import Session
 from utils.statement_dataframe import (
@@ -41,7 +41,7 @@ class StatementService:
     transactions = self.repository.get_transactions(date, end_date)
 
     if not transactions or len(transactions) == 0:
-    	raise StatementNotFoundException()
+      raise StatementNotFoundException()
 
     top_credit_transactions = self.repository.get_top_credit_transactions(date, end_date)
     top_debit_transactions = self.repository.get_top_debit_transactions(date, end_date)

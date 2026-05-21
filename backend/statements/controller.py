@@ -1,6 +1,6 @@
 from typing_extensions import Annotated
 from fastapi import APIRouter, File, Depends, Query
-from services.statement_service import StatementService
+from statements.service import StatementService
 from db.database import SessionLocal
 from sqlalchemy.orm import Session
 from datetime import date
