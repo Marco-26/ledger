@@ -24,6 +24,7 @@ class TransactionMapper:
                 transaction_debit=row[DFColumns.DEBIT.value],
                 transaction_credit=row[DFColumns.CREDIT.value],
                 transaction_balance=row[DFColumns.BALANCE.value],
+                transaction_category="test",
             )
             for row in df.to_dict(orient="records")
         ]
@@ -35,6 +36,7 @@ class TransactionMapper:
             credit=transaction.transaction_credit,
             description=transaction.transaction_description,
             debit=transaction.transaction_debit,
+            category=transaction.transaction_category,
         )
 
     @staticmethod

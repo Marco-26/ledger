@@ -8,6 +8,7 @@ class TransactionDTO(BaseModel):
     credit: float
     description: str | None = None
     debit: float
+    category: str
 
 
 class DailyTransactionDTO(BaseModel):
