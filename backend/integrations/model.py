@@ -6,11 +6,10 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
 from sklearn.svm import LinearSVC
 
-df = pd.read_csv(
-    "/Users/mcosta/dev/ledger/backend/integrations/realistic_transactions_dataset.csv"
-)
+df = pd.read_parquet("/Users/mcosta/dev/ledger/backend/integrations/data.parquet")
 
-X = df["description"]
+
+X = df["transaction_description"]
 y = df["category"]
 
 X_train, X_test, y_train, y_test = train_test_split(
@@ -30,8 +29,6 @@ model = Pipeline(
         ("clf", LinearSVC(max_iter=5000, class_weight="balanced")),
     ]
 )
-
-print(df[df["description"].str.contains("ORDENADOS", case=False, na=False)])
 
 model.fit(X_train, y_train)
 
