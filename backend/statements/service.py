@@ -11,6 +11,7 @@ from mappers.transaction_mapper import TransactionMapper
 from utils import date_utils
 from domain.transaction_builder import build_statement
 from exceptions.domain import StatementWrongDateSelected, StatementNotFoundException
+from integrations.openai_api import classify_transactions
 
 
 class StatementService:
@@ -63,9 +64,14 @@ class StatementService:
             top_debit_transactions=self.repository.get_top_debit_transactions(
                 date, end_date
             ),
-            daily_transactions=self.repository.get_daily_transactions(date, end_date),
             statement_date=date,
             previous_month_transactions=self.repository.get_transactions(
                 previous_month, previous_month_end
             ),
         )
+
+    def categorize_transactions(self):
+        transactions = self.get_monthly_statement(date(2026, 1, 1))
+        print(transactions.all_transactions)
+        categorized_transactions = classify_transactions(transactions.all_transactions)
+        return categorized_transactions
