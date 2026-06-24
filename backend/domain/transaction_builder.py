@@ -1,7 +1,6 @@
 from datetime import date
 from db.models.statement import Transaction
 from schemas.statement_dto import StatementDTO
-from mappers.transaction_mapper import map_transactions_with_callback, map_transactions
 from utils import revenue_utils
 
 
@@ -25,19 +24,11 @@ def build_statement(
         debit_total=debit_total,
         net_balance=net_balance,
         number_of_transactions=len(transactions),
-        credit_list=map_transactions_with_callback(
-            transactions, predicate=lambda t: (t.transaction_credit or 0) > 0
-        ),
-        debit_list=map_transactions_with_callback(
-            transactions, predicate=lambda t: (t.transaction_debit or 0) > 0
-        ),
-        top_incomes=map_transactions_with_callback(
-            top_credit_transactions, predicate=lambda t: (t.transaction_credit or 0) > 0
-        ),
-        top_expenses=map_transactions_with_callback(
-            top_debit_transactions, predicate=lambda t: (t.transaction_debit or 0) > 0
-        ),
-        all_transactions=map_transactions(transactions),
+        credit_list=[t for t in transactions if (t.credit or 0) > 0],
+        debit_list=[t for t in transactions if ((t.credit or 0) > 0)],
+        top_incomes=top_credit_transactions,
+        top_expenses=top_debit_transactions,
+        all_transactions=transactions,
         credit_total_growth_rate=revenue_utils.calculate_revenue_growth_rate(
             credit_total, credit_prev
         ),

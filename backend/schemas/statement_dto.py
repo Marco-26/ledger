@@ -1,9 +1,11 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import Optional
 from datetime import date as Date
 
 
 class TransactionDTO(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     date: Date
     credit: float
     description: str | None = None

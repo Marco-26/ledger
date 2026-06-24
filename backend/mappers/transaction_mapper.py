@@ -5,18 +5,6 @@ from utils.statement_dataframe import DFColumns
 from schemas.statement_dto import TransactionDTO
 
 
-def map_transactions_with_callback(
-    transactions: list[Transaction], predicate: Callable[[Transaction], bool]
-) -> list[TransactionDTO]:
-    return [
-        TransactionMapper.from_statement_orm(t) for t in transactions if predicate(t)
-    ]
-
-
-def map_transactions(transactions: list[Transaction]) -> list[TransactionDTO]:
-    return [TransactionMapper.from_statement_orm(t) for t in transactions]
-
-
 class TransactionMapper:
     @staticmethod
     def from_df(df: pd.DataFrame) -> list[Transaction]:
@@ -31,13 +19,3 @@ class TransactionMapper:
             )
             for row in df.to_dict(orient="records")
         ]
-
-    @staticmethod
-    def from_statement_orm(transaction: Transaction) -> TransactionDTO:
-        return TransactionDTO(
-            date=transaction.transaction_date,
-            credit=transaction.transaction_credit,
-            description=transaction.transaction_description,
-            debit=transaction.transaction_debit,
-            category=transaction.transaction_category,
-        )

@@ -28,20 +28,20 @@ class Transaction(Base):
         ForeignKey("statements.id", ondelete="CASCADE"), nullable=False
     )
     statement = relationship("Statement", back_populates="transactions")
-    transaction_date: Mapped[date] = mapped_column(Date)
-    transaction_description: Mapped[str] = mapped_column(String)
-    transaction_debit: Mapped[Optional[float]] = mapped_column(Float)
-    transaction_credit: Mapped[Optional[float]] = mapped_column(Float)
-    transaction_balance: Mapped[float] = mapped_column(Float)
-    transaction_category: Mapped[str] = mapped_column(String)
+    date: Mapped[date] = mapped_column(Date)
+    description: Mapped[str] = mapped_column(String)
+    debit: Mapped[Optional[float]] = mapped_column(Float)
+    credit: Mapped[Optional[float]] = mapped_column(Float)
+    balance: Mapped[float] = mapped_column(Float)
+    category: Mapped[str] = mapped_column(String)
 
     def to_dict(self):
         return {
             "id": self.id,
-            "date": self.transaction_date.isoformat(),
-            "description": self.transaction_description,
-            "debit": self.transaction_debit,
-            "credit": self.transaction_credit,
-            "balance": self.transaction_balance,
-            "category": self.transaction_category,
+            "date": self.date.isoformat(),
+            "description": self.description,
+            "debit": self.debit,
+            "credit": self.credit,
+            "balance": self.balance,
+            "category": self.category,
         }

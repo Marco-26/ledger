@@ -34,19 +34,17 @@ class StatementRepository:
         self.db.commit()
 
     def get_transactions(self, start_date: date, end_date: date):
-        stmt = select(Transaction).where(
-            Transaction.transaction_date.between(start_date, end_date)
-        )
+        stmt = select(Transaction).where(Transaction.date.between(start_date, end_date))
         return self.db.execute(stmt).scalars().all()
 
     def get_top_credit_transactions(self, start_date: date, end_date: date):
         stmt = (
             select(Transaction)
             .where(
-                Transaction.transaction_date.between(start_date, end_date),
-                Transaction.transaction_credit > 0,
+                Transaction.date.between(start_date, end_date),
+                Transaction.credit > 0,
             )
-            .order_by(Transaction.transaction_credit.desc())
+            .order_by(Transaction.credit.desc())
             .limit(TOP_N_TRANSACTIONS)
         )
         return self.db.execute(stmt).scalars().all()
@@ -55,10 +53,10 @@ class StatementRepository:
         stmt = (
             select(Transaction)
             .where(
-                Transaction.transaction_date.between(start_date, end_date),
-                Transaction.transaction_debit > 0,
+                Transaction.date.between(start_date, end_date),
+                Transaction.debit > 0,
             )
-            .order_by(Transaction.transaction_debit.desc())
+            .order_by(Transaction.debit.desc())
             .limit(TOP_N_TRANSACTIONS)
         )
         return self.db.execute(stmt).scalars().all()
