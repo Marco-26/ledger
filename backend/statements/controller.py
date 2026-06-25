@@ -29,6 +29,6 @@ def get_statement(
     return service.get_monthly_statement(date)
 
 
-@router.post("/api/ai/statement", response_model=TransactionDTO)
+@router.post("/api/ai/statement")
 def classify_test(service: StatementService = Depends(get_statement_service)):
     return service.categorize_transactions()

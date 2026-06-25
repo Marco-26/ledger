@@ -72,6 +72,5 @@ class StatementService:
 
     def categorize_transactions(self):
         transactions = self.get_monthly_statement(date(2026, 1, 1))
-        print(transactions.all_transactions)
         categorized_transactions = classify_transactions(transactions.all_transactions)
         return categorized_transactions
