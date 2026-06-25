@@ -34,14 +34,3 @@ class Transaction(Base):
     credit: Mapped[Optional[float]] = mapped_column(Float)
     balance: Mapped[float] = mapped_column(Float)
     category: Mapped[str] = mapped_column(String)
-
-    def to_dict(self):
-        return {
-            "id": self.id,
-            "date": self.date.isoformat(),
-            "description": self.description,
-            "debit": self.debit,
-            "credit": self.credit,
-            "balance": self.balance,
-            "category": self.category,
-        }

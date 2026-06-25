@@ -25,7 +25,7 @@ def build_statement(
         net_balance=net_balance,
         number_of_transactions=len(transactions),
         credit_list=[t for t in transactions if (t.credit or 0) > 0],
-        debit_list=[t for t in transactions if ((t.credit or 0) > 0)],
+        debit_list=[t for t in transactions if ((t.debit or 0) > 0)],
         top_incomes=top_credit_transactions,
         top_expenses=top_debit_transactions,
         all_transactions=transactions,

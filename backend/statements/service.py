@@ -1,11 +1,11 @@
 from statements.repository import StatementRepository
 from schemas.statement_dto import StatementDTO
 from sqlalchemy.orm import Session
-from utils.statement_dataframe import (
+from utils.statement_dataframe_utils import (
     build_statement_dataframe,
     normalize_statement_dataframe,
 )
-from utils.statement_pdf import extract_table_from_pdf
+from utils.file_utils import extract_table_from_pdf_file
 from datetime import date
 from mappers.transaction_mapper import TransactionMapper
 from utils import date_utils
@@ -22,11 +22,11 @@ class StatementService:
     def generate_monthly_statement(
         self, file: bytes, user_selected_date: date
     ) -> StatementDTO:
-        table = extract_table_from_pdf(file)
+        table = extract_table_from_pdf_file(file)
         df = normalize_statement_dataframe(build_statement_dataframe(table))
 
         transactions = TransactionMapper.from_df(df)
-        statement_date = transactions[0].transaction_date
+        statement_date = transactions[0].date
 
         # if the user wants to upload a statement from february into january, for example.
         if (statement_date.year, statement_date.month) != (
