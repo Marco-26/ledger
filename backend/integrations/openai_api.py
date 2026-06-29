@@ -25,4 +25,5 @@ def classify_transactions(data: list[TransactionDTO]):
         text_format=ClassifiedTransactions,
     )
 
-    return response.output_parsed.transactions
+    result = response.output_parsed
+    return result.transactions if result else []

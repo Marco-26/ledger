@@ -59,17 +59,17 @@ class StatementService:
         previous_month_end = date_utils.get_end_of_month(previous_month)
 
         return build_statement(
-            transactions=transactions,
-            top_credit_transactions=self.repository.get_top_credit_transactions(
+            transactions=list(transactions),
+            top_credit_transactions=list(self.repository.get_top_credit_transactions(
                 date, end_date
-            ),
-            top_debit_transactions=self.repository.get_top_debit_transactions(
+            )),
+            top_debit_transactions=list(self.repository.get_top_debit_transactions(
                 date, end_date
-            ),
+            )),
             statement_date=date,
-            previous_month_transactions=self.repository.get_transactions(
+            previous_month_transactions=list(self.repository.get_transactions(
                 previous_month, previous_month_end
-            ),
+            )),
         )
 
     def categorize_transactions(self, transactions: list[TransactionDTO]) -> list[TransactionDTO]:
