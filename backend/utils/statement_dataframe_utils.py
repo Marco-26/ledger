@@ -8,7 +8,6 @@ class DFColumns(Enum):
     DEBIT = "Debit"
     CREDIT = "Credit"
     BALANCE = "Balance"
-    CATEGORY = "Category"
 
 
 STATEMENT_COLUMNS = [col.value for col in DFColumns]

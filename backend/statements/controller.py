@@ -4,7 +4,7 @@ from statements.service import StatementService
 from sqlalchemy.orm import Session
 from datetime import date
 from db.database import get_db
-from schemas.statement_dto import StatementDTO, TransactionDTO
+from schemas.statement_dto import StatementDTO
 
 router = APIRouter()
 
@@ -27,8 +27,3 @@ def get_statement(
     date: date = Query(...), service: StatementService = Depends(get_statement_service)
 ):
     return service.get_monthly_statement(date)
-
-
-@router.post("/api/ai/statement")
-def classify_test(service: StatementService = Depends(get_statement_service)):
-    return service.categorize_transactions()

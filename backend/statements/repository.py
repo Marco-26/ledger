@@ -3,6 +3,7 @@ from db.models.statement import Statement, Transaction
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 from constants import TOP_N_TRANSACTIONS
+from schemas.statement_dto import TransactionDTO
 
 
 class StatementRepository:
@@ -10,11 +11,20 @@ class StatementRepository:
         self.db = db
 
     def create_statement(
-        self, transactions: list[Transaction], date: date
+        self, transactions: list[TransactionDTO], date: date
     ) -> Statement:
         try:
             new_record = Statement(date_uploaded=date)
-            new_record.transactions = transactions
+            new_record.transactions = [
+                Transaction(
+                    date=t.date,
+                    description=t.description,
+                    debit=t.debit,
+                    credit=t.credit,
+                    category=t.category,
+                )
+                for t in transactions
+            ]
 
             self.db.add(new_record)
             self.db.commit()

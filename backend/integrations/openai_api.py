@@ -2,7 +2,6 @@ from openai import OpenAI
 from constants import MODEL_SYSTEM_PROMPT
 from schemas.statement_dto import TransactionDTO
 from pydantic import BaseModel
-import json
 
 client = OpenAI()
 
@@ -26,4 +25,4 @@ def classify_transactions(data: list[TransactionDTO]):
         text_format=ClassifiedTransactions,
     )
 
-    return response.output_parsed
+    return response.output_parsed.transactions

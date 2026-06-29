@@ -10,7 +10,7 @@ class TransactionDTO(BaseModel):
     credit: float
     description: str | None = None
     debit: float
-    category: str
+    category: str | None = None
 
 
 class StatementDTO(BaseModel):

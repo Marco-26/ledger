@@ -1,5 +1,5 @@
 from statements.repository import StatementRepository
-from schemas.statement_dto import StatementDTO
+from schemas.statement_dto import StatementDTO, TransactionDTO
 from sqlalchemy.orm import Session
 from utils.statement_dataframe_utils import (
     build_statement_dataframe,
@@ -41,7 +41,9 @@ class StatementService:
         if record:
             self.repository.delete_statement(record)
 
-        self.repository.create_statement(transactions, user_selected_date)
+        categorized_transactions = self.categorize_transactions(transactions)
+
+        self.repository.create_statement(categorized_transactions, user_selected_date)
 
         return self.get_monthly_statement(user_selected_date)
 
@@ -70,7 +72,5 @@ class StatementService:
             ),
         )
 
-    def categorize_transactions(self):
-        transactions = self.get_monthly_statement(date(2026, 1, 1))
-        categorized_transactions = classify_transactions(transactions.all_transactions)
-        return categorized_transactions
+    def categorize_transactions(self, transactions: list[TransactionDTO]) -> list[TransactionDTO]:
+        return classify_transactions(transactions)
