@@ -1,7 +1,7 @@
 from db.database import Base
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import Date, String, Float, ForeignKey
-from datetime import date
+from datetime import date as dt_date
 from typing import Optional
 
 
@@ -9,8 +9,8 @@ class Statement(Base):
     __tablename__ = "statements"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    date_uploaded: Mapped[date] = mapped_column(
-        Date, default=lambda: date.today().replace(day=1)
+    date_uploaded: Mapped[dt_date] = mapped_column(
+        Date, default=lambda: dt_date.today().replace(day=1)
     )
     transactions = relationship(
         "Transaction",
@@ -27,9 +27,10 @@ class Transaction(Base):
     statement_id: Mapped[int] = mapped_column(
         ForeignKey("statements.id", ondelete="CASCADE"), nullable=False
     )
+
     statement = relationship("Statement", back_populates="transactions")
-    transaction_date: Mapped[date] = mapped_column(Date)
-    transaction_description: Mapped[str] = mapped_column(String)
-    transaction_debit: Mapped[Optional[float]] = mapped_column(Float)
-    transaction_credit: Mapped[Optional[float]] = mapped_column(Float)
-    transaction_balance: Mapped[float] = mapped_column(Float)
+    date: Mapped[dt_date] = mapped_column(Date)
+    description: Mapped[str] = mapped_column(String)
+    debit: Mapped[Optional[float]] = mapped_column(Float)
+    credit: Mapped[Optional[float]] = mapped_column(Float)
+    category: Mapped[str] = mapped_column(String)

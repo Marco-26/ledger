@@ -4,7 +4,7 @@ from io import BytesIO
 from constants import DATE_PATTERN_REGEX
 
 
-def extract_table_from_pdf(file: bytes) -> list:
+def extract_table_from_pdf_file(file: bytes) -> list:
     pdf_stream = BytesIO(file)
     tables = camelot.read_pdf(
         pdf_stream, pages="all", flavor="stream", suppress_stdout=True

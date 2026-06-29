@@ -1,19 +1,16 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import Optional
 from datetime import date as Date
 
 
 class TransactionDTO(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     date: Date
     credit: float
     description: str | None = None
     debit: float
-
-
-class DailyTransactionDTO(BaseModel):
-    date: Date
-    credit: float
-    debit: float
+    category: str | None = None
 
 
 class StatementDTO(BaseModel):
@@ -24,7 +21,7 @@ class StatementDTO(BaseModel):
     number_of_transactions: int
     top_expenses: list[TransactionDTO]
     top_incomes: list[TransactionDTO]
-    daily_transactions: list[DailyTransactionDTO]
+    all_transactions: list[TransactionDTO]
     debit_list: list[TransactionDTO]
     credit_list: list[TransactionDTO]
 

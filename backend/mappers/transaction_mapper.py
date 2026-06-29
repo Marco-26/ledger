@@ -1,48 +1,17 @@
+from schemas.statement_dto import TransactionDTO
 import pandas as pd
-from typing import Callable
-from db.models.statement import Transaction
-from utils.statement_dataframe import DFColumns
-from schemas.statement_dto import TransactionDTO, DailyTransactionDTO
-from domain.models import DailyTransaction
-
-
-def map_transactions(
-    transactions: list[Transaction], predicate: Callable[[Transaction], bool]
-) -> list[TransactionDTO]:
-    return [
-        TransactionMapper.from_statement_orm(t) for t in transactions if predicate(t)
-    ]
+from utils.statement_dataframe_utils import DFColumns
 
 
 class TransactionMapper:
     @staticmethod
-    def from_df(df: pd.DataFrame) -> list[Transaction]:
+    def from_df(df: pd.DataFrame) -> list[TransactionDTO]:
         return [
-            Transaction(
-                transaction_date=row[DFColumns.DATE.value],
-                transaction_description=row[DFColumns.DESCRIPTION.value],
-                transaction_debit=row[DFColumns.DEBIT.value],
-                transaction_credit=row[DFColumns.CREDIT.value],
-                transaction_balance=row[DFColumns.BALANCE.value],
+            TransactionDTO(
+                date=row[DFColumns.DATE.value],
+                description=row[DFColumns.DESCRIPTION.value],
+                debit=row[DFColumns.DEBIT.value],
+                credit=row[DFColumns.CREDIT.value],
             )
             for row in df.to_dict(orient="records")
         ]
-
-    @staticmethod
-    def from_statement_orm(transaction: Transaction) -> TransactionDTO:
-        return TransactionDTO(
-            date=transaction.transaction_date,
-            credit=transaction.transaction_credit,
-            description=transaction.transaction_description,
-            debit=transaction.transaction_debit,
-        )
-
-    @staticmethod
-    def from_daily_transaction(
-        daily_transaction: DailyTransaction,
-    ) -> DailyTransactionDTO:
-        return DailyTransactionDTO(
-            date=daily_transaction.date,
-            credit=daily_transaction.credit,
-            debit=daily_transaction.debit,
-        )

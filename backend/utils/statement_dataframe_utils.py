@@ -11,6 +11,7 @@ class DFColumns(Enum):
 
 
 STATEMENT_COLUMNS = [col.value for col in DFColumns]
+
 NUMERIC_COLUMNS = [
     DFColumns.DEBIT.value,
     DFColumns.CREDIT.value,

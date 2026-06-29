@@ -1,9 +1,9 @@
 from datetime import date
 from db.models.statement import Statement, Transaction
 from sqlalchemy.orm import Session
-from sqlalchemy import select, func
+from sqlalchemy import select
 from constants import TOP_N_TRANSACTIONS
-from domain.models import DailyTransaction
+from schemas.statement_dto import TransactionDTO
 
 
 class StatementRepository:
@@ -11,11 +11,20 @@ class StatementRepository:
         self.db = db
 
     def create_statement(
-        self, transactions: list[Transaction], date: date
+        self, transactions: list[TransactionDTO], date: date
     ) -> Statement:
         try:
             new_record = Statement(date_uploaded=date)
-            new_record.transactions = transactions
+            new_record.transactions = [
+                Transaction(
+                    date=t.date,
+                    description=t.description,
+                    debit=t.debit,
+                    credit=t.credit,
+                    category=t.category,
+                )
+                for t in transactions
+            ]
 
             self.db.add(new_record)
             self.db.commit()
@@ -35,19 +44,17 @@ class StatementRepository:
         self.db.commit()
 
     def get_transactions(self, start_date: date, end_date: date):
-        stmt = select(Transaction).where(
-            Transaction.transaction_date.between(start_date, end_date)
-        )
+        stmt = select(Transaction).where(Transaction.date.between(start_date, end_date))
         return self.db.execute(stmt).scalars().all()
 
     def get_top_credit_transactions(self, start_date: date, end_date: date):
         stmt = (
             select(Transaction)
             .where(
-                Transaction.transaction_date.between(start_date, end_date),
-                Transaction.transaction_credit > 0,
+                Transaction.date.between(start_date, end_date),
+                Transaction.credit > 0,
             )
-            .order_by(Transaction.transaction_credit.desc())
+            .order_by(Transaction.credit.desc())
             .limit(TOP_N_TRANSACTIONS)
         )
         return self.db.execute(stmt).scalars().all()
@@ -56,25 +63,10 @@ class StatementRepository:
         stmt = (
             select(Transaction)
             .where(
-                Transaction.transaction_date.between(start_date, end_date),
-                Transaction.transaction_debit > 0,
+                Transaction.date.between(start_date, end_date),
+                Transaction.debit > 0,
             )
-            .order_by(Transaction.transaction_debit.desc())
+            .order_by(Transaction.debit.desc())
             .limit(TOP_N_TRANSACTIONS)
         )
         return self.db.execute(stmt).scalars().all()
-
-    def get_daily_transactions(self, start_date: date, end_date: date):
-        stmt = (
-            select(
-                Transaction.transaction_date.label("date"),
-                func.sum(Transaction.transaction_credit).label("credit"),
-                func.sum(Transaction.transaction_debit).label("debit"),
-            )
-            .where(Transaction.transaction_date.between(start_date, end_date))
-            .group_by(Transaction.transaction_date)
-            .order_by(Transaction.transaction_date)
-        )
-        response = self.db.execute(stmt).all()
-
-        return [DailyTransaction(row.date, row.credit, row.debit) for row in response]

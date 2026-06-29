@@ -2,8 +2,8 @@ from db.models.statement import Transaction
 
 
 def calculate_totals(transactions: list[Transaction]) -> tuple[float, float, float]:
-    credit_total = sum(t.transaction_credit or 0.0 for t in transactions)
-    debit_total = sum(t.transaction_debit or 0.0 for t in transactions)
+    credit_total = sum(t.credit or 0.0 for t in transactions)
+    debit_total = sum(t.credit or 0.0 for t in transactions)
     return credit_total, debit_total, credit_total - debit_total
 
 

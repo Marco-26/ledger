@@ -1,16 +1,17 @@
 from statements.repository import StatementRepository
-from schemas.statement_dto import StatementDTO
+from schemas.statement_dto import StatementDTO, TransactionDTO
 from sqlalchemy.orm import Session
-from utils.statement_dataframe import (
+from utils.statement_dataframe_utils import (
     build_statement_dataframe,
     normalize_statement_dataframe,
 )
-from utils.statement_pdf import extract_table_from_pdf
+from utils.file_utils import extract_table_from_pdf_file
 from datetime import date
 from mappers.transaction_mapper import TransactionMapper
 from utils import date_utils
 from domain.transaction_builder import build_statement
 from exceptions.domain import StatementWrongDateSelected, StatementNotFoundException
+from integrations.openai_api import classify_transactions
 
 
 class StatementService:
@@ -21,11 +22,11 @@ class StatementService:
     def generate_monthly_statement(
         self, file: bytes, user_selected_date: date
     ) -> StatementDTO:
-        table = extract_table_from_pdf(file)
+        table = extract_table_from_pdf_file(file)
         df = normalize_statement_dataframe(build_statement_dataframe(table))
 
         transactions = TransactionMapper.from_df(df)
-        statement_date = transactions[0].transaction_date
+        statement_date = transactions[0].date
 
         # if the user wants to upload a statement from february into january, for example.
         if (statement_date.year, statement_date.month) != (
@@ -40,7 +41,9 @@ class StatementService:
         if record:
             self.repository.delete_statement(record)
 
-        self.repository.create_statement(transactions, user_selected_date)
+        categorized_transactions = self.categorize_transactions(transactions)
+
+        self.repository.create_statement(categorized_transactions, user_selected_date)
 
         return self.get_monthly_statement(user_selected_date)
 
@@ -56,16 +59,18 @@ class StatementService:
         previous_month_end = date_utils.get_end_of_month(previous_month)
 
         return build_statement(
-            transactions=transactions,
-            top_credit_transactions=self.repository.get_top_credit_transactions(
+            transactions=list(transactions),
+            top_credit_transactions=list(self.repository.get_top_credit_transactions(
                 date, end_date
-            ),
-            top_debit_transactions=self.repository.get_top_debit_transactions(
+            )),
+            top_debit_transactions=list(self.repository.get_top_debit_transactions(
                 date, end_date
-            ),
-            daily_transactions=self.repository.get_daily_transactions(date, end_date),
+            )),
             statement_date=date,
-            previous_month_transactions=self.repository.get_transactions(
+            previous_month_transactions=list(self.repository.get_transactions(
                 previous_month, previous_month_end
-            ),
+            )),
         )
+
+    def categorize_transactions(self, transactions: list[TransactionDTO]) -> list[TransactionDTO]:
+        return classify_transactions(transactions)
