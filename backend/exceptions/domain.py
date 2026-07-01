@@ -5,6 +5,10 @@ class StatementNotFoundException(Exception):
     pass
 
 
+class StatementParsingException(Exception):
+    pass
+
+
 class StatementWrongDateSelected(Exception):
 
     def __init__(self, user_selected_date: date, statement_date: date):
