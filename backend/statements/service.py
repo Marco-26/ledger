@@ -7,11 +7,15 @@ from utils.statement_dataframe_utils import (
 )
 from utils.file_utils import extract_table_from_pdf_file
 from datetime import date
-from mappers.transaction_mapper import TransactionMapper
 from utils import date_utils
 from domain.transaction_builder import build_statement
-from exceptions.domain import StatementWrongDateSelected, StatementNotFoundException
+from exceptions.domain import (
+    StatementWrongDateSelected,
+    StatementNotFoundException,
+    StatementParsingException,
+)
 from integrations.openai_api import classify_transactions
+from statements.adapter import dataframe_to_transactions
 
 
 class StatementService:
@@ -25,7 +29,11 @@ class StatementService:
         table = extract_table_from_pdf_file(file)
         df = normalize_statement_dataframe(build_statement_dataframe(table))
 
-        transactions = TransactionMapper.from_df(df)
+        transactions = dataframe_to_transactions(df)
+
+        if not transactions:
+            raise StatementParsingException()
+
         statement_date = transactions[0].date
 
         # if the user wants to upload a statement from february into january, for example.
@@ -41,7 +49,7 @@ class StatementService:
         if record:
             self.repository.delete_statement(record)
 
-        categorized_transactions = self.categorize_transactions(transactions)
+        categorized_transactions = self._classify_transactions(transactions)
 
         self.repository.create_statement(categorized_transactions, user_selected_date)
 
@@ -60,17 +68,33 @@ class StatementService:
 
         return build_statement(
             transactions=list(transactions),
-            top_credit_transactions=list(self.repository.get_top_credit_transactions(
-                date, end_date
-            )),
-            top_debit_transactions=list(self.repository.get_top_debit_transactions(
-                date, end_date
-            )),
+            top_credit_transactions=list(
+                self.repository.get_top_credit_transactions(date, end_date)
+            ),
+            top_debit_transactions=list(
+                self.repository.get_top_debit_transactions(date, end_date)
+            ),
             statement_date=date,
-            previous_month_transactions=list(self.repository.get_transactions(
-                previous_month, previous_month_end
-            )),
+            previous_month_transactions=list(
+                self.repository.get_transactions(previous_month, previous_month_end)
+            ),
         )
 
-    def categorize_transactions(self, transactions: list[TransactionDTO]) -> list[TransactionDTO]:
-        return classify_transactions(transactions)
+    def _classify_transactions(self, transactions: list[TransactionDTO]):
+        ai_candidates: list[TransactionDTO] = []
+        cached_classified: list[TransactionDTO] = []
+
+        for transaction in transactions:
+            category = self.repository.get_category_based_on_description(
+                transaction.description
+            )
+
+            if category:
+                transaction = transaction.model_copy(update={"category": category})
+                cached_classified.append(transaction)
+            else:
+                ai_candidates.append(transaction)
+
+        ai_classified = classify_transactions(ai_candidates)
+
+        return ai_classified + cached_classified
