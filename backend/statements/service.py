@@ -1,5 +1,5 @@
 from statements.repository import StatementRepository
-from schemas.statement_dto import StatementDTO
+from schemas.statement_dto import StatementDTO, TransactionDTO
 from sqlalchemy.orm import Session
 from utils.statement_dataframe_utils import (
     build_statement_dataframe,
@@ -49,7 +49,7 @@ class StatementService:
         if record:
             self.repository.delete_statement(record)
 
-        categorized_transactions = classify_transactions(transactions)
+        categorized_transactions = self._classify_transactions(transactions)
 
         self.repository.create_statement(categorized_transactions, user_selected_date)
 
@@ -79,3 +79,22 @@ class StatementService:
                 self.repository.get_transactions(previous_month, previous_month_end)
             ),
         )
+
+    def _classify_transactions(self, transactions: list[TransactionDTO]):
+        ai_candidates: list[TransactionDTO] = []
+        cached_classified: list[TransactionDTO] = []
+
+        for transaction in transactions:
+            category = self.repository.get_category_based_on_description(
+                transaction.description
+            )
+
+            if category:
+                transaction = transaction.model_copy(update={"category": category})
+                cached_classified.append(transaction)
+            else:
+                ai_candidates.append(transaction)
+
+        ai_classified = classify_transactions(ai_candidates)
+
+        return ai_classified + cached_classified

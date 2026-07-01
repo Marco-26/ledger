@@ -70,3 +70,9 @@ class StatementRepository:
             .limit(TOP_N_TRANSACTIONS)
         )
         return self.db.execute(stmt).scalars().all()
+
+    def get_category_based_on_description(self, description: str):
+        stmt = select(Transaction.category).where(
+            Transaction.description == description,
+        )
+        return self.db.execute(stmt).scalars().first()
