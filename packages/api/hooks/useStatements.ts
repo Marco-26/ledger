@@ -24,16 +24,7 @@ export function useStatements({ selectedMonth }: IUseStatementsProps) {
   const { data, error } = useQuery({
     queryKey: [Constants.API.TANSTACK_QUERIES.STATEMENTS, selectedMonth],
     queryFn: () => fetchStatement(selectedMonth),
-    retry: (failureCount, error) => {
-      if (
-        error instanceof AxiosError &&
-        error.response?.status &&
-        error.response.status < 500
-      ) {
-        return false;
-      }
-      return failureCount < 3;
-    },
+    retry: false,
     enabled: !!selectedMonth,
   });
 
