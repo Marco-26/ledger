@@ -18,7 +18,6 @@ class StatementDTO(BaseModel):
     debit_total: float
     credit_total: float
     net_balance: float
-    number_of_transactions: int
     top_expenses: list[TransactionDTO]
     top_incomes: list[TransactionDTO]
     all_transactions: list[TransactionDTO]

@@ -14,6 +14,7 @@ export class StatementDataAdapter {
       description: transactionResponse.description,
       credit: transactionResponse.credit,
       debit: transactionResponse.debit,
+      category: transactionResponse.category
     };
   }
 
@@ -37,8 +38,8 @@ export class StatementDataAdapter {
       topIncomes: this.convertDataToTransactionList(
         statementResponse.top_incomes,
       ),
-      dailyTransactions: this.convertDataToTransactionList(
-        statementResponse.daily_transactions,
+      allTransactions: this.convertDataToTransactionList(
+        statementResponse.all_transactions,
       ),
       creditList: this.convertDataToTransactionList(
         statementResponse.credit_list,
