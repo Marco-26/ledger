@@ -1,5 +1,6 @@
 import { TransactionType, type ITransaction } from "@ledger/api";
 import { cn, formatCurrency } from "@/lib/utils";
+import { CategoryChip } from "./CategoryChip";
 
 interface TransactionTableProps {
   transactions?: ITransaction[];
@@ -42,10 +43,13 @@ export function TransactionTable({
           <span className="text-sm text-foreground truncate">
             {transaction.description}
           </span>
-          <div className="flex items-center justify-between">
-            <span className="text-xs text-muted-foreground tabular-nums">
-              {transaction.date.format("DD-MM-YYYY")}
-            </span>
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="text-xs text-muted-foreground tabular-nums shrink-0">
+                {transaction.date.format("DD-MM-YYYY")}
+              </span>
+              <CategoryChip category={transaction.category} className="truncate" />
+            </div>
             <span
               className={cn(
                 "text-sm font-medium tabular-nums",

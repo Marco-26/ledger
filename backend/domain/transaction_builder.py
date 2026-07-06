@@ -23,9 +23,16 @@ def build_statement(
         credit_total=credit_total,
         debit_total=debit_total,
         net_balance=net_balance,
-        number_of_transactions=len(transactions),
-        credit_list=[TransactionDTO.model_validate(t) for t in transactions if (t.credit or 0) > 0],
-        debit_list=[TransactionDTO.model_validate(t) for t in transactions if ((t.debit or 0) > 0)],
+        credit_list=[
+            TransactionDTO.model_validate(t)
+            for t in transactions
+            if (t.credit or 0) > 0
+        ],
+        debit_list=[
+            TransactionDTO.model_validate(t)
+            for t in transactions
+            if ((t.debit or 0) > 0)
+        ],
         top_incomes=[TransactionDTO.model_validate(t) for t in top_credit_transactions],
         top_expenses=[TransactionDTO.model_validate(t) for t in top_debit_transactions],
         all_transactions=[TransactionDTO.model_validate(t) for t in transactions],

@@ -3,6 +3,7 @@ export interface ITransactionResponse {
   description: string;
   credit: number;
   debit: number;
+  category: string;
 }
 
 export interface IStatementResponse {
@@ -12,7 +13,7 @@ export interface IStatementResponse {
   net_balance: number;
   top_expenses: ITransactionResponse[];
   top_incomes: ITransactionResponse[];
-  daily_transactions: ITransactionResponse[];
+  all_transactions: ITransactionResponse[];
   credit_list: ITransactionResponse[];
   debit_list: ITransactionResponse[];
   credit_total_growth_rate: number;

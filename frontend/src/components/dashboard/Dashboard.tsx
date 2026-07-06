@@ -1,5 +1,4 @@
 import { type ChangeEvent } from "react";
-import type { IStatement } from "@/data/StatementDtos";
 import { SummaryCardsSection } from "@/components/dashboard/SummaryCards";
 import { CashFlowChart } from "@/components/dashboard/CashFlowChart";
 import { TopTransactions } from "@/components/dashboard/TopTransactions";
@@ -7,6 +6,7 @@ import { TransactionHistory } from "@/components/dashboard/TransactionHistory";
 import { Header } from "./Header";
 import type { Dayjs } from "dayjs";
 import { Constants } from "@/utils/Constants";
+import type { IStatement } from "@ledger/api";
 
 interface DashboardProps {
   data?: IStatement;

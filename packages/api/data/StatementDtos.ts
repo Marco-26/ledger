@@ -10,6 +10,7 @@ export interface ITransaction {
   credit: number;
   debit: number;
   description: string;
+  category: string;
 }
 
 export interface IStatement {
@@ -19,7 +20,7 @@ export interface IStatement {
   netBalance: number;
   topExpenses: ITransaction[];
   topIncomes: ITransaction[];
-  dailyTransactions: ITransaction[];
+  allTransactions: ITransaction[];
   creditList: ITransaction[];
   debitList: ITransaction[];
   creditTotalGrowthRate: number;

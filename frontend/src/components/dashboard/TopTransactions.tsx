@@ -1,4 +1,4 @@
-import type { IStatement } from "@/data/StatementDtos";
+import type { IStatement } from "@ledger/api";
 import { TopTransactionsCard } from "../core/TopTransactionsCard";
 import { TrendingDown, TrendingUp } from "lucide-react";
 

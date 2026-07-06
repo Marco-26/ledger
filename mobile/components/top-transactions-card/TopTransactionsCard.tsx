@@ -6,6 +6,7 @@ import { TransactionType } from "@/utils/sharedTypes";
 import { ICON_COLOR_MAPPER } from "@/styles/global";
 import { ITransaction } from "@ledger/api";
 import { Constants } from "@/utils/constants";
+import CategoryChip from "../category-chip/CategoryChip";
 
 interface TopTransactionsCardProps {
   title: string;
@@ -52,9 +53,12 @@ export default function TopTransactionsCard({
                   <Text style={styles.rowDescription} numberOfLines={1}>
                     {item.description}
                   </Text>
-                  <Text style={styles.rowDate}>
-                    {item.date.format(Constants.UI.DATE_FORMAT_DISPLAY)}
-                  </Text>
+                  <View style={styles.rowMeta}>
+                    <Text style={styles.rowDate}>
+                      {item.date.format(Constants.UI.DATE_FORMAT_DISPLAY)}
+                    </Text>
+                    <CategoryChip category={item.category} />
+                  </View>
                 </View>
                 <Text style={styles.rowAmount}>
                   {isIncome ? "+" : "-"}

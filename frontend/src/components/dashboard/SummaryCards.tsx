@@ -1,4 +1,4 @@
-import type { IStatement } from "@/data/StatementDtos";
+import type { IStatement } from "@ledger/api";
 import SummaryCard from "../core/SummaryCard";
 
 interface SummaryCardsProps {
