@@ -21,7 +21,7 @@ export function CashFlowChart({ data }: CashFlowChartProps) {
       return [];
     }
 
-    return data.dailyTransactions.map((t) => ({
+    return data.allTransactions.map((t) => ({
       ...t,
       date: t.date.format("DD-MM"),
     }));

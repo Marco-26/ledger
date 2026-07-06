@@ -89,6 +89,11 @@ export function getStyles(variant: TransactionType) {
       color: Colors.foreground,
       fontWeight: "500",
     },
+    rowMeta: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: Spacing[2],
+    },
     rowDate: {
       fontSize: FontSize.xs,
       fontFamily: FontFamily.mono,

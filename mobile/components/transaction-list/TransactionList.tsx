@@ -5,6 +5,7 @@ import { styles } from "./TransactionList.styles";
 import { TransactionType } from "@/utils/sharedTypes";
 import { ITransaction } from "@ledger/api";
 import { Constants } from "@/utils/constants";
+import CategoryChip from "../category-chip/CategoryChip";
 
 interface TransactionListProps {
   transactions?: ITransaction[];
@@ -37,9 +38,12 @@ export default function TransactionList({
                 {t.description}
               </Text>
               <View style={styles.rowMeta}>
-                <Text style={styles.dateText}>
-                  {t.date.format(Constants.UI.DATE_FORMAT_DISPLAY)}
-                </Text>
+                <View style={styles.metaLeft}>
+                  <Text style={styles.dateText}>
+                    {t.date.format(Constants.UI.DATE_FORMAT_DISPLAY)}
+                  </Text>
+                  <CategoryChip category={t.category} />
+                </View>
                 <Text style={[styles.amountText, { color: amountColor }]}>
                   {prefix}
                   {formatCurrency(getAmount(t))}

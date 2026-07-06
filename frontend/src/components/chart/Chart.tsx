@@ -16,7 +16,7 @@ import {
   type ChartConfig,
 } from "@/components/ui/chart";
 
-import type { ITransaction } from "@/data/StatementDtos";
+import type { ITransaction } from "@ledger/api";
 
 export const description = "An interactive area chart";
 

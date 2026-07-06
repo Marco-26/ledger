@@ -1,6 +1,7 @@
 import { cn, formatCurrency } from "@/lib/utils";
-import type { ITransaction } from "@/data/StatementDtos";
+import type { ITransaction } from "@ledger/api";
 import type { ReactElement } from "react";
+import { CategoryChip } from "./CategoryChip";
 
 interface ITopTransactionsCardProps {
   data?: ITransaction[];
@@ -74,9 +75,12 @@ export function TopTransactionsCard({
                 >
                   {item.description}
                 </p>
-                <p className="font-numeric text-xs text-muted-foreground mt-1">
-                  {item.date.format("DD-MM-YYYY")}
-                </p>
+                <div className="flex items-center gap-2 mt-1 min-w-0">
+                  <p className="font-numeric text-xs text-muted-foreground shrink-0">
+                    {item.date.format("DD-MM-YYYY")}
+                  </p>
+                  <CategoryChip category={item.category} className="truncate" />
+                </div>
               </div>
 
               <span
