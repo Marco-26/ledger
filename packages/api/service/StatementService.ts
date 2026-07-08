@@ -20,7 +20,9 @@ export class StatementService {
     return StatementDataAdapter.convertToStatement(response.data);
   }
 
-  public async fetchStatement(date: string): Promise<IStatement> {
+  public async fetchStatement(date?: string): Promise<IStatement> {
+    if(!date) return Promise.reject();
+
     const url = `${this.baseURL}?${Constants.API.QUERY_PARAMS.DATE}=${encodeURIComponent(date)}`;
     const response = await apiClient.get(url);
     return StatementDataAdapter.convertToStatement(response.data);

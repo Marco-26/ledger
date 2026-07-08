@@ -2,23 +2,26 @@ import { useState } from "react";
 import { Dashboard } from "./components/dashboard/Dashboard";
 import dayjs from "dayjs";
 import { Toaster } from "sonner";
-import { useStatements } from "@ledger/api";
+import { useStatementsQuery } from "@ledger/api/hooks/useStatementsQuery";
+import { useCreateStatementQuery } from "@ledger/api";
 
 function App() {
   const [selectedMonth, setSelectedMonth] = useState<string>(
     dayjs().date(1).format("YYYY-MM-DD"),
   );
 
-  const { data, isUploading, uploadStatement } = useStatements({
+  const { data } = useStatementsQuery({
     selectedMonth: selectedMonth,
   });
+
+  const { mutateAsync: uploadStatement, isPending } = useCreateStatementQuery();
 
   return (
     <>
       <Toaster position="top-right" />
       <Dashboard
         data={data}
-        isUploading={isUploading}
+        isUploading={isPending}
         onUploadStatement={(file, date) =>
           uploadStatement({ statementFile: file, date: date })
         }

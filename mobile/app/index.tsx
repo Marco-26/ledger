@@ -6,15 +6,15 @@ import { TransactionHistory } from "@/components/transaction-history/Transaction
 import { Colors, Spacing } from "@/styles/tokens";
 import { Constants } from "@/utils/constants";
 import { TransactionType } from "@/utils/sharedTypes";
+import { useStatementsQuery } from "@ledger/api";
 import dayjs, { Dayjs } from "dayjs";
 import { useState } from "react";
 import { ScrollView, StatusBar, StyleSheet, View } from "react-native";
-import { useStatements } from "@ledger/api";
 
 export default function Index() {
   const [selectedDate, setSelectedDate] = useState<Dayjs>(dayjs());
 
-  const { data } = useStatements({
+  const { data } = useStatementsQuery({
     selectedMonth: selectedDate.date(1).format(Constants.UI.DATE_FORMAT),
   });
 
