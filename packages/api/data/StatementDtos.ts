@@ -13,6 +13,11 @@ export interface ITransaction {
   category: string;
 }
 
+export interface ICategorySpending {
+  label: string;
+  value: number;
+}
+
 export interface IStatement {
   date: Dayjs;
   debitTotal: number;
@@ -23,6 +28,7 @@ export interface IStatement {
   allTransactions: ITransaction[];
   creditList: ITransaction[];
   debitList: ITransaction[];
+  spendingByCategory: ICategorySpending[];
   creditTotalGrowthRate: number;
   debitTotalGrowthRate: number;
   netBalanceTotalGrowthRate: number;

@@ -13,6 +13,11 @@ class TransactionDTO(BaseModel):
     category: str | None = None
 
 
+class CategorySpendingDTO(BaseModel):
+    label: str
+    value: float
+
+
 class StatementDTO(BaseModel):
     date: Optional[Date] = None
     debit_total: float
@@ -23,6 +28,7 @@ class StatementDTO(BaseModel):
     all_transactions: list[TransactionDTO]
     debit_list: list[TransactionDTO]
     credit_list: list[TransactionDTO]
+    spending_by_category: list[CategorySpendingDTO]
 
     credit_total_growth_rate: float
     debit_total_growth_rate: float
