@@ -47,6 +47,9 @@ export class StatementDataAdapter {
       debitList: this.convertDataToTransactionList(
         statementResponse.debit_list,
       ),
+      spendingByCategory: statementResponse.spending_by_category.map(
+        (category) => ({ label: category.label, value: category.value }),
+      ),
       creditTotalGrowthRate: statementResponse.credit_total_growth_rate,
       debitTotalGrowthRate: statementResponse.debit_total_growth_rate,
       netBalanceTotalGrowthRate:

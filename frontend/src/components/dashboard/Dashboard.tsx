@@ -3,6 +3,7 @@ import { SummaryCardsSection } from "@/components/dashboard/SummaryCards";
 import { CashFlowChart } from "@/components/dashboard/CashFlowChart";
 import { TopTransactions } from "@/components/dashboard/TopTransactions";
 import { TransactionHistory } from "@/components/dashboard/TransactionHistory";
+import { SpendingByCategory } from "@/components/dashboard/SpendingByCategory";
 import { Header } from "./Header";
 import type { Dayjs } from "dayjs";
 import { Constants } from "@/utils/Constants";
@@ -63,8 +64,12 @@ export function Dashboard({
           <TopTransactions data={data} />
         </div>
 
-        <div className="animate-fade-up delay-4 pb-12">
+        <div className="animate-fade-up delay-4">
           <TransactionHistory data={data} />
+        </div>
+
+        <div className="animate-fade-up delay-5 pb-12">
+          <SpendingByCategory data={data} />
         </div>
       </div>
     </div>

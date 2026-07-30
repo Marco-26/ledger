@@ -1,8 +1,8 @@
-import CashFlowChart from "@/components/cash-flow-chart/CashFlowChart";
 import Header from "@/components/header/Header";
 import SummaryCard from "@/components/summary-card/SummaryCard";
 import TopTransactionsCard from "@/components/top-transactions-card/TopTransactionsCard";
 import { TransactionHistory } from "@/components/transaction-history/TransactionHistory";
+import SpendingByCategory from "@/components/spending-by-category/SpendingByCategory";
 import { Colors, Spacing } from "@/styles/tokens";
 import { Constants } from "@/utils/constants";
 import { TransactionType } from "@/utils/sharedTypes";
@@ -29,8 +29,6 @@ export default function Index() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <CashFlowChart transactions={data?.allTransactions} />
-
         <View style={styles.summaryGrid}>
           <SummaryCard
             title="Money In"
@@ -73,6 +71,8 @@ export default function Index() {
         </View>
 
         <TransactionHistory data={data} />
+
+        <SpendingByCategory data={data} />
 
         <View style={{ height: Spacing[10] }} />
       </ScrollView>
