@@ -31,13 +31,13 @@ export function SpendingByCategory({ data }: SpendingByCategoryProps) {
                 <span className="text-sm font-medium text-foreground truncate">
                   {category.label}
                 </span>
-                <span className="font-numeric text-sm font-semibold text-[var(--expense)] tabular-nums shrink-0">
+                <span className="font-numeric text-sm font-semibold text-foreground tabular-nums shrink-0">
                   {formatCurrency(category.value)}
                 </span>
               </div>
               <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
                 <div
-                  className="h-full rounded-full bg-[var(--expense)]"
+                  className="h-full rounded-full bg-gradient-to-r from-[var(--expense-bar)] to-[var(--expense-bar-light)]"
                   style={{
                     width: `${maxValue > 0 ? (category.value / maxValue) * 100 : 0}%`,
                   }}
