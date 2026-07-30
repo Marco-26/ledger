@@ -99,7 +99,6 @@ mobile/
 │   ├── header/         # App title and month navigator
 │   ├── month-navigator/# Prev/next month controls
 │   ├── summary-card/   # Money In, Money Out, Net Balance cards with growth rate
-│   ├── cash-flow-chart/# Line chart of daily credit vs debit (react-native-chart-kit)
 │   ├── top-transactions-card/  # Top 3 income and expense transactions
 │   ├── transaction-history/    # Tabbed income/expense transaction list
 │   └── transaction-list/       # Scrollable list of individual transactions

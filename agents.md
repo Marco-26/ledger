@@ -138,7 +138,6 @@ Never edit files under `src/components/ui/` manually.
 - **Language**: TypeScript
 - **Framework**: React Native via **Expo** with **expo-router** (file-based routing in `app/`)
 - **Data layer**: `@ledger/api` (same hooks/services as the web app)
-- **Charts**: `react-native-chart-kit`
 - **Icons**: `@expo/vector-icons` (Ionicons)
 
 ### Structure & conventions

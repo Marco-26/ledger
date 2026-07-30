@@ -1,4 +1,3 @@
-import CashFlowChart from "@/components/cash-flow-chart/CashFlowChart";
 import Header from "@/components/header/Header";
 import SummaryCard from "@/components/summary-card/SummaryCard";
 import TopTransactionsCard from "@/components/top-transactions-card/TopTransactionsCard";
@@ -30,8 +29,6 @@ export default function Index() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <CashFlowChart transactions={data?.allTransactions} />
-
         <View style={styles.summaryGrid}>
           <SummaryCard
             title="Money In"
