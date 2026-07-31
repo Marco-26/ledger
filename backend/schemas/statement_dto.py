@@ -22,6 +22,7 @@ class TransactionDTO(BaseModel):
 class TransactionCategoryDTO(BaseModel):
     label: str
     amount: float
+    percentage: float
 
 
 class StatementDTO(BaseModel):

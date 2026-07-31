@@ -1,5 +1,5 @@
 from db.models.statement import Transaction
-from schemas.statement_dto import TransactionType
+from schemas.statement_dto import TransactionType, TransactionCategoryDTO
 
 
 def calculate_totals(transactions: list[Transaction]) -> tuple[float, float, float]:
@@ -14,7 +14,7 @@ def calculate_totals(transactions: list[Transaction]) -> tuple[float, float, flo
 
 def process_category(
     transactions: list[Transaction],
-) -> list[tuple[str, float]]:
+) -> list[TransactionCategoryDTO]:
     categories: dict[str, float] = {}
 
     for transaction in transactions:
@@ -23,7 +23,23 @@ def process_category(
             categories.get(transaction.category, 0.0) + amount
         )
 
-    return sorted(categories.items(), key=lambda item: item[1], reverse=True)
+    sorted_categories = sorted(
+        categories.items(), key=lambda item: item[1], reverse=True
+    )
+
+    return [
+        TransactionCategoryDTO(
+            label=label,
+            amount=amount,
+            percentage=calculate_category_percentage(categories, label),
+        )
+        for label, amount in sorted_categories
+    ]
+
+
+def calculate_category_percentage(categories: dict[str, float], category: str):
+    total = sum(categories.values())
+    return round((categories.get(category) / total) * 100, 2)
 
 
 def calculate_revenue_growth_rate(current_value: float, previous_value: float) -> float:

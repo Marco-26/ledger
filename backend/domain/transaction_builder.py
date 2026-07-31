@@ -41,13 +41,7 @@ def build_statement(
         top_incomes=[TransactionDTO.model_validate(t) for t in top_credit_transactions],
         top_expenses=[TransactionDTO.model_validate(t) for t in top_debit_transactions],
         all_transactions=[TransactionDTO.model_validate(t) for t in transactions],
-        transaction_categories=[
-            TransactionCategoryDTO(
-                label=label,
-                amount=amount,
-            )
-            for label, amount in revenue_utils.process_category(transactions)
-        ],
+        transaction_categories=revenue_utils.process_category(transactions),
         credit_total_growth_rate=revenue_utils.calculate_revenue_growth_rate(
             credit_total, credit_prev
         ),
