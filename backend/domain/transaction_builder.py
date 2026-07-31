@@ -1,6 +1,11 @@
 from datetime import date
 from db.models.statement import Transaction
-from schemas.statement_dto import CategorySpendingDTO, StatementDTO, TransactionDTO
+from schemas.statement_dto import (
+    TransactionCategoryDTO,
+    StatementDTO,
+    TransactionDTO,
+    TransactionType,
+)
 from utils import revenue_utils
 
 
@@ -26,21 +31,22 @@ def build_statement(
         credit_list=[
             TransactionDTO.model_validate(t)
             for t in transactions
-            if (t.credit or 0) > 0
+            if (t.type == TransactionType.CREDIT.value)
         ],
         debit_list=[
             TransactionDTO.model_validate(t)
             for t in transactions
-            if ((t.debit or 0) > 0)
+            if (t.type == TransactionType.DEBIT.value)
         ],
         top_incomes=[TransactionDTO.model_validate(t) for t in top_credit_transactions],
         top_expenses=[TransactionDTO.model_validate(t) for t in top_debit_transactions],
         all_transactions=[TransactionDTO.model_validate(t) for t in transactions],
-        spending_by_category=[
-            CategorySpendingDTO(label=label, value=value)
-            for label, value in revenue_utils.calculate_spending_by_category(
-                transactions
+        transaction_categories=[
+            TransactionCategoryDTO(
+                label=label,
+                amount=amount,
             )
+            for label, amount in revenue_utils.process_category(transactions)
         ],
         credit_total_growth_rate=revenue_utils.calculate_revenue_growth_rate(
             credit_total, credit_prev

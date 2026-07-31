@@ -2,7 +2,6 @@ from db.database import Base
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import Date, String, Float, ForeignKey
 from datetime import date as dt_date
-from typing import Optional
 
 
 class Statement(Base):
@@ -31,6 +30,6 @@ class Transaction(Base):
     statement = relationship("Statement", back_populates="transactions")
     date: Mapped[dt_date] = mapped_column(Date)
     description: Mapped[str] = mapped_column(String)
-    debit: Mapped[Optional[float]] = mapped_column(Float)
-    credit: Mapped[Optional[float]] = mapped_column(Float)
     category: Mapped[str] = mapped_column(String)
+    type: Mapped[str] = mapped_column(String)  # DEBIT OR CREDIT
+    amount: Mapped[float] = mapped_column(Float)
