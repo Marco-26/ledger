@@ -7,15 +7,17 @@ export enum TransactionType {
 
 export interface ITransaction {
   date: Dayjs;
-  credit: number;
-  debit: number;
   description: string;
   category: string;
+  amount: number;
+  type: TransactionType;
 }
 
-export interface ICategorySpending {
+export interface ITransactionCategory {
   label: string;
-  value: number;
+  amount: number;
+  percentage: number;
+  type: TransactionType;
 }
 
 export interface IStatement {
@@ -28,7 +30,7 @@ export interface IStatement {
   allTransactions: ITransaction[];
   creditList: ITransaction[];
   debitList: ITransaction[];
-  spendingByCategory: ICategorySpending[];
+  transactionCategories: ITransactionCategory[];
   creditTotalGrowthRate: number;
   debitTotalGrowthRate: number;
   netBalanceTotalGrowthRate: number;

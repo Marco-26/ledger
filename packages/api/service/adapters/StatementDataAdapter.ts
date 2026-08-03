@@ -1,20 +1,38 @@
 import type {
   IStatementResponse,
+  ITransactionCategoryResponse,
   ITransactionResponse,
+  TransactionTypeValues,
 } from "../../data/StatementDaos";
-import type { IStatement, ITransaction } from "../../data/StatementDtos";
+import type {
+  IStatement,
+  ITransaction,
+  ITransactionCategory,
+} from "../../data/StatementDtos";
+import { TransactionType } from "../../data/StatementDtos";
 import dayjs from "dayjs";
 
+type StatementDataMapper = {
+  TRANSACTION_DATA_INBOUD: Record<TransactionTypeValues, TransactionType>;
+}
+
 export class StatementDataAdapter {
+  private readonly dataMapping: StatementDataMapper = {
+    TRANSACTION_DATA_INBOUD : {
+      INCOME: TransactionType.INCOME,
+      EXPENSE: TransactionType.EXPENSE 
+    }
+  }
+
   convertDataToTransaction(
     transactionResponse: ITransactionResponse,
   ): ITransaction {
     return {
       date: dayjs(transactionResponse.date),
       description: transactionResponse.description,
-      credit: transactionResponse.credit,
-      debit: transactionResponse.debit,
-      category: transactionResponse.category
+      amount: transactionResponse.amount,
+      category: transactionResponse.category,
+      type: this.dataMapping.TRANSACTION_DATA_INBOUD[transactionResponse.type]
     };
   }
 
@@ -24,6 +42,17 @@ export class StatementDataAdapter {
     return transactionResponseList.map((transactionResponse) =>
       this.convertDataToTransaction(transactionResponse),
     );
+  }
+
+  convertDataToTransactionCategory(
+    categoryResponse: ITransactionCategoryResponse,
+  ): ITransactionCategory {
+    return {
+      label: categoryResponse.label,
+      amount: categoryResponse.amount,
+      percentage: categoryResponse.percentage,
+      type: this.dataMapping.TRANSACTION_DATA_INBOUD[categoryResponse.type],
+    };
   }
 
   convertToStatement(statementResponse: IStatementResponse): IStatement {
@@ -47,8 +76,8 @@ export class StatementDataAdapter {
       debitList: this.convertDataToTransactionList(
         statementResponse.debit_list,
       ),
-      spendingByCategory: statementResponse.spending_by_category.map(
-        (category) => ({ label: category.label, value: category.value }),
+      transactionCategories: statementResponse.transaction_categories.map(
+        (category) => this.convertDataToTransactionCategory(category),
       ),
       creditTotalGrowthRate: statementResponse.credit_total_growth_rate,
       debitTotalGrowthRate: statementResponse.debit_total_growth_rate,

@@ -20,8 +20,6 @@ export default function TransactionList({
   const amountColor = isIncome ? Colors.income : Colors.expense;
   const prefix = isIncome ? "+" : "-";
 
-  const getAmount = (t: ITransaction) => (isIncome ? t.credit : t.debit);
-
   return (
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false} nestedScrollEnabled>
@@ -46,7 +44,7 @@ export default function TransactionList({
                 </View>
                 <Text style={[styles.amountText, { color: amountColor }]}>
                   {prefix}
-                  {formatCurrency(getAmount(t))}
+                  {formatCurrency(t.amount)}
                 </Text>
               </View>
             </View>
