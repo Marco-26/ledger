@@ -65,41 +65,6 @@ export const styles = StyleSheet.create({
     color: Colors.foreground,
   },
 
-  hero: {
-    paddingHorizontal: Spacing[4],
-    paddingTop: Spacing[4],
-    paddingBottom: Spacing[4],
-    gap: Spacing[3],
-  },
-  heroLabel: {
-    fontSize: FontSize.xs,
-    fontFamily: FontFamily.sans,
-    color: Colors.mutedForeground,
-    letterSpacing: 1.6,
-    textTransform: "uppercase",
-    fontWeight: "500",
-  },
-  heroValue: {
-    fontSize: FontSize["2xl"],
-    fontFamily: FontFamily.mono,
-    fontWeight: "700",
-    color: Colors.expense,
-    letterSpacing: -0.5,
-    marginTop: -Spacing[1],
-  },
-  distributionTrack: {
-    flexDirection: "row",
-    height: 8,
-    borderRadius: Radius.full,
-    backgroundColor: Colors.muted,
-    overflow: "hidden",
-    gap: 3,
-  },
-  distributionSegment: {
-    height: "100%",
-    borderRadius: 3,
-  },
-
   // ── Ranked category list ──────────────────────────────────────────────────
   list: {
     paddingVertical: Spacing[2],

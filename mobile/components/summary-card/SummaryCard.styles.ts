@@ -109,10 +109,3 @@ export function getStyles(variant: Variant) {
     },
   });
 }
-
-/** Per-variant color values for use in dynamic inline styles */
-export const variantColors = {
-  income: { value: Colors.income },
-  expense: { value: Colors.expense },
-  neutral: { value: Colors.foreground },
-} as const;
