@@ -34,39 +34,35 @@ export const styles = StyleSheet.create({
     backgroundColor: Colors.border,
   },
 
-  hero: {
+  tabsRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing[2],
     paddingHorizontal: Spacing[4],
-    paddingTop: Spacing[4],
-    paddingBottom: Spacing[4],
-    gap: Spacing[3],
+    paddingTop: Spacing[3],
+    paddingBottom: Spacing[2],
   },
-  heroLabel: {
+  tab: {
+    paddingHorizontal: Spacing[4],
+    paddingVertical: 7,
+    borderRadius: Radius.md,
+    borderWidth: 1,
+    borderColor: "transparent",
+    backgroundColor: Colors.muted,
+  },
+  tabActive: {
+    backgroundColor: Colors.cardElevated,
+    borderColor: Colors.borderMid,
+  },
+  tabText: {
     fontSize: FontSize.xs,
     fontFamily: FontFamily.sans,
-    color: Colors.mutedForeground,
-    letterSpacing: 1.6,
-    textTransform: "uppercase",
     fontWeight: "500",
+    color: Colors.mutedForeground,
+    letterSpacing: 0.4,
   },
-  heroValue: {
-    fontSize: FontSize["2xl"],
-    fontFamily: FontFamily.mono,
-    fontWeight: "700",
-    color: Colors.expense,
-    letterSpacing: -0.5,
-    marginTop: -Spacing[1],
-  },
-  distributionTrack: {
-    flexDirection: "row",
-    height: 8,
-    borderRadius: Radius.full,
-    backgroundColor: Colors.muted,
-    overflow: "hidden",
-    gap: 3,
-  },
-  distributionSegment: {
-    height: "100%",
-    borderRadius: 3,
+  tabTextActive: {
+    color: Colors.foreground,
   },
 
   // ── Ranked category list ──────────────────────────────────────────────────

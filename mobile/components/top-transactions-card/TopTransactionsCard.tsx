@@ -62,7 +62,7 @@ export default function TopTransactionsCard({
                 </View>
                 <Text style={styles.rowAmount}>
                   {isIncome ? "+" : "-"}
-                  {formatCurrency(isIncome ? item.credit : item.debit)}
+                  {formatCurrency(item.amount)}
                 </Text>
               </View>
               {index < data.length - 1 && <View style={styles.rowSeparator} />}

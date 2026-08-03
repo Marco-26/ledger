@@ -1,21 +1,29 @@
 from pydantic import BaseModel, ConfigDict
 from typing import Optional
 from datetime import date as Date
+from enum import Enum
+
+
+class TransactionType(Enum):
+    INCOME = "INCOME"
+    EXPENSE = "EXPENSE"
 
 
 class TransactionDTO(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
     date: Date
-    credit: float
     description: str | None = None
-    debit: float
     category: str | None = None
+    type: TransactionType
+    amount: float
 
 
-class CategorySpendingDTO(BaseModel):
+class TransactionCategoryDTO(BaseModel):
     label: str
-    value: float
+    amount: float
+    percentage: float
+    type: TransactionType
 
 
 class StatementDTO(BaseModel):
@@ -28,7 +36,7 @@ class StatementDTO(BaseModel):
     all_transactions: list[TransactionDTO]
     debit_list: list[TransactionDTO]
     credit_list: list[TransactionDTO]
-    spending_by_category: list[CategorySpendingDTO]
+    transaction_categories: list[TransactionCategoryDTO]
 
     credit_total_growth_rate: float
     debit_total_growth_rate: float

@@ -28,7 +28,6 @@ class StatementService:
     ) -> StatementDTO:
         table = extract_table_from_pdf_file(file)
         df = normalize_statement_dataframe(build_statement_dataframe(table))
-
         transactions = dataframe_to_transactions(df)
 
         if not transactions:

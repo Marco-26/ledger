@@ -1,14 +1,18 @@
+export type TransactionTypeValues = "INCOME" | "EXPENSE"
+
 export interface ITransactionResponse {
   date: string;
   description: string;
-  credit: number;
-  debit: number;
-  category: string;
+  category: TransactionTypeValues;
+  amount: number;
+  type: TransactionTypeValues
 }
 
-export interface ICategorySpendingResponse {
+export interface ITransactionCategoryResponse {
   label: string;
-  value: number;
+  amount: number;
+  percentage: number;
+  type: TransactionTypeValues;
 }
 
 export interface IStatementResponse {
@@ -21,7 +25,7 @@ export interface IStatementResponse {
   all_transactions: ITransactionResponse[];
   credit_list: ITransactionResponse[];
   debit_list: ITransactionResponse[];
-  spending_by_category: ICategorySpendingResponse[];
+  transaction_categories: ITransactionCategoryResponse[];
   credit_total_growth_rate: number;
   debit_total_growth_rate: number;
   net_balance_total_growth_rate: number;

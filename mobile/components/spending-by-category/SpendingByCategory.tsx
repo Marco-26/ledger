@@ -1,6 +1,7 @@
-import { Text, View } from "react-native";
+import { useState } from "react";
+import { Text, TouchableOpacity, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { IStatement } from "@ledger/api";
+import { IStatement, TransactionType } from "@ledger/api";
 import { formatCurrency } from "@/utils/format";
 import { Colors } from "@/styles/tokens";
 import { styles } from "./SpendingByCategory.styles";
@@ -8,6 +9,8 @@ import { styles } from "./SpendingByCategory.styles";
 interface SpendingByCategoryProps {
   data?: IStatement;
 }
+
+type Tabs = "income" | "expenses";
 
 type IconName = React.ComponentProps<typeof Ionicons>["name"];
 
@@ -22,13 +25,31 @@ const CATEGORY_ICONS: Record<string, IconName> = {
   salary: "cash-outline",
   rent: "home-outline",
   other: "ellipsis-horizontal-circle-outline",
+  other_income: "pricetag-outline",
+};
+
+export const CATEGORY_LABELS: Record<string, string> = {
+  salary: "Salary",
+  other_income: "Other Income",
+  groceries: "Groceries",
+  restaurants: "Restaurants",
+  transportation: "Transportation",
+  utilities: "Utilities",
+  entertainment: "Entertainment",
+  healthcare: "Healthcare",
+  shopping: "Shopping",
+  rent: "Rent",
+  other: "Other",
 };
 
 export default function SpendingByCategory({ data }: SpendingByCategoryProps) {
-  const categories = data?.spendingByCategory ?? [];
-  const totalValue = categories.reduce(
-    (sum, category) => sum + category.value,
-    0,
+  const [activeTab, setActiveTab] = useState<Tabs>("income");
+
+  const activeType =
+    activeTab === "income" ? TransactionType.INCOME : TransactionType.EXPENSE;
+
+  const categories = (data?.transactionCategories ?? []).filter(
+    (category) => category.type === activeType,
   );
 
   return (
@@ -40,58 +61,82 @@ export default function SpendingByCategory({ data }: SpendingByCategoryProps) {
 
       <View style={styles.divider} />
 
+      <View style={styles.tabsRow}>
+        {(["income", "expenses"] as Tabs[]).map((tab) => {
+          const isActive = activeTab === tab;
+          const tabAccentColor = isActive
+            ? tab === "income"
+              ? Colors.income
+              : Colors.expense
+            : undefined;
+
+          return (
+            <TouchableOpacity
+              key={tab}
+              style={[styles.tab, isActive && styles.tabActive]}
+              onPress={() => setActiveTab(tab)}
+              activeOpacity={0.7}
+            >
+              <Text
+                style={[
+                  styles.tabText,
+                  isActive && styles.tabTextActive,
+                  isActive && tabAccentColor
+                    ? { color: tabAccentColor }
+                    : undefined,
+                ]}
+              >
+                {tab === "income" ? "Income" : "Expenses"}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
+
       {categories.length > 0 ? (
-        <>
-          <View style={styles.list}>
-            {categories.map((category, index) => {
-              const share =
-                totalValue > 0
-                  ? Math.round((category.value / totalValue) * 100)
-                  : 0;
+        <View style={styles.list}>
+          {categories.map((category, index) => {
+            return (
+              <View key={category.label}>
+                <View style={styles.row}>
+                  <View
+                    style={[
+                      styles.iconBadge,
+                      {
+                        borderColor: Colors.brand,
+                      },
+                    ]}
+                  >
+                    <Ionicons
+                      name={CATEGORY_ICONS[category.label]}
+                      size={14}
+                      color={Colors.brand}
+                    />
+                  </View>
 
-              return (
-                <View key={category.label}>
-                  <View style={styles.row}>
-                    <View
-                      style={[
-                        styles.iconBadge,
-                        {
-                          borderColor: Colors.brand,
-                        },
-                      ]}
-                    >
-                      <Ionicons
-                        name={
-                          CATEGORY_ICONS[category.label.toLowerCase()] ??
-                          "pricetag-outline"
-                        }
-                        size={14}
-                        color={Colors.brand}
-                      />
-                    </View>
-
-                    <View style={styles.rowContent}>
-                      <Text style={styles.label} numberOfLines={1}>
-                        {category.label}
-                      </Text>
-                      <Text style={styles.share}>{share}% of spending</Text>
-                    </View>
-
-                    <Text style={styles.amount}>
-                      {formatCurrency(category.value)}
+                  <View style={styles.rowContent}>
+                    <Text style={styles.label} numberOfLines={1}>
+                      {CATEGORY_LABELS[category.label]}
+                    </Text>
+                    <Text style={styles.share}>
+                      {category.percentage}% of {activeTab}
                     </Text>
                   </View>
-                  {index < categories.length - 1 && (
-                    <View style={styles.rowSeparator} />
-                  )}
+
+                  <Text style={styles.amount}>
+                    {formatCurrency(category.amount)}
+                  </Text>
                 </View>
-              );
-            })}
-          </View>
-        </>
+                {index < categories.length - 1 && (
+                  <View style={styles.rowSeparator} />
+                )}
+              </View>
+            );
+          })}
+        </View>
       ) : (
         <View style={styles.empty}>
-          <Text style={styles.emptyText}>No spending data available.</Text>
+          <Text style={styles.emptyText}>No {activeTab} data available.</Text>
         </View>
       )}
     </View>

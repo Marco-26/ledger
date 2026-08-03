@@ -6,10 +6,10 @@ interface SpendingByCategoryProps {
 }
 
 export function SpendingByCategory({ data }: SpendingByCategoryProps) {
-  const categories = data?.spendingByCategory ?? [];
+  const categories = data?.transactionCategories ?? [];
   const hasData = categories.length > 0;
   const maxValue = hasData
-    ? Math.max(...categories.map((category) => category.value))
+    ? Math.max(...categories.map((category) => category.amount))
     : 0;
 
   return (
@@ -32,14 +32,14 @@ export function SpendingByCategory({ data }: SpendingByCategoryProps) {
                   {category.label}
                 </span>
                 <span className="font-numeric text-sm font-semibold text-foreground tabular-nums shrink-0">
-                  {formatCurrency(category.value)}
+                  {formatCurrency(category.amount)}
                 </span>
               </div>
               <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
                 <div
                   className="h-full rounded-full bg-gradient-to-r from-[var(--expense-bar)] to-[var(--expense-bar-light)]"
                   style={{
-                    width: `${maxValue > 0 ? (category.value / maxValue) * 100 : 0}%`,
+                    width: `${maxValue > 0 ? (category.amount / maxValue) * 100 : 0}%`,
                   }}
                 />
               </div>

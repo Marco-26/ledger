@@ -12,7 +12,7 @@ interface ITransactionHistory {
 }
 
 export function TransactionHistory({ data }: ITransactionHistory) {
-  const [activeTab, setActiveTab] = useState<Tabs>("expenses");
+  const [activeTab, setActiveTab] = useState<Tabs>("income");
 
   const filteredTransactions =
     activeTab === "income" ? data?.creditList : data?.debitList;

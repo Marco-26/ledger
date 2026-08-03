@@ -3,7 +3,7 @@ from db.models.statement import Statement, Transaction
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 from constants import TOP_N_TRANSACTIONS
-from schemas.statement_dto import TransactionDTO
+from schemas.statement_dto import TransactionDTO, TransactionType
 
 
 class StatementRepository:
@@ -19,9 +19,9 @@ class StatementRepository:
                 Transaction(
                     date=t.date,
                     description=t.description,
-                    debit=t.debit,
-                    credit=t.credit,
                     category=t.category,
+                    amount=t.amount,
+                    type=t.type.value,
                 )
                 for t in transactions
             ]
@@ -52,9 +52,9 @@ class StatementRepository:
             select(Transaction)
             .where(
                 Transaction.date.between(start_date, end_date),
-                Transaction.credit > 0,
+                Transaction.type == TransactionType.INCOME.value,
             )
-            .order_by(Transaction.credit.desc())
+            .order_by(Transaction.amount.desc())
             .limit(TOP_N_TRANSACTIONS)
         )
         return self.db.execute(stmt).scalars().all()
@@ -64,9 +64,9 @@ class StatementRepository:
             select(Transaction)
             .where(
                 Transaction.date.between(start_date, end_date),
-                Transaction.debit > 0,
+                Transaction.type == TransactionType.EXPENSE.value,
             )
-            .order_by(Transaction.debit.desc())
+            .order_by(Transaction.amount.desc())
             .limit(TOP_N_TRANSACTIONS)
         )
         return self.db.execute(stmt).scalars().all()
