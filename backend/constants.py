@@ -7,17 +7,17 @@ DATE_PATTERN_REGEX = r"\d{2}-\d{2}-\d{2}"
 TOP_N_TRANSACTIONS = 3
 DATABASE_URL = os.getenv("DATABASE_URL")
 
-INCOME_CATEGORIES = ["Salary", "Other Income"]
+INCOME_CATEGORIES = ["salary", "other_income"]
 EXPENSE_CATEGORIES = [
-    "Groceries",
-    "Restaurants",
-    "Transportation",
-    "Utilities",
-    "Entertainment",
-    "Healthcare",
-    "Shopping",
-    "Rent",
-    "Other",
+    "groceries",
+    "restaurants",
+    "transportation",
+    "utilities",
+    "entertainment",
+    "healthcare",
+    "shopping",
+    "rent",
+    "other",
 ]
 
 

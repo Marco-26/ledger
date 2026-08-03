@@ -1,6 +1,6 @@
 from db.models.statement import Transaction
 from schemas.statement_dto import TransactionType, TransactionCategoryDTO
-from constants import EXPENSE_CATEGORIES, INCOME_CATEGORIES
+from constants import EXPENSE_CATEGORIES
 
 
 def calculate_totals(transactions: list[Transaction]) -> tuple[float, float, float]:
@@ -33,19 +33,28 @@ def process_category(
             label=label,
             amount=amount,
             percentage=calculate_category_percentage(categories, label),
-            type=(
-                TransactionType.EXPENSE
-                if label in EXPENSE_CATEGORIES
-                else TransactionType.INCOME
-            ),
+            type=get_category_type(label),
         )
         for label, amount in sorted_categories
     ]
 
 
-def calculate_category_percentage(categories: dict[str, float], category: str):
-    total = sum(categories.values())
-    return round((categories.get(category) / total) * 100, 2)
+def get_category_type(category: str) -> TransactionType:
+    return (
+        TransactionType.EXPENSE
+        if category in EXPENSE_CATEGORIES
+        else TransactionType.INCOME
+    )
+
+
+def calculate_category_percentage(categories: dict[str, float], category: str) -> float:
+    category_type = get_category_type(category)
+    total = sum(
+        amount
+        for label, amount in categories.items()
+        if get_category_type(label) == category_type
+    )
+    return round((categories[category] / total) * 100, 2)
 
 
 def calculate_revenue_growth_rate(current_value: float, previous_value: float) -> float:

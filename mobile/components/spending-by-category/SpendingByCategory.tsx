@@ -25,6 +25,21 @@ const CATEGORY_ICONS: Record<string, IconName> = {
   salary: "cash-outline",
   rent: "home-outline",
   other: "ellipsis-horizontal-circle-outline",
+  other_income: "pricetag-outline",
+};
+
+export const CATEGORY_LABELS: Record<string, string> = {
+  salary: "Salary",
+  other_income: "Other Income",
+  groceries: "Groceries",
+  restaurants: "Restaurants",
+  transportation: "Transportation",
+  utilities: "Utilities",
+  entertainment: "Entertainment",
+  healthcare: "Healthcare",
+  shopping: "Shopping",
+  rent: "Rent",
+  other: "Other",
 };
 
 export default function SpendingByCategory({ data }: SpendingByCategoryProps) {
@@ -32,12 +47,9 @@ export default function SpendingByCategory({ data }: SpendingByCategoryProps) {
 
   const activeType =
     activeTab === "income" ? TransactionType.INCOME : TransactionType.EXPENSE;
+
   const categories = (data?.transactionCategories ?? []).filter(
     (category) => category.type === activeType,
-  );
-  const totalValue = categories.reduce(
-    (sum, category) => sum + category.amount,
-    0,
   );
 
   return (
@@ -84,11 +96,6 @@ export default function SpendingByCategory({ data }: SpendingByCategoryProps) {
       {categories.length > 0 ? (
         <View style={styles.list}>
           {categories.map((category, index) => {
-            const share =
-              totalValue > 0
-                ? Math.round((category.amount / totalValue) * 100)
-                : 0;
-
             return (
               <View key={category.label}>
                 <View style={styles.row}>
@@ -101,10 +108,7 @@ export default function SpendingByCategory({ data }: SpendingByCategoryProps) {
                     ]}
                   >
                     <Ionicons
-                      name={
-                        CATEGORY_ICONS[category.label.toLowerCase()] ??
-                        "pricetag-outline"
-                      }
+                      name={CATEGORY_ICONS[category.label]}
                       size={14}
                       color={Colors.brand}
                     />
@@ -112,10 +116,10 @@ export default function SpendingByCategory({ data }: SpendingByCategoryProps) {
 
                   <View style={styles.rowContent}>
                     <Text style={styles.label} numberOfLines={1}>
-                      {category.label}
+                      {CATEGORY_LABELS[category.label]}
                     </Text>
                     <Text style={styles.share}>
-                      {share}% of {activeTab}
+                      {category.percentage}% of {activeTab}
                     </Text>
                   </View>
 
