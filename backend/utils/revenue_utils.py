@@ -1,13 +1,14 @@
 from db.models.statement import Transaction
 from schemas.statement_dto import TransactionType, TransactionCategoryDTO
+from constants import EXPENSE_CATEGORIES, INCOME_CATEGORIES
 
 
 def calculate_totals(transactions: list[Transaction]) -> tuple[float, float, float]:
     credit_total = sum(
-        t.amount or 0.0 for t in transactions if t.type == TransactionType.CREDIT.value
+        t.amount or 0.0 for t in transactions if t.type == TransactionType.INCOME.value
     )
     debit_total = sum(
-        t.amount or 0.0 for t in transactions if t.type == TransactionType.DEBIT.value
+        t.amount or 0.0 for t in transactions if t.type == TransactionType.EXPENSE.value
     )
     return credit_total, debit_total, credit_total - debit_total
 
@@ -32,6 +33,11 @@ def process_category(
             label=label,
             amount=amount,
             percentage=calculate_category_percentage(categories, label),
+            type=(
+                TransactionType.EXPENSE
+                if label in EXPENSE_CATEGORIES
+                else TransactionType.INCOME
+            ),
         )
         for label, amount in sorted_categories
     ]

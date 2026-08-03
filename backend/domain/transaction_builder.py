@@ -1,7 +1,6 @@
 from datetime import date
 from db.models.statement import Transaction
 from schemas.statement_dto import (
-    TransactionCategoryDTO,
     StatementDTO,
     TransactionDTO,
     TransactionType,
@@ -31,12 +30,12 @@ def build_statement(
         credit_list=[
             TransactionDTO.model_validate(t)
             for t in transactions
-            if (t.type == TransactionType.CREDIT.value)
+            if (t.type == TransactionType.INCOME.value)
         ],
         debit_list=[
             TransactionDTO.model_validate(t)
             for t in transactions
-            if (t.type == TransactionType.DEBIT.value)
+            if (t.type == TransactionType.EXPENSE.value)
         ],
         top_incomes=[TransactionDTO.model_validate(t) for t in top_credit_transactions],
         top_expenses=[TransactionDTO.model_validate(t) for t in top_debit_transactions],

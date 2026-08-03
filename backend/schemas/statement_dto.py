@@ -5,8 +5,8 @@ from enum import Enum
 
 
 class TransactionType(Enum):
-    DEBIT = "DEBIT"
-    CREDIT = "CREDIT"
+    INCOME = "INCOME"
+    EXPENSE = "EXPENSE"
 
 
 class TransactionDTO(BaseModel):
@@ -23,6 +23,7 @@ class TransactionCategoryDTO(BaseModel):
     label: str
     amount: float
     percentage: float
+    type: TransactionType
 
 
 class StatementDTO(BaseModel):

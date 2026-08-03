@@ -52,7 +52,7 @@ class StatementRepository:
             select(Transaction)
             .where(
                 Transaction.date.between(start_date, end_date),
-                Transaction.type == TransactionType.CREDIT.value,
+                Transaction.type == TransactionType.INCOME.value,
             )
             .order_by(Transaction.amount.desc())
             .limit(TOP_N_TRANSACTIONS)
@@ -64,7 +64,7 @@ class StatementRepository:
             select(Transaction)
             .where(
                 Transaction.date.between(start_date, end_date),
-                Transaction.type == TransactionType.DEBIT.value,
+                Transaction.type == TransactionType.EXPENSE.value,
             )
             .order_by(Transaction.amount.desc())
             .limit(TOP_N_TRANSACTIONS)
