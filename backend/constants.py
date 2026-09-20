@@ -5,7 +5,7 @@ load_dotenv()
 
 DATE_PATTERN_REGEX = r"\d{2}-\d{2}-\d{2}"
 TOP_N_TRANSACTIONS = 3
-DATABASE_URL = os.getenv("DATABASE_URL")
+DATABASE_URL = f"{os.getenv("DATABASE_URL")}{os.getenv('POSTGRES_USER')}:{os.getenv('POSTGRES_PASSWORD')}@localhost/{os.getenv('POSTGRES_DB')}"
 
 INCOME_CATEGORIES = ["salary", "other_income"]
 EXPENSE_CATEGORIES = [
