@@ -1,8 +1,11 @@
 import { useEffect } from "react";
-import { Stack } from "expo-router";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import RootNavigator from "@/components/navigation/root-navigator/RootNavigator";
+import { StatementProvider } from "@/context/StatementContext";
+import { ThemeProvider } from "@/styles/theme";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -11,7 +14,6 @@ const queryClient = new QueryClient();
 export default function RootLayout() {
   const [fontsLoaded, fontError] = useFonts({
     Geist: require("../assets/fonts/Geist.ttf"),
-    "Playfair Display": require("../assets/fonts/Playfair Display.ttf"),
   });
 
   useEffect(() => {
@@ -26,7 +28,13 @@ export default function RootLayout() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Stack screenOptions={{ headerShown: false }} />
+      <SafeAreaProvider>
+        <ThemeProvider>
+          <StatementProvider>
+            <RootNavigator />
+          </StatementProvider>
+        </ThemeProvider>
+      </SafeAreaProvider>
     </QueryClientProvider>
   );
 }
