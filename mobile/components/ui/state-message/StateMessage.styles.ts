@@ -4,6 +4,7 @@ import { Radius, Spacing, Type, type ThemeColors } from "@/styles/tokens";
 export const createStyles = (colors: ThemeColors) =>
   StyleSheet.create({
     container: {
+      height: "100%",
       alignItems: "center",
       justifyContent: "center",
       paddingVertical: Spacing[9],
