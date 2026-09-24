@@ -16,6 +16,7 @@ export const createStyles = (colors: ThemeColors) =>
     head: {
       flexDirection: "row",
       alignItems: "center",
+      justifyContent: "center",
       gap: Spacing[1],
     },
     marker: {
@@ -31,10 +32,12 @@ export const createStyles = (colors: ThemeColors) =>
     },
     value: {
       ...Type.figure,
+      textAlign: "center",
     },
     delta: {
       ...Type.metaSmall,
       color: colors.textTertiary,
       fontWeight: FontWeight.regular,
+      textAlign: "center",
     },
   });
