@@ -12,7 +12,8 @@ import { useTheme } from "@/styles/theme";
 import { MAX_CONTENT_WIDTH, Spacing } from "@/styles/tokens";
 import { Constants } from "@/utils/constants";
 import { formatMonthLabel } from "@/utils/format";
-import UploadFileFloatingButton from "@/components/ui/floating-button/FloatingButton";
+import UploadFileFloatingButton from "@/components/ui/upload-file-floating-button/UploadFileFloatingButton";
+import { useCreateStatementQuery } from "@ledger/api";
 
 export default function HomeScreen() {
   const { colors } = useTheme();
@@ -27,7 +28,13 @@ export default function HomeScreen() {
     goToPreviousMonth,
     goToNextMonth,
     canGoToNextMonth,
-  } = useStatement();
+	} = useStatement();
+
+  const { mutateAsync: uploadStatement } = useCreateStatementQuery();
+
+	const handleFilePicker = (file: File) => {
+		uploadStatement({ statementFile: file, date: selectedDate.toString()})
+	}
 
   return (
     <SafeAreaView
@@ -54,8 +61,8 @@ export default function HomeScreen() {
           onPrevious={goToPreviousMonth}
           onNext={goToNextMonth}
           canGoNext={canGoToNextMonth}
-          fullWidth
           style={styles.monthStepper}
+          fullWidth
         />
 
         {isError ? (
@@ -108,7 +115,7 @@ export default function HomeScreen() {
 
         <View style={styles.tail} />
 			</ScrollView>
-      <UploadFileFloatingButton />
+      <UploadFileFloatingButton onFileSelected={handleFilePicker}/>
     </SafeAreaView>
   );
 }

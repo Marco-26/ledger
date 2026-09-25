@@ -5,7 +5,7 @@ import { useTheme, useThemedStyles } from "@/styles/theme";
 import { createStyles } from "./UploadFileFloatingButton.styles";
 
 interface UploadFileFloatingButtonProps {
-  onFileSelected?: (file: DocumentPicker.DocumentPickerAsset) => void;
+  onFileSelected?: (file: File) => void;
   accessibilityLabel?: string;
 }
 

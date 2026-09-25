@@ -2,10 +2,10 @@ import { TouchableOpacity, View } from "react-native";
 import { Octicons } from "@expo/vector-icons";
 import * as DocumentPicker from "expo-document-picker";
 import { useTheme, useThemedStyles } from "@/styles/theme";
-import { createStyles } from "./FloatingButton.styles";
+import { createStyles } from "./UploadFileFloatingButton.styles";
 
 interface UploadFileFloatingButtonProps {
-  onFileSelected?: (file: DocumentPicker.DocumentPickerAsset) => void;
+  onFileSelected?: (file: File) => void;
   accessibilityLabel?: string;
 }
 
