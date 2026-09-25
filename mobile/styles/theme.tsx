@@ -46,6 +46,5 @@ export function useTheme(): Theme {
  */
 export function useThemedStyles<T>(factory: (colors: ThemeColors) => T): T {
   const { colors, scheme } = useTheme();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   return useMemo(() => factory(colors), [scheme]);
 }

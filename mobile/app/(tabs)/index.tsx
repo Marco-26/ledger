@@ -12,6 +12,7 @@ import { useTheme } from "@/styles/theme";
 import { MAX_CONTENT_WIDTH, Spacing } from "@/styles/tokens";
 import { Constants } from "@/utils/constants";
 import { formatMonthLabel } from "@/utils/format";
+import UploadFileFloatingButton from "@/components/ui/floating-button/FloatingButton";
 
 export default function HomeScreen() {
   const { colors } = useTheme();
@@ -106,7 +107,8 @@ export default function HomeScreen() {
         )}
 
         <View style={styles.tail} />
-      </ScrollView>
+			</ScrollView>
+      <UploadFileFloatingButton />
     </SafeAreaView>
   );
 }
