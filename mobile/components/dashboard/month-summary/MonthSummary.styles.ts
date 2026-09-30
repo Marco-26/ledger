@@ -62,11 +62,4 @@ export const createStyles = (colors: ThemeColors) =>
       alignItems: "stretch",
       gap: Spacing[4],
     },
-    skeletonGroup: {
-      gap: Spacing[3],
-    },
-    skeletonColumn: {
-      flex: 1,
-      gap: Spacing[2],
-    },
   });

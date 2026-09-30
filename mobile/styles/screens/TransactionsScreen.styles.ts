@@ -45,11 +45,6 @@ export const createStyles = (colors: ThemeColors) =>
       paddingTop: Spacing[3],
       paddingBottom: Spacing[4],
     },
-    headerSkeleton: {
-      gap: Spacing[3],
-      paddingTop: Spacing[1],
-      paddingBottom: Spacing[4],
-    },
     body: {
       flex: 1,
     },
@@ -88,15 +83,5 @@ export const createStyles = (colors: ThemeColors) =>
       alignSelf: "center",
       paddingHorizontal: Spacing[5],
       paddingTop: Spacing[2],
-    },
-    skeletonRow: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: Spacing[3],
-      minHeight: 60,
-    },
-    skeletonBody: {
-      flex: 1,
-      gap: Spacing[1],
     },
   });

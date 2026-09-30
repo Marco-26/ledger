@@ -1,12 +1,12 @@
 import { Text, View } from "react-native";
 import { TransactionType, type ITransactionCategory } from "@ledger/api";
 import SectionHeading from "@/components/ui/section-heading/SectionHeading";
-import Skeleton from "@/components/ui/skeleton/Skeleton";
 import { useTheme, useThemedStyles } from "@/styles/theme";
 import { Spacing } from "@/styles/tokens";
 import { categoryLabel } from "@/utils/categories";
 import { formatCurrency, formatPercent } from "@/utils/format";
 import { createStyles } from "./CategoryBreakdown.styles";
+import CategoryBreakdownSkeleton from "./skeleton/CategoryBreakdownSkeleton";
 
 interface CategoryBreakdownProps {
   categories?: ITransactionCategory[];
@@ -39,17 +39,7 @@ export default function CategoryBreakdown({
       <SectionHeading title="Where it went" />
 
       {isLoading ? (
-        <View style={styles.list}>
-          {Array.from({ length: 4 }).map((_, index) => (
-            <View key={index} style={styles.row}>
-              <View style={styles.rowHead}>
-                <Skeleton width="40%" height={13} />
-                <Skeleton width={64} height={11} />
-              </View>
-              <Skeleton width="100%" height={3} />
-            </View>
-          ))}
-        </View>
+        <CategoryBreakdownSkeleton />
       ) : visible.length > 0 ? (
         <View style={styles.list}>
           {visible.map((category) => {
