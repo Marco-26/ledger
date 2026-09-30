@@ -30,11 +30,13 @@ export default function HomeScreen() {
     canGoToNextMonth,
 	} = useStatement();
 
-  const { mutateAsync: uploadStatement } = useCreateStatementQuery();
+  const { mutate: uploadStatement, isPending: isUploading } = useCreateStatementQuery();
 
 	const handleFilePicker = (file: File) => {
-		uploadStatement({ statementFile: file, date: selectedDate.toString()})
+		uploadStatement({ statementFile: file, date: selectedDate.date(1).format(Constants.UI.DATE_FORMAT)})
 	}
+
+  const isDashboardLoading = isLoading || isUploading;
 
   return (
     <SafeAreaView
@@ -65,7 +67,7 @@ export default function HomeScreen() {
           fullWidth
         />
 
-        {isError ? (
+        {!isUploading && isError ? (
           <StateMessage
             icon="cloud-offline-outline"
             tone="error"
@@ -74,7 +76,7 @@ export default function HomeScreen() {
             actionLabel="Try again"
             onAction={refetch}
           />
-        ) : isEmpty ? (
+        ) : !isUploading && isEmpty ? (
           <StateMessage
             icon="document-text-outline"
             title={`Nothing in ${formatMonthLabel(selectedDate)}`}
@@ -82,14 +84,14 @@ export default function HomeScreen() {
           />
         ) : (
           <>
-            <MonthSummary statement={statement} isLoading={isLoading} />
+            <MonthSummary statement={statement} isLoading={isDashboardLoading} />
 
             <Divider style={styles.rule} />
 
             <TopMovements
               title="Top income"
               transactions={statement?.topIncomes}
-              isLoading={isLoading}
+              isLoading={isDashboardLoading}
               emptyLabel="No income recorded this month."
               filter="income"
             />
@@ -99,7 +101,7 @@ export default function HomeScreen() {
             <TopMovements
               title="Top spending"
               transactions={statement?.topExpenses}
-              isLoading={isLoading}
+              isLoading={isDashboardLoading}
               emptyLabel="No spending recorded this month."
               filter="expense"
             />
@@ -108,14 +110,14 @@ export default function HomeScreen() {
 
             <CategoryBreakdown
               categories={statement?.transactionCategories}
-              isLoading={isLoading}
+              isLoading={isDashboardLoading}
             />
           </>
         )}
 
         <View style={styles.tail} />
 			</ScrollView>
-      <UploadFileFloatingButton onFileSelected={handleFilePicker}/>
+      <UploadFileFloatingButton onFileSelected={handleFilePicker} isLoading={isUploading} />
     </SafeAreaView>
   );
 }

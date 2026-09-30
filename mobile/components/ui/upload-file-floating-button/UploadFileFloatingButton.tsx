@@ -1,4 +1,4 @@
-import { TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, TouchableOpacity, View } from "react-native";
 import { Octicons } from "@expo/vector-icons";
 import * as DocumentPicker from "expo-document-picker";
 import { useTheme, useThemedStyles } from "@/styles/theme";
@@ -7,11 +7,13 @@ import { createStyles } from "./UploadFileFloatingButton.styles";
 interface UploadFileFloatingButtonProps {
   onFileSelected?: (file: File) => void;
   accessibilityLabel?: string;
+  isLoading?: boolean;
 }
 
 export default function UploadFileFloatingButton({
   onFileSelected,
   accessibilityLabel = "Import a statement",
+  isLoading = false,
 }: UploadFileFloatingButtonProps) {
   const styles = useThemedStyles(createStyles);
   const { colors } = useTheme();
@@ -40,11 +42,17 @@ export default function UploadFileFloatingButton({
       <TouchableOpacity
         style={styles.button}
         onPress={openFilePicker}
+        disabled={isLoading}
         activeOpacity={0.85}
         accessibilityRole="button"
         accessibilityLabel={accessibilityLabel}
+        accessibilityState={{ disabled: isLoading, busy: isLoading }}
       >
-        <Octicons name="diff-added" size={24} color={colors.textInverse} />
+        {isLoading ? (
+          <ActivityIndicator color={colors.textInverse} />
+        ) : (
+          <Octicons name="diff-added" size={24} color={colors.textInverse} />
+        )}
       </TouchableOpacity>
     </View>
   );
