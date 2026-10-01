@@ -14,6 +14,7 @@ import { Constants } from "@/utils/constants";
 import { formatMonthLabel } from "@/utils/format";
 import UploadFileFloatingButton from "@/components/ui/upload-file-floating-button/UploadFileFloatingButton";
 import { useCreateStatementQuery } from "@ledger/api";
+import { useEffect } from "react";
 
 export default function HomeScreen() {
   const { colors } = useTheme();
@@ -27,16 +28,26 @@ export default function HomeScreen() {
     selectedDate,
     goToPreviousMonth,
     goToNextMonth,
-    canGoToNextMonth,
+		canGoToNextMonth,
+		setUploadingFileMonth,
+		uploadingFileMonth
 	} = useStatement();
 
-  const { mutate: uploadStatement, isPending: isUploading } = useCreateStatementQuery();
+	const { mutate: uploadStatement, isPending: isUploading, isSuccess} = useCreateStatementQuery();
 
 	const handleFilePicker = (file: File) => {
+		setUploadingFileMonth(selectedDate.month());
 		uploadStatement({ statementFile: file, date: selectedDate.date(1).format(Constants.UI.DATE_FORMAT)})
 	}
 
-  const isDashboardLoading = isLoading || isUploading;
+	const isCurrentDashboardLoading = uploadingFileMonth === selectedDate.month();
+	const isDashboardLoading = (isLoading || isUploading) && isCurrentDashboardLoading; 
+
+	useEffect(() => {
+		if (isSuccess) {
+			setUploadingFileMonth(undefined)
+		}
+	}, [isSuccess, setUploadingFileMonth])
 
   return (
     <SafeAreaView
@@ -76,7 +87,7 @@ export default function HomeScreen() {
             actionLabel="Try again"
             onAction={refetch}
           />
-        ) : !isUploading && isEmpty ? (
+        ) : !isCurrentDashboardLoading && isEmpty ? (
           <StateMessage
             icon="document-text-outline"
             title={`Nothing in ${formatMonthLabel(selectedDate)}`}
@@ -110,14 +121,15 @@ export default function HomeScreen() {
 
             <CategoryBreakdown
               categories={statement?.transactionCategories}
-              isLoading={isDashboardLoading}
+									isLoading={isDashboardLoading}
+									
             />
           </>
         )}
 
         <View style={styles.tail} />
 			</ScrollView>
-      <UploadFileFloatingButton onFileSelected={handleFilePicker} isLoading={isUploading} />
+			<UploadFileFloatingButton onFileSelected={handleFilePicker} isLoading={isUploading} disabled={!!uploadingFileMonth} />
     </SafeAreaView>
   );
 }

@@ -15,16 +15,15 @@ interface StatementContextValue {
   setSelectedDate: (date: Dayjs) => void;
   goToPreviousMonth: () => void;
   goToNextMonth: () => void;
-  /** The current month is the last one worth showing. */
   canGoToNextMonth: boolean;
   statement?: IStatement;
   isLoading: boolean;
-  /** A real failure (network, server). */
   isError: boolean;
-  /** The month simply has no statement yet — the API answers 404. */
   isEmpty: boolean;
   isRefetching: boolean;
-  refetch: () => void;
+	refetch: () => void;
+	setUploadingFileMonth: (monthId: number | undefined) => void;
+	uploadingFileMonth?: number;
 }
 
 const StatementContext = createContext<StatementContextValue | null>(null);
@@ -43,6 +42,7 @@ function isNotFound(error: unknown): boolean {
  */
 export function StatementProvider({ children }: { children: ReactNode }) {
   const [selectedDate, setSelectedDate] = useState<Dayjs>(() => dayjs());
+  const [uploadingFileMonth, setUploadingFileMonth] = useState<number>();
 
   const { data, error, isLoading, isError, isRefetching, refetch } = useStatementsQuery({
     selectedMonth: selectedDate.date(1).format(Constants.UI.DATE_FORMAT),
@@ -73,7 +73,9 @@ export function StatementProvider({ children }: { children: ReactNode }) {
       isError: isError && !isNotFound(error),
       isEmpty: isError && isNotFound(error),
       isRefetching,
-      refetch,
+			refetch,
+			setUploadingFileMonth,
+			uploadingFileMonth
     }),
     [
       selectedDate,
@@ -84,7 +86,8 @@ export function StatementProvider({ children }: { children: ReactNode }) {
       isLoading,
       isError,
       isRefetching,
-      refetch,
+			refetch,
+    	uploadingFileMonth
     ],
   );
 

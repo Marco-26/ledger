@@ -7,18 +7,21 @@ import { createStyles } from "./UploadFileFloatingButton.styles";
 interface UploadFileFloatingButtonProps {
   onFileSelected?: (file: File) => void;
   accessibilityLabel?: string;
-  isLoading?: boolean;
+	isLoading?: boolean;
+	disabled?: boolean;
 }
 
 export default function UploadFileFloatingButton({
   onFileSelected,
   accessibilityLabel = "Import a statement",
-  isLoading = false,
+	isLoading = false,
+  disabled
 }: UploadFileFloatingButtonProps) {
   const styles = useThemedStyles(createStyles);
   const { colors } = useTheme();
 
-  const openFilePicker = async () => {
+	const openFilePicker = async () => {
+		if (disabled) return;
     try {
       const result = await DocumentPicker.getDocumentAsync({
         type: "application/pdf",
@@ -38,7 +41,7 @@ export default function UploadFileFloatingButton({
 
   return (
     // box-none lets taps fall through to the content behind the overlay.
-    <View style={styles.overlay} pointerEvents="box-none">
+    <View style={styles.overlay} pointerEvents="box-none" >
       <TouchableOpacity
         style={styles.button}
         onPress={openFilePicker}
