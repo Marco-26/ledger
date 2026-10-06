@@ -59,20 +59,18 @@ export default function HomeScreen() {
     }
   }, [errorUploading]);
 
+  const selectedMonth = selectedDate.date(1).format(Constants.UI.DATE_FORMAT);
+
   const handleFilePicker = (file: File) => {
-    setUploadingFileMonth(selectedDate.month());
+    setUploadingFileMonth(selectedMonth);
     uploadStatement(
-      {
-        statementFile: file,
-        date: selectedDate.date(1).format(Constants.UI.DATE_FORMAT),
-      },
+      { statementFile: file, date: selectedMonth },
       { onSettled: () => setUploadingFileMonth(undefined) },
     );
   };
 
-  const isCurrentDashboardLoading = uploadingFileMonth === selectedDate.month();
-  const isDashboardLoading =
-    (isLoading || isUploading) && isCurrentDashboardLoading;
+  const isSelectedMonthUploading = uploadingFileMonth === selectedMonth;
+  const isDashboardLoading = isLoading || isSelectedMonthUploading;
 
   return (
     <SafeAreaView
@@ -103,7 +101,7 @@ export default function HomeScreen() {
           fullWidth
         />
 
-        {!isUploading && isError ? (
+        {!isSelectedMonthUploading && isError ? (
           <StateMessage
             icon="cloud-offline-outline"
             tone="error"
@@ -112,7 +110,7 @@ export default function HomeScreen() {
             actionLabel="Try again"
             onAction={refetch}
           />
-        ) : !isCurrentDashboardLoading && isEmpty ? (
+        ) : !isSelectedMonthUploading && isEmpty ? (
           <StateMessage
             icon="document-text-outline"
             title={`Nothing in ${formatMonthLabel(selectedDate)}`}

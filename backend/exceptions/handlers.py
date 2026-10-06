@@ -1,5 +1,3 @@
-from venv import logger
-
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
@@ -10,6 +8,9 @@ from exceptions.domain import (
 )
 
 from exceptions.error_codes import ErrorCodes
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 async def statement_not_found_handler(

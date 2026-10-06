@@ -22,8 +22,8 @@ interface StatementContextValue {
   isEmpty: boolean;
   isRefetching: boolean;
   refetch: () => void;
-  setUploadingFileMonth: (monthId: number | undefined) => void;
-  uploadingFileMonth?: number;
+  setUploadingFileMonth: (month: string | undefined) => void;
+  uploadingFileMonth?: string;
 }
 
 const StatementContext = createContext<StatementContextValue | null>(null);
@@ -42,7 +42,7 @@ function isNotFound(error: unknown): boolean {
  */
 export function StatementProvider({ children }: { children: ReactNode }) {
   const [selectedDate, setSelectedDate] = useState<Dayjs>(() => dayjs());
-  const [uploadingFileMonth, setUploadingFileMonth] = useState<number>();
+  const [uploadingFileMonth, setUploadingFileMonth] = useState<string>();
 
   const { data, error, isLoading, isError, isRefetching, refetch } =
     useStatementsQuery({
