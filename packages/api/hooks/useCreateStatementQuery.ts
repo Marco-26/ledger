@@ -20,7 +20,6 @@ export function useCreateStatementQuery() {
       });
     },
     onError: (error) => {
-      console.error(error);
     },
   });
 }

@@ -21,9 +21,9 @@ interface StatementContextValue {
   isError: boolean;
   isEmpty: boolean;
   isRefetching: boolean;
-	refetch: () => void;
-	setUploadingFileMonth: (monthId: number | undefined) => void;
-	uploadingFileMonth?: number;
+  refetch: () => void;
+  setUploadingFileMonth: (monthId: number | undefined) => void;
+  uploadingFileMonth?: number;
 }
 
 const StatementContext = createContext<StatementContextValue | null>(null);
@@ -44,9 +44,10 @@ export function StatementProvider({ children }: { children: ReactNode }) {
   const [selectedDate, setSelectedDate] = useState<Dayjs>(() => dayjs());
   const [uploadingFileMonth, setUploadingFileMonth] = useState<number>();
 
-  const { data, error, isLoading, isError, isRefetching, refetch } = useStatementsQuery({
-    selectedMonth: selectedDate.date(1).format(Constants.UI.DATE_FORMAT),
-  });
+  const { data, error, isLoading, isError, isRefetching, refetch } =
+    useStatementsQuery({
+      selectedMonth: selectedDate.date(1).format(Constants.UI.DATE_FORMAT),
+    });
 
   const goToPreviousMonth = useCallback(
     () => setSelectedDate((date) => date.subtract(1, "month")),
@@ -73,9 +74,9 @@ export function StatementProvider({ children }: { children: ReactNode }) {
       isError: isError && !isNotFound(error),
       isEmpty: isError && isNotFound(error),
       isRefetching,
-			refetch,
-			setUploadingFileMonth,
-			uploadingFileMonth
+      refetch,
+      setUploadingFileMonth,
+      uploadingFileMonth,
     }),
     [
       selectedDate,
@@ -86,8 +87,8 @@ export function StatementProvider({ children }: { children: ReactNode }) {
       isLoading,
       isError,
       isRefetching,
-			refetch,
-    	uploadingFileMonth
+      refetch,
+      uploadingFileMonth,
     ],
   );
 

@@ -11,10 +11,11 @@ import { useStatement } from "@/context/StatementContext";
 import { useTheme } from "@/styles/theme";
 import { MAX_CONTENT_WIDTH, Spacing } from "@/styles/tokens";
 import { Constants } from "@/utils/constants";
-import { formatMonthLabel } from "@/utils/format";
-import UploadFileFloatingButton from "@/components/ui/upload-file-floating-button/UploadFileFloatingButton";
 import { useCreateStatementQuery } from "@ledger/api";
 import { useEffect } from "react";
+import UploadFileFloatingButton from "@/components/ui/upload-file-floating-button/UploadFileFloatingButton";
+import { formatMonthLabel } from "@/utils/format";
+import Toast from "react-native-toast-message";
 
 export default function HomeScreen() {
   const { colors } = useTheme();
@@ -28,26 +29,40 @@ export default function HomeScreen() {
     selectedDate,
     goToPreviousMonth,
     goToNextMonth,
-		canGoToNextMonth,
-		setUploadingFileMonth,
-		uploadingFileMonth
-	} = useStatement();
+    canGoToNextMonth,
+    setUploadingFileMonth,
+    uploadingFileMonth,
+  } = useStatement();
 
-	const { mutate: uploadStatement, isPending: isUploading, isSuccess} = useCreateStatementQuery();
+  const {
+    mutate: uploadStatement,
+    isPending: isUploading,
+    isError: errorUploading,
+  } = useCreateStatementQuery();
 
-	const handleFilePicker = (file: File) => {
-		setUploadingFileMonth(selectedDate.month());
-		uploadStatement({ statementFile: file, date: selectedDate.date(1).format(Constants.UI.DATE_FORMAT)})
-	}
+  useEffect(() => {
+    if (errorUploading) {
+      Toast.show({
+        type: "error",
+        text1: "Error uploading statement",
+      });
+    }
+  }, [errorUploading]);
 
-	const isCurrentDashboardLoading = uploadingFileMonth === selectedDate.month();
-	const isDashboardLoading = (isLoading || isUploading) && isCurrentDashboardLoading; 
+  const handleFilePicker = (file: File) => {
+    setUploadingFileMonth(selectedDate.month());
+    uploadStatement(
+      {
+        statementFile: file,
+        date: selectedDate.date(1).format(Constants.UI.DATE_FORMAT),
+      },
+      { onSettled: () => setUploadingFileMonth(undefined) },
+    );
+  };
 
-	useEffect(() => {
-		if (isSuccess) {
-			setUploadingFileMonth(undefined)
-		}
-	}, [isSuccess, setUploadingFileMonth])
+  const isCurrentDashboardLoading = uploadingFileMonth === selectedDate.month();
+  const isDashboardLoading =
+    (isLoading || isUploading) && isCurrentDashboardLoading;
 
   return (
     <SafeAreaView
@@ -95,7 +110,10 @@ export default function HomeScreen() {
           />
         ) : (
           <>
-            <MonthSummary statement={statement} isLoading={isDashboardLoading} />
+            <MonthSummary
+              statement={statement}
+              isLoading={isDashboardLoading}
+            />
 
             <Divider style={styles.rule} />
 
@@ -121,15 +139,18 @@ export default function HomeScreen() {
 
             <CategoryBreakdown
               categories={statement?.transactionCategories}
-									isLoading={isDashboardLoading}
-									
+              isLoading={isDashboardLoading}
             />
           </>
         )}
 
         <View style={styles.tail} />
-			</ScrollView>
-			<UploadFileFloatingButton onFileSelected={handleFilePicker} isLoading={isUploading} disabled={!!uploadingFileMonth} />
+      </ScrollView>
+      <UploadFileFloatingButton
+        onFileSelected={handleFilePicker}
+        isLoading={isUploading}
+        disabled={!!uploadingFileMonth}
+      />
     </SafeAreaView>
   );
 }
