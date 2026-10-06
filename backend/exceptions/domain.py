@@ -9,7 +9,7 @@ class StatementParsingException(Exception):
     pass
 
 
-class StatementWrongDateSelected(Exception):
+class StatementWrongDateSelectedException(Exception):
 
     def __init__(self, user_selected_date: date, statement_date: date):
         self.user_selected_date = user_selected_date

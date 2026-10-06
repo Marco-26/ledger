@@ -13,13 +13,13 @@ import MonthStepper from "@/components/month-stepper/MonthStepper";
 import TransactionFilters, {
   type TypeFilter,
 } from "@/components/transactions/transaction-filters/TransactionFilters";
+import TransactionFiltersSkeleton from "@/components/transactions/transaction-filters/skeleton/TransactionFiltersSkeleton";
 import TransactionRow from "@/components/transactions/transaction-row/TransactionRow";
+import TransactionRowSkeleton from "@/components/transactions/transaction-row/skeleton/TransactionRowSkeleton";
 import Divider from "@/components/ui/divider/Divider";
-import Skeleton from "@/components/ui/skeleton/Skeleton";
 import StateMessage from "@/components/ui/state-message/StateMessage";
 import { useStatement } from "@/context/StatementContext";
 import { useTheme, useThemedStyles } from "@/styles/theme";
-import { Radius } from "@/styles/tokens";
 import { categoryLabel } from "@/utils/categories";
 import {
   formatCurrency,
@@ -183,14 +183,7 @@ export default function TransactionsScreen() {
       return (
         <View style={styles.skeletonList}>
           {Array.from({ length: 7 }).map((_, index) => (
-            <View key={index} style={styles.skeletonRow}>
-              <Skeleton width={38} height={38} radius={Radius.full} />
-              <View style={styles.skeletonBody}>
-                <Skeleton width="58%" height={14} />
-                <Skeleton width="34%" height={11} />
-              </View>
-              <Skeleton width={72} height={14} />
-            </View>
+            <TransactionRowSkeleton key={index} />
           ))}
         </View>
       );
@@ -285,15 +278,7 @@ export default function TransactionsScreen() {
           />
         </View>
 
-        {isLoading ? (
-          // Placeholders keep the header the same height as the loaded state,
-          // so nothing jumps when the month arrives.
-          <View style={styles.headerSkeleton}>
-            <Skeleton width={160} height={12} />
-            <Skeleton width="100%" height={44} radius={Radius.md} />
-            <Skeleton width="100%" height={40} radius={Radius.full} />
-          </View>
-        ) : null}
+        {isLoading ? <TransactionFiltersSkeleton /> : null}
 
         {!isLoading && !isError && !isEmpty ? (
           <Text style={styles.summaryLine}>

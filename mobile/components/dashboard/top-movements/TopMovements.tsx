@@ -6,10 +6,10 @@ import type { ITransaction } from "@ledger/api";
 import TransactionRow from "@/components/transactions/transaction-row/TransactionRow";
 import Divider from "@/components/ui/divider/Divider";
 import SectionHeading from "@/components/ui/section-heading/SectionHeading";
-import Skeleton from "@/components/ui/skeleton/Skeleton";
 import { useTheme, useThemedStyles } from "@/styles/theme";
-import { HIT_SLOP, Radius } from "@/styles/tokens";
+import { HIT_SLOP } from "@/styles/tokens";
 import { createStyles } from "./TopMovements.styles";
+import TopMovementsSkeleton from "./skeleton/TopMovementsSkeleton";
 
 interface TopMovementsProps {
   title: string;
@@ -59,21 +59,7 @@ export default function TopMovements({
       />
 
       {isLoading ? (
-        <>
-          {Array.from({ length: MAX_ITEMS }).map((_, index) => (
-            <Fragment key={index}>
-              {index > 0 ? <Divider /> : null}
-              <View style={styles.skeletonRow}>
-                <Skeleton width={38} height={38} radius={Radius.full} />
-                <View style={styles.skeletonBody}>
-                  <Skeleton width="62%" height={14} />
-                  <Skeleton width="38%" height={11} />
-                </View>
-                <Skeleton width={76} height={14} />
-              </View>
-            </Fragment>
-          ))}
-        </>
+        <TopMovementsSkeleton rows={MAX_ITEMS} />
       ) : items.length > 0 ? (
         items.map((transaction, index) => (
           <Fragment key={`${transaction.description}-${index}`}>

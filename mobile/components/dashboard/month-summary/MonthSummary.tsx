@@ -3,10 +3,10 @@ import { Ionicons } from "@expo/vector-icons";
 import type { IStatement } from "@ledger/api";
 import MonthTransactionSummary from "@/components/dashboard/month-transaction-summary/MonthTransactionSummary";
 import VerticalDivider from "@/components/ui/vertical-divider/VerticalDivider";
-import Skeleton from "@/components/ui/skeleton/Skeleton";
 import { useTheme, useThemedStyles } from "@/styles/theme";
 import { formatCurrency, formatDelta, splitCurrency } from "@/utils/format";
 import { createStyles } from "./MonthSummary.styles";
+import MonthSummarySkeleton from "./skeleton/MonthSummarySkeleton";
 
 interface MonthSummaryProps {
   statement?: IStatement;
@@ -24,28 +24,7 @@ export default function MonthSummary({
   const styles = useThemedStyles(createStyles);
   const { colors } = useTheme();
 
-  if (isLoading) {
-    return (
-      <View style={styles.container}>
-        <View style={styles.skeletonGroup}>
-          <Skeleton width={92} height={13} />
-          <Skeleton width={220} height={40} />
-          <Skeleton width={140} height={12} />
-        </View>
-        <View style={styles.splitRow}>
-          <View style={styles.skeletonColumn}>
-            <Skeleton width={70} height={12} />
-            <Skeleton width={120} height={24} />
-          </View>
-          <VerticalDivider />
-          <View style={styles.skeletonColumn}>
-            <Skeleton width={70} height={12} />
-            <Skeleton width={120} height={24} />
-          </View>
-        </View>
-      </View>
-    );
-  }
+  if (isLoading) return <MonthSummarySkeleton />;
 
   const balance = statement?.netBalance ?? 0;
   const { sign, symbol, integer, symbolFirst } = splitCurrency(balance);

@@ -21,14 +21,4 @@ export const createStyles = (colors: ThemeColors) =>
       ...Type.meta,
       color: colors.textTertiary,
     },
-    skeletonRow: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: Spacing[3],
-      minHeight: 60,
-    },
-    skeletonBody: {
-      flex: 1,
-      gap: Spacing[1],
-    },
   });

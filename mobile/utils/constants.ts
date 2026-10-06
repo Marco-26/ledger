@@ -23,4 +23,14 @@ export const Constants = {
     // The API has no accounts yet; swap this for the session user once it does.
     NAME: "Marco",
   },
+  ERRORS: {
+    DATE_MISMATCH: {
+      text1: "Wrong month",
+      text2: "This statement doesn't belong to the selected date.",
+    },
+    GENERAL: {
+      text1: "ERROR",
+      text2: "There was an error processing your request.",
+    },
+  },
 };

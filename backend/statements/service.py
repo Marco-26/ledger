@@ -10,7 +10,7 @@ from datetime import date
 from utils import date_utils
 from domain.transaction_builder import build_statement
 from exceptions.domain import (
-    StatementWrongDateSelected,
+    StatementWrongDateSelectedException,
     StatementNotFoundException,
     StatementParsingException,
 )
@@ -40,7 +40,7 @@ class StatementService:
             user_selected_date.year,
             user_selected_date.month,
         ):
-            raise StatementWrongDateSelected(
+            raise StatementWrongDateSelectedException(
                 user_selected_date=user_selected_date, statement_date=statement_date
             )
 

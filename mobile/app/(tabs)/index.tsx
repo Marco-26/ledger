@@ -11,7 +11,14 @@ import { useStatement } from "@/context/StatementContext";
 import { useTheme } from "@/styles/theme";
 import { MAX_CONTENT_WIDTH, Spacing } from "@/styles/tokens";
 import { Constants } from "@/utils/constants";
+import { useCreateStatementQuery } from "@ledger/api";
+import { useEffect } from "react";
+import UploadFileFloatingButton from "@/components/ui/upload-file-floating-button/UploadFileFloatingButton";
 import { formatMonthLabel } from "@/utils/format";
+import Toast from "react-native-toast-message";
+import { isAxiosError } from "axios";
+
+type ErrorCode = keyof typeof Constants.ERRORS;
 
 export default function HomeScreen() {
   const { colors } = useTheme();
@@ -26,7 +33,44 @@ export default function HomeScreen() {
     goToPreviousMonth,
     goToNextMonth,
     canGoToNextMonth,
+    setUploadingFileMonth,
+    uploadingFileMonth,
   } = useStatement();
+
+  const {
+    mutate: uploadStatement,
+    isPending: isUploading,
+    error: errorUploading,
+  } = useCreateStatementQuery();
+
+  useEffect(() => {
+    if (!!errorUploading) {
+      const code = isAxiosError<{ code?: string }>(errorUploading)
+        ? errorUploading.response?.data?.code
+        : undefined;
+
+      const error = Constants.ERRORS[code as ErrorCode];
+
+      Toast.show({
+        type: "error",
+        text1: error ? error.text1 : Constants.ERRORS.GENERAL.text1,
+        text2: error ? error.text2 : Constants.ERRORS.GENERAL.text2,
+      });
+    }
+  }, [errorUploading]);
+
+  const selectedMonth = selectedDate.date(1).format(Constants.UI.DATE_FORMAT);
+
+  const handleFilePicker = (file: File) => {
+    setUploadingFileMonth(selectedMonth);
+    uploadStatement(
+      { statementFile: file, date: selectedMonth },
+      { onSettled: () => setUploadingFileMonth(undefined) },
+    );
+  };
+
+  const isSelectedMonthUploading = uploadingFileMonth === selectedMonth;
+  const isDashboardLoading = isLoading || isSelectedMonthUploading;
 
   return (
     <SafeAreaView
@@ -53,11 +97,11 @@ export default function HomeScreen() {
           onPrevious={goToPreviousMonth}
           onNext={goToNextMonth}
           canGoNext={canGoToNextMonth}
-          fullWidth
           style={styles.monthStepper}
+          fullWidth
         />
 
-        {isError ? (
+        {!isSelectedMonthUploading && isError ? (
           <StateMessage
             icon="cloud-offline-outline"
             tone="error"
@@ -66,7 +110,7 @@ export default function HomeScreen() {
             actionLabel="Try again"
             onAction={refetch}
           />
-        ) : isEmpty ? (
+        ) : !isSelectedMonthUploading && isEmpty ? (
           <StateMessage
             icon="document-text-outline"
             title={`Nothing in ${formatMonthLabel(selectedDate)}`}
@@ -74,14 +118,17 @@ export default function HomeScreen() {
           />
         ) : (
           <>
-            <MonthSummary statement={statement} isLoading={isLoading} />
+            <MonthSummary
+              statement={statement}
+              isLoading={isDashboardLoading}
+            />
 
             <Divider style={styles.rule} />
 
             <TopMovements
               title="Top income"
               transactions={statement?.topIncomes}
-              isLoading={isLoading}
+              isLoading={isDashboardLoading}
               emptyLabel="No income recorded this month."
               filter="income"
             />
@@ -91,7 +138,7 @@ export default function HomeScreen() {
             <TopMovements
               title="Top spending"
               transactions={statement?.topExpenses}
-              isLoading={isLoading}
+              isLoading={isDashboardLoading}
               emptyLabel="No spending recorded this month."
               filter="expense"
             />
@@ -100,13 +147,18 @@ export default function HomeScreen() {
 
             <CategoryBreakdown
               categories={statement?.transactionCategories}
-              isLoading={isLoading}
+              isLoading={isDashboardLoading}
             />
           </>
         )}
 
         <View style={styles.tail} />
       </ScrollView>
+      <UploadFileFloatingButton
+        onFileSelected={handleFilePicker}
+        isLoading={isUploading}
+        disabled={!!uploadingFileMonth}
+      />
     </SafeAreaView>
   );
 }
