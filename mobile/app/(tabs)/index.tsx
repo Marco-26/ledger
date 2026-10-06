@@ -16,6 +16,9 @@ import { useEffect } from "react";
 import UploadFileFloatingButton from "@/components/ui/upload-file-floating-button/UploadFileFloatingButton";
 import { formatMonthLabel } from "@/utils/format";
 import Toast from "react-native-toast-message";
+import { isAxiosError } from "axios";
+
+type ErrorCode = keyof typeof Constants.ERRORS;
 
 export default function HomeScreen() {
   const { colors } = useTheme();
@@ -37,14 +40,21 @@ export default function HomeScreen() {
   const {
     mutate: uploadStatement,
     isPending: isUploading,
-    isError: errorUploading,
+    error: errorUploading,
   } = useCreateStatementQuery();
 
   useEffect(() => {
-    if (errorUploading) {
+    if (!!errorUploading) {
+      const code = isAxiosError<{ code?: string }>(errorUploading)
+        ? errorUploading.response?.data?.code
+        : undefined;
+
+      const error = Constants.ERRORS[code as ErrorCode];
+
       Toast.show({
         type: "error",
-        text1: "Error uploading statement",
+        text1: error ? error.text1 : Constants.ERRORS.GENERAL.text1,
+        text2: error ? error.text2 : Constants.ERRORS.GENERAL.text2,
       });
     }
   }, [errorUploading]);
