@@ -1,14 +1,18 @@
-from db.models.statement import Transaction
-from schemas.statement_dto import TransactionType, TransactionCategoryDTO
+from decimal import Decimal
+
 from constants import EXPENSE_CATEGORIES
+from db.models.statement import Transaction
+from schemas.statement_dto import TransactionCategoryDTO, TransactionType
 
 
-def calculate_totals(transactions: list[Transaction]) -> tuple[float, float, float]:
+def calculate_totals(
+    transactions: list[Transaction],
+) -> tuple[Decimal, Decimal, Decimal]:
     credit_total = sum(
-        t.amount or 0.0 for t in transactions if t.type == TransactionType.INCOME.value
+        t.amount or Decimal(0) for t in transactions if t.type == TransactionType.INCOME
     )
     debit_total = sum(
-        t.amount or 0.0 for t in transactions if t.type == TransactionType.EXPENSE.value
+        t.amount or Decimal(0) for t in transactions if t.type == TransactionType.EXPENSE
     )
     return credit_total, debit_total, credit_total - debit_total
 
@@ -16,12 +20,12 @@ def calculate_totals(transactions: list[Transaction]) -> tuple[float, float, flo
 def process_category(
     transactions: list[Transaction],
 ) -> list[TransactionCategoryDTO]:
-    categories: dict[str, float] = {}
+    categories: dict[str, Decimal] = {}
 
     for transaction in transactions:
         amount = transaction.amount
         categories[transaction.category] = (
-            categories.get(transaction.category, 0.0) + amount
+            categories.get(transaction.category, Decimal(0)) + amount
         )
 
     sorted_categories = sorted(
@@ -47,18 +51,22 @@ def get_category_type(category: str) -> TransactionType:
     )
 
 
-def calculate_category_percentage(categories: dict[str, float], category: str) -> float:
+def calculate_category_percentage(
+    categories: dict[str, Decimal], category: str
+) -> float:
     category_type = get_category_type(category)
     total = sum(
         amount
         for label, amount in categories.items()
         if get_category_type(label) == category_type
     )
-    return round((categories[category] / total) * 100, 2)
+    return round(float(categories[category] / total * 100), 2)
 
 
-def calculate_revenue_growth_rate(current_value: float, previous_value: float) -> float:
+def calculate_revenue_growth_rate(
+    current_value: Decimal, previous_value: Decimal
+) -> float:
     if previous_value == 0:
         return 0
 
-    return ((current_value - previous_value) / previous_value) * 100
+    return float((current_value - previous_value) / previous_value * 100)

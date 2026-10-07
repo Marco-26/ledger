@@ -30,12 +30,12 @@ def build_statement(
         credit_list=[
             TransactionDTO.model_validate(t)
             for t in transactions
-            if (t.type == TransactionType.INCOME.value)
+            if (t.type == TransactionType.INCOME)
         ],
         debit_list=[
             TransactionDTO.model_validate(t)
             for t in transactions
-            if (t.type == TransactionType.EXPENSE.value)
+            if (t.type == TransactionType.EXPENSE)
         ],
         top_incomes=[TransactionDTO.model_validate(t) for t in top_credit_transactions],
         top_expenses=[TransactionDTO.model_validate(t) for t in top_debit_transactions],
