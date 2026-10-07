@@ -17,6 +17,7 @@ import UploadFileFloatingButton from "@/components/ui/upload-file-floating-butto
 import { formatMonthLabel } from "@/utils/format";
 import Toast from "react-native-toast-message";
 import { isAxiosError } from "axios";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
 
 type ErrorCode = keyof typeof Constants.ERRORS;
 
@@ -35,8 +36,10 @@ export default function HomeScreen() {
     canGoToNextMonth,
     setUploadingFileMonth,
     uploadingFileMonth,
-  } = useStatement();
+	} = useStatement();
 
+	const user = useCurrentUser();
+	
   const {
     mutate: uploadStatement,
     isPending: isUploading,
@@ -90,7 +93,7 @@ export default function HomeScreen() {
           />
         }
       >
-        <GreetingHeader name={Constants.USER.NAME} />
+				<GreetingHeader user={user} />
 
         <MonthStepper
           date={selectedDate}

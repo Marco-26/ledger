@@ -1,6 +1,5 @@
 import { StyleSheet } from "react-native";
 import {
-  FontSize,
   FontWeight,
   Radius,
   Spacing,
@@ -36,14 +35,26 @@ export const createStyles = (colors: ThemeColors) =>
       borderRadius: Radius.full,
       alignItems: "center",
       justifyContent: "center",
-      backgroundColor: colors.surface,
       borderWidth: StyleSheet.hairlineWidth,
       borderColor: colors.borderStrong,
+      overflow: "hidden",
     },
-    monogramText: {
-      fontSize: FontSize.base,
+    // Brass ring while the account menu hangs from the avatar.
+    monogramActive: {
+      borderWidth: 1.5,
+      borderColor: colors.brass,
+    },
+    monogramPressed: {
+      opacity: 0.8,
+    },
+    initials: {
+      ...Type.label,
       fontWeight: FontWeight.semibold,
-      color: colors.brass,
-      letterSpacing: 0.5,
+      letterSpacing: 0.6,
+      color: colors.textSecondary,
+    },
+    avatar: {
+      width: "100%",
+      height: "100%",
     },
   });
