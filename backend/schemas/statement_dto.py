@@ -4,7 +4,7 @@ from datetime import date as Date
 from enum import Enum
 
 
-class TransactionType(Enum):
+class TransactionType(str, Enum):
     INCOME = "INCOME"
     EXPENSE = "EXPENSE"
 

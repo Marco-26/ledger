@@ -37,7 +37,7 @@ class StatementRepository:
 
     def get_statement_via_date(self, date: date) -> Statement | None:
         stmt = select(Statement).where(Statement.date_uploaded == date)
-        return self.db.execute(stmt).unique().scalar_one_or_none()
+        return self.db.scalars(stmt).one_or_none()
 
     def delete_statement(self, statement: Statement):
         self.db.delete(statement)
@@ -45,34 +45,34 @@ class StatementRepository:
 
     def get_transactions(self, start_date: date, end_date: date):
         stmt = select(Transaction).where(Transaction.date.between(start_date, end_date))
-        return self.db.execute(stmt).scalars().all()
+        return self.db.scalars(stmt).all()
 
     def get_top_credit_transactions(self, start_date: date, end_date: date):
         stmt = (
             select(Transaction)
             .where(
                 Transaction.date.between(start_date, end_date),
-                Transaction.type == TransactionType.INCOME.value,
+                Transaction.type == TransactionType.INCOME,
             )
             .order_by(Transaction.amount.desc())
             .limit(TOP_N_TRANSACTIONS)
         )
-        return self.db.execute(stmt).scalars().all()
+        return self.db.scalars(stmt).all()
 
     def get_top_debit_transactions(self, start_date: date, end_date: date):
         stmt = (
             select(Transaction)
             .where(
                 Transaction.date.between(start_date, end_date),
-                Transaction.type == TransactionType.EXPENSE.value,
+                Transaction.type == TransactionType.EXPENSE,
             )
             .order_by(Transaction.amount.desc())
             .limit(TOP_N_TRANSACTIONS)
         )
-        return self.db.execute(stmt).scalars().all()
+        return self.db.scalars(stmt).all()
 
     def get_category_based_on_description(self, description: str):
         stmt = select(Transaction.category).where(
             Transaction.description == description,
         )
-        return self.db.execute(stmt).scalars().first()
+        return self.db.scalars(stmt).first()
