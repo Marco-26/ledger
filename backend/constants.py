@@ -1,5 +1,6 @@
-from dotenv import load_dotenv
 import os
+
+from dotenv import load_dotenv
 
 load_dotenv()
 
@@ -20,6 +21,8 @@ EXPENSE_CATEGORIES = [
     "other",
 ]
 
+SUPABASE_JWKS_URL = os.getenv("SUPABASE_JWKS_URL", "")
+SUPABASE_BASE_URL = os.getenv("SUPABASE_BASE_URL", "")
 
 MODEL_SYSTEM_PROMPT = f"""
 You are a bank transaction classifier.
