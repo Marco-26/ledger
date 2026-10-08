@@ -1,7 +1,9 @@
-from db.database import Base
+import uuid
+from typing import TYPE_CHECKING
+
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from typing import TYPE_CHECKING
+from db.database import Base
 
 if TYPE_CHECKING:
     from db.models.statement import Statement
@@ -14,3 +16,4 @@ class User(Base):
     statements: Mapped[list["Statement"]] = relationship(
         back_populates="user", cascade="all, delete-orphan"
     )
+    supabase_id: Mapped[uuid.UUID] = mapped_column(unique=True, nullable=False)
