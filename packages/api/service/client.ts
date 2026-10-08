@@ -11,7 +11,7 @@ export function setAuthTokenProvider(fn: () => Promise<string | undefined>) {
 }
 
 apiClient.interceptors.request.use(async (config) => {
-	const token = getToken?.();
+	const token = await getToken?.();
 	if (token) config.headers.Authorization = `Bearer ${token}`
 	return config;
 })
