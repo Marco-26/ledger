@@ -7,9 +7,9 @@ Create Date: 2026-10-08 22:47:24.257051
 """
 from typing import Sequence, Union
 
-from alembic import op
 import sqlalchemy as sa
 
+from alembic import op
 
 # revision identifiers, used by Alembic.
 revision: str = '66cd1f229ffe'
@@ -24,7 +24,8 @@ def upgrade() -> None:
     op.alter_column('users', 'supabase_id',
                existing_type=sa.VARCHAR(length=36),
                type_=sa.Uuid(),
-               existing_nullable=False)
+               existing_nullable=False,
+               postgresql_using='supabase_id::uuid')
     op.create_unique_constraint(None, 'users', ['supabase_id'])
     # ### end Alembic commands ###
 

@@ -1,6 +1,7 @@
 import uuid
 
 from db.models.user import User
+from exceptions.domain import UserNotFoundException
 from users.repository import UserRepository
 
 
@@ -9,7 +10,10 @@ class UserService:
     self.repo = user_repository
 
   def get_user_by_supabase_id(self, supabase_id: uuid.UUID) -> User:
-    return self.repo.get_user_by_supabase_id(supabase_id)
+    user = self.repo.get_user_by_supabase_id(supabase_id)
+    if not user:
+      raise UserNotFoundException()
+    return user
 
-  def create_user(self, supabase_id: uuid.UUID) -> None:
-    self.repo.create_user(supabase_id)
+  def create_user(self, supabase_id: uuid.UUID) -> User:
+    return self.repo.create_user(supabase_id)
