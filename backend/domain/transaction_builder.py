@@ -1,6 +1,8 @@
 from datetime import date
+
+from constants import TOP_N_TRANSACTIONS
 from db.models.statement import Transaction
-from schemas.statement_dto import (
+from schemas.statement import (
     StatementDTO,
     TransactionDTO,
     TransactionType,
@@ -10,8 +12,6 @@ from utils import revenue_utils
 
 def build_statement(
     transactions: list[Transaction],
-    top_credit_transactions: list[Transaction],
-    top_debit_transactions: list[Transaction],
     statement_date: date,
     previous_month_transactions: list[Transaction],
 ) -> StatementDTO:
@@ -24,9 +24,9 @@ def build_statement(
 
     return StatementDTO(
         date=statement_date,
-        credit_total=credit_total,
-        debit_total=debit_total,
-        net_balance=net_balance,
+        credit_total=float(credit_total),
+        debit_total=float(debit_total),
+        net_balance=float(net_balance),
         credit_list=[
             TransactionDTO.model_validate(t)
             for t in transactions
@@ -37,8 +37,8 @@ def build_statement(
             for t in transactions
             if (t.type == TransactionType.EXPENSE)
         ],
-        top_incomes=[TransactionDTO.model_validate(t) for t in top_credit_transactions],
-        top_expenses=[TransactionDTO.model_validate(t) for t in top_debit_transactions],
+        top_incomes=[TransactionDTO.model_validate(t) for t in _get_top_transactions(transactions, TransactionType.INCOME)],
+        top_expenses=[TransactionDTO.model_validate(t) for t in _get_top_transactions(transactions, TransactionType.EXPENSE)],
         all_transactions=[TransactionDTO.model_validate(t) for t in transactions],
         transaction_categories=revenue_utils.process_category(transactions),
         credit_total_growth_rate=revenue_utils.calculate_revenue_growth_rate(
@@ -51,3 +51,10 @@ def build_statement(
             net_balance, net_prev
         ),
     )
+
+
+def _get_top_transactions(
+    transactions: list[Transaction], transaction_type: TransactionType
+) -> list[Transaction]:
+    matching = [t for t in transactions if t.type == transaction_type]
+    return sorted(matching, key=lambda t: t.amount, reverse=True)[:TOP_N_TRANSACTIONS]

@@ -2,7 +2,7 @@ from decimal import Decimal
 
 from db.database import Base
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import Date, Numeric, String, ForeignKey, Enum as SQLEnum
+from sqlalchemy import Date, Numeric, String, ForeignKey, UniqueConstraint, Enum as SQLEnum
 from datetime import date as dt_date
 from enum import Enum
 from typing import TYPE_CHECKING
@@ -13,6 +13,9 @@ if TYPE_CHECKING:
 
 class Statement(Base):
     __tablename__ = "statements"
+    __table_args__ = (
+        UniqueConstraint("user_id", "date_uploaded", name="uq_statements_user_month"),
+    )
 
     id: Mapped[int] = mapped_column(primary_key=True)
     date_uploaded: Mapped[dt_date] = mapped_column(
@@ -21,7 +24,7 @@ class Statement(Base):
 
     transactions: Mapped[list["Transaction"]] = relationship(
         back_populates="statement",
-        lazy="joined",
+        lazy="selectin",
         cascade="all, delete-orphan",
     )
 

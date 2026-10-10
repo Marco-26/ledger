@@ -11,7 +11,8 @@ class StatementParsingException(Exception):
 
 class StatementWrongDateSelectedException(Exception):
 
-    def __init__(self, user_selected_date: date, statement_date: date):
+    def __init__(self, user_selected_date: date, statement_date: date) -> None:
+        super().__init__()
         self.user_selected_date = user_selected_date
         self.statement_date = statement_date
 

@@ -7,7 +7,7 @@ from db.models.user import User
 
 
 class UserRepository:
-  def __init__(self, db: Session):
+  def __init__(self, db: Session) -> None:
     self.db = db
 
   def get_user_by_supabase_id(self, supabase_id: uuid.UUID) -> User | None:

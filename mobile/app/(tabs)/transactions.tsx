@@ -144,18 +144,6 @@ export default function TransactionsScreen() {
     }));
   }, [filtered]);
 
-  const net = useMemo(
-    () =>
-      filtered.reduce(
-        (sum, item) =>
-          item.type === TransactionType.INCOME
-            ? sum + Math.abs(item.amount)
-            : sum - Math.abs(item.amount),
-        0,
-      ),
-    [filtered],
-  );
-
   const hasFilters =
     query.length > 0 || typeFilter !== "all" || category !== null;
 

@@ -1,3 +1,4 @@
+from collections.abc import Iterator
 from typing import Annotated
 
 from fastapi import Depends
@@ -14,7 +15,7 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 class Base(DeclarativeBase):
     pass
 
-def get_db():
+def get_db() -> Iterator[Session]:
     # actual db session
     db = SessionLocal()
     try:

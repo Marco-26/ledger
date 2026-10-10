@@ -2,17 +2,19 @@ from decimal import Decimal
 
 from constants import EXPENSE_CATEGORIES
 from db.models.statement import Transaction
-from schemas.statement_dto import TransactionCategoryDTO, TransactionType
+from schemas.statement import TransactionCategoryDTO, TransactionType
 
 
 def calculate_totals(
     transactions: list[Transaction],
 ) -> tuple[Decimal, Decimal, Decimal]:
     credit_total = sum(
-        t.amount or Decimal(0) for t in transactions if t.type == TransactionType.INCOME
+        (t.amount for t in transactions if t.type == TransactionType.INCOME),
+        Decimal(0),
     )
     debit_total = sum(
-        t.amount or Decimal(0) for t in transactions if t.type == TransactionType.EXPENSE
+        (t.amount for t in transactions if t.type == TransactionType.EXPENSE),
+        Decimal(0),
     )
     return credit_total, debit_total, credit_total - debit_total
 
@@ -35,7 +37,7 @@ def process_category(
     return [
         TransactionCategoryDTO(
             label=label,
-            amount=amount,
+            amount=float(amount),
             percentage=calculate_category_percentage(categories, label),
             type=get_category_type(label),
         )
@@ -56,9 +58,12 @@ def calculate_category_percentage(
 ) -> float:
     category_type = get_category_type(category)
     total = sum(
-        amount
-        for label, amount in categories.items()
-        if get_category_type(label) == category_type
+        (
+            amount
+            for label, amount in categories.items()
+            if get_category_type(label) == category_type
+        ),
+        Decimal(0),
     )
     return round(float(categories[category] / total * 100), 2)
 
@@ -67,6 +72,6 @@ def calculate_revenue_growth_rate(
     current_value: Decimal, previous_value: Decimal
 ) -> float:
     if previous_value == 0:
-        return 0
+        return 0.0
 
     return float((current_value - previous_value) / previous_value * 100)

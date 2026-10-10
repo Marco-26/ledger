@@ -15,15 +15,15 @@ logger = logging.getLogger(__name__)
 
 
 async def statement_not_found_handler(
-    request: Request, exc: StatementNotFoundException
-):
+    request: Request, exc: Exception
+) -> JSONResponse:
     logger.error("Statement not found", exc_info=exc)
     return JSONResponse(status_code=404, content={"detail": "Content not found"})
 
 
 async def statement_parsing_error_handler(
-    request: Request, exc: StatementParsingException
-):
+    request: Request, exc: Exception
+) -> JSONResponse:
     logger.error("Failed to parse statement", exc_info=exc)
     return JSONResponse(
         status_code=500, content={"detail": "Failed to parse statement"}
@@ -31,8 +31,10 @@ async def statement_parsing_error_handler(
 
 
 async def statement_wrong_date_selected_handler(
-    request: Request, exc: StatementWrongDateSelectedException
-):
+    request: Request, exc: Exception
+) -> JSONResponse:
+    # Starlette types handlers as (Request, Exception); narrow to read the dates.
+    assert isinstance(exc, StatementWrongDateSelectedException)
     logger.error(
         f"Selected month: {exc.user_selected_date.strftime("%B %Y")} does not match statement month: {exc.statement_date.strftime("%B %Y")}",
         exc_info=exc,
@@ -47,13 +49,13 @@ async def statement_wrong_date_selected_handler(
 
 
 async def user_not_found_handler(
-    request: Request, exc: UserNotFoundException
-):
+    request: Request, exc: Exception
+) -> JSONResponse:
     logger.error("User not found", exc_info=exc)
     return JSONResponse(status_code=404, content={"detail": "User not found"})
 
 
-def register_exception_handler(app: FastAPI):
+def register_exception_handler(app: FastAPI) -> None:
     app.add_exception_handler(StatementNotFoundException, statement_not_found_handler)
     app.add_exception_handler(
         StatementWrongDateSelectedException, statement_wrong_date_selected_handler

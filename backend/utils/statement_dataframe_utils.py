@@ -19,7 +19,7 @@ NUMERIC_COLUMNS = [
 ]
 
 
-def build_statement_dataframe(rows: list) -> pd.DataFrame:
+def build_statement_dataframe(rows: list[list[str]]) -> pd.DataFrame:
     df = pd.DataFrame(rows)
     df = df.drop(1, axis=1)
     df.columns = STATEMENT_COLUMNS

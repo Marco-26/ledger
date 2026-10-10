@@ -1,7 +1,8 @@
-from pydantic import BaseModel, ConfigDict
-from typing import Optional
 from datetime import date as Date
 from enum import Enum
+from typing import Optional
+
+from pydantic import BaseModel, ConfigDict
 
 
 class TransactionType(str, Enum):

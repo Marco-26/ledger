@@ -1,30 +1,32 @@
-from statements.repository import StatementRepository
-from schemas.statement_dto import StatementDTO, TransactionDTO
+from datetime import date
+
 from sqlalchemy.orm import Session
+
+from domain.transaction_builder import build_statement
+from exceptions.domain import (
+    StatementNotFoundException,
+    StatementParsingException,
+    StatementWrongDateSelectedException,
+)
+from integrations.openai_api import classify_transactions
+from schemas.statement import StatementDTO, TransactionDTO
+from statements.adapter import dataframe_to_transactions
+from statements.repository import StatementRepository
+from utils import date_utils
+from utils.file_utils import extract_table_from_pdf_file
 from utils.statement_dataframe_utils import (
     build_statement_dataframe,
     normalize_statement_dataframe,
 )
-from utils.file_utils import extract_table_from_pdf_file
-from datetime import date
-from utils import date_utils
-from domain.transaction_builder import build_statement
-from exceptions.domain import (
-    StatementWrongDateSelectedException,
-    StatementNotFoundException,
-    StatementParsingException,
-)
-from integrations.openai_api import classify_transactions
-from statements.adapter import dataframe_to_transactions
 
 
 class StatementService:
-    def __init__(self, db: Session):
+    def __init__(self, db: Session) -> None:
         self.db = db
         self.repository = StatementRepository(db)
 
     def generate_monthly_statement(
-        self, file: bytes, user_selected_date: date
+        self, file: bytes, user_selected_date: date, user_id: int
     ) -> StatementDTO:
         table = extract_table_from_pdf_file(file)
         df = normalize_statement_dataframe(build_statement_dataframe(table))
@@ -44,49 +46,41 @@ class StatementService:
                 user_selected_date=user_selected_date, statement_date=statement_date
             )
 
-        record = self.repository.get_statement_via_date(user_selected_date)
+        categorized_transactions = self._classify_transactions(transactions)
+
+        record = self.repository.get_statement(user_selected_date, user_id)
         if record:
             self.repository.delete_statement(record)
 
-        categorized_transactions = self._classify_transactions(transactions)
+        self.repository.create_statement(categorized_transactions, user_selected_date, user_id)
 
-        self.repository.create_statement(categorized_transactions, user_selected_date)
+        return self.get_monthly_statement(user_selected_date, user_id)
 
-        return self.get_monthly_statement(user_selected_date)
+    def get_monthly_statement(self, date: date, user_id: int) -> StatementDTO:
+        statement = self.repository.get_statement(date, user_id)
 
-    def get_monthly_statement(self, date: date) -> StatementDTO:
-        end_date = date_utils.get_end_of_month(date)
-
-        transactions = self.repository.get_transactions(date, end_date)
-
-        if not transactions:
+        if not statement:
             raise StatementNotFoundException()
 
         previous_month = date_utils.get_previous_month_based_on_date(date)
-        previous_month_end = date_utils.get_end_of_month(previous_month)
+        previous_month_statement = self.repository.get_statement(previous_month, user_id)
 
         return build_statement(
-            transactions=list(transactions),
-            top_credit_transactions=list(
-                self.repository.get_top_credit_transactions(date, end_date)
-            ),
-            top_debit_transactions=list(
-                self.repository.get_top_debit_transactions(date, end_date)
-            ),
+            transactions=list(statement.transactions),
             statement_date=date,
-            previous_month_transactions=list(
-                self.repository.get_transactions(previous_month, previous_month_end)
-            ),
+            previous_month_transactions=(
+              list(previous_month_statement.transactions) if previous_month_statement else []
+            )
         )
 
-    def _classify_transactions(self, transactions: list[TransactionDTO]):
+    def _classify_transactions(self, transactions: list[TransactionDTO]) -> list[TransactionDTO]:
         ai_candidates: list[TransactionDTO] = []
         cached_classified: list[TransactionDTO] = []
 
         for transaction in transactions:
             category = self.repository.get_category_based_on_description(
                 transaction.description
-            )
+            ) if transaction.description else None
 
             if category:
                 transaction = transaction.model_copy(update={"category": category})

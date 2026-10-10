@@ -1,11 +1,11 @@
-import { useEffect } from "react";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 import RootNavigator from "@/components/navigation/root-navigator/RootNavigator";
-import { StatementProvider } from "@/context/StatementContext";
+import { SplashScreenController } from "@/components/SplashScreenController";
+import AuthProvider from "@/providers/AuthProvider";
 import { ThemeProvider } from "@/styles/theme";
 
 SplashScreen.preventAutoHideAsync();
@@ -17,12 +17,7 @@ export default function RootLayout() {
     Geist: require("../assets/fonts/Geist.ttf"),
   });
 
-  useEffect(() => {
-    if (fontsLoaded || fontError) {
-      SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded, fontError]);
-
+  // SplashScreenController hides the splash once the session is known.
   if (!fontsLoaded && !fontError) {
     return null;
   }
@@ -31,9 +26,10 @@ export default function RootLayout() {
     <QueryClientProvider client={queryClient}>
       <SafeAreaProvider>
         <ThemeProvider>
-          <StatementProvider>
+          <AuthProvider>
+            <SplashScreenController />
             <RootNavigator />
-          </StatementProvider>
+          </AuthProvider>
         </ThemeProvider>
         <Toast />
       </SafeAreaProvider>
