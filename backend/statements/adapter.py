@@ -6,7 +6,7 @@ from utils.utils import clean_transaction
 
 
 def dataframe_to_transactions(data: df) -> list[TransactionDTO]:
-    transactions = []
+    transactions: list[TransactionDTO] = []
 
     for row in data.to_dict(orient="records"):
         amount = row[DFColumns.CREDIT.value] or row[DFColumns.DEBIT.value]

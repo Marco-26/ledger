@@ -1,8 +1,9 @@
 from datetime import date
+from decimal import Decimal
 
-from constants import TOP_N_TRANSACTIONS
 from db.models.statement import Statement, Transaction
-from schemas.statement import TransactionDTO, TransactionType
+from db.models.statement import TransactionType as TransactionTypeModel
+from schemas.statement import TransactionDTO
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -21,8 +22,8 @@ class StatementRepository:
                     date=t.date,
                     description=t.description,
                     category=t.category,
-                    amount=t.amount,
-                    type=t.type.value,
+                    amount=Decimal(str(t.amount)),
+                    type=TransactionTypeModel(t.type.value),
                 )
                 for t in transactions
             ]
@@ -36,44 +37,16 @@ class StatementRepository:
 
         return new_record
 
-    def get_statement_via_date(self, date: date) -> Statement | None:
-        stmt = select(Statement).where(Statement.date_uploaded == date)
-        return self.db.scalars(stmt).one_or_none()
-
-    def delete_statement(self, statement: Statement):
+    def delete_statement(self, statement: Statement) -> None:
         self.db.delete(statement)
         self.db.commit()
 
-    def get_statement(self, start_date: date, user_id:int):
+    def get_statement(self, start_date: date, user_id:int) -> Statement | None:
         stmt = select(Statement).where(Statement.user_id == user_id, Statement.date_uploaded == start_date)
-        return self.db.scalars(stmt).unique().one_or_none()
+        return self.db.scalars(stmt).one_or_none()
           
 
-    def get_top_credit_transactions(self, start_date: date, end_date: date):
-        stmt = (
-            select(Transaction)
-            .where(
-                Transaction.date.between(start_date, end_date),
-                Transaction.type == TransactionType.INCOME,
-            )
-            .order_by(Transaction.amount.desc())
-            .limit(TOP_N_TRANSACTIONS)
-        )
-        return self.db.scalars(stmt).all()
-
-    def get_top_debit_transactions(self, start_date: date, end_date: date):
-        stmt = (
-            select(Transaction)
-            .where(
-                Transaction.date.between(start_date, end_date),
-                Transaction.type == TransactionType.EXPENSE,
-            )
-            .order_by(Transaction.amount.desc())
-            .limit(TOP_N_TRANSACTIONS)
-        )
-        return self.db.scalars(stmt).all()
-
-    def get_category_based_on_description(self, description: str):
+    def get_category_based_on_description(self, description: str) -> str | None:
         stmt = select(Transaction.category).where(
             Transaction.description == description,
         )

@@ -11,7 +11,7 @@ class ClassifiedTransactions(BaseModel):
     transactions: list[TransactionDTO]
 
 
-def classify_transactions(data: list[TransactionDTO]):
+def classify_transactions(data: list[TransactionDTO]) -> list[TransactionDTO]:
     payload = [t.model_dump() for t in data]
 
     response = client.responses.parse(

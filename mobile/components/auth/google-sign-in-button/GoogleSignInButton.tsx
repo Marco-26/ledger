@@ -42,7 +42,7 @@ export default function GoogleSignInButton() {
       provider: "google",
       options: {
         redirectTo: REDIRECT_URL,
-        queryParams: { prompt: "consent" },
+        queryParams: { prompt: "select_account" },
         skipBrowserRedirect: true,
       },
     });

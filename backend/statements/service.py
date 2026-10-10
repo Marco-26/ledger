@@ -21,7 +21,7 @@ from utils.statement_dataframe_utils import (
 
 
 class StatementService:
-    def __init__(self, db: Session):
+    def __init__(self, db: Session) -> None:
         self.db = db
         self.repository = StatementRepository(db)
 
@@ -46,19 +46,17 @@ class StatementService:
                 user_selected_date=user_selected_date, statement_date=statement_date
             )
 
-        record = self.repository.get_statement_via_date(user_selected_date)
+        categorized_transactions = self._classify_transactions(transactions)
+
+        record = self.repository.get_statement(user_selected_date, user_id)
         if record:
             self.repository.delete_statement(record)
-
-        categorized_transactions = self._classify_transactions(transactions)
 
         self.repository.create_statement(categorized_transactions, user_selected_date, user_id)
 
         return self.get_monthly_statement(user_selected_date, user_id)
 
     def get_monthly_statement(self, date: date, user_id: int) -> StatementDTO:
-        end_date = date_utils.get_end_of_month(date)
-
         statement = self.repository.get_statement(date, user_id)
 
         if not statement:
@@ -69,26 +67,20 @@ class StatementService:
 
         return build_statement(
             transactions=list(statement.transactions),
-            top_credit_transactions=list(
-                self.repository.get_top_credit_transactions(date, end_date)
-            ),
-            top_debit_transactions=list(
-                self.repository.get_top_debit_transactions(date, end_date)
-            ),
             statement_date=date,
             previous_month_transactions=(
               list(previous_month_statement.transactions) if previous_month_statement else []
             )
         )
 
-    def _classify_transactions(self, transactions: list[TransactionDTO]):
+    def _classify_transactions(self, transactions: list[TransactionDTO]) -> list[TransactionDTO]:
         ai_candidates: list[TransactionDTO] = []
         cached_classified: list[TransactionDTO] = []
 
         for transaction in transactions:
             category = self.repository.get_category_based_on_description(
                 transaction.description
-            )
+            ) if transaction.description else None
 
             if category:
                 transaction = transaction.model_copy(update={"category": category})

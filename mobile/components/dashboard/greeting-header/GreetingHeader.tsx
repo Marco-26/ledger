@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
-import { Image, Pressable, Text, View, useWindowDimensions } from "react-native";
+import { Pressable, Text, View, useWindowDimensions } from "react-native";
+import { Image } from "expo-image";
 import * as Haptics from "expo-haptics";
 import type { IUser } from "@/hooks/useCurrentUser";
 import { useThemedStyles } from "@/styles/theme";

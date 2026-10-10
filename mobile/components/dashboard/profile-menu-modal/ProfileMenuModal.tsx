@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import Toast from "react-native-toast-message";
+import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import type { IUser } from "@/hooks/useCurrentUser";
 import { useTheme, useThemedStyles } from "@/styles/theme";
@@ -31,6 +32,7 @@ interface ProfileMenuModalProps {
 
 export default function ProfileMenuModal({ visible, anchor, user, onClose }: ProfileMenuModalProps) {
   const styles = useThemedStyles(createStyles);
+  const queryClient = useQueryClient();
   const { colors, isDark } = useTheme();
   const progress = useRef(new Animated.Value(0)).current;
   // Stays mounted through the exit animation, after `visible` has gone false.
@@ -70,6 +72,9 @@ export default function ProfileMenuModal({ visible, anchor, user, onClose }: Pro
       });
       return;
     }
+
+    // Cached statements belong to this account; the next sign-in must not see them.
+    queryClient.clear();
 
     // On success the auth guard swaps to the Login screen and unmounts us.
     onClose();

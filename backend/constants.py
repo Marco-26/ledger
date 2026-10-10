@@ -21,7 +21,6 @@ EXPENSE_CATEGORIES = [
     "other",
 ]
 
-SUPABASE_JWKS_URL = os.getenv("SUPABASE_JWKS_URL", "")
 SUPABASE_BASE_URL = os.getenv("SUPABASE_BASE_URL", "")
 
 MODEL_SYSTEM_PROMPT = f"""

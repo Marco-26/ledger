@@ -10,8 +10,7 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.marco26.ledger",
-      "usesAppleSignIn": true
+      "bundleIdentifier": "com.marco26.ledger"
     },
     "android": {
       "adaptiveIcon": {
@@ -41,9 +40,7 @@
             "backgroundColor": "#000000"
           }
         }
-      ],
-      "expo-secure-store",
-      "expo-apple-authentication"
+      ]
     ],
     "experiments": {
       "typedRoutes": true,
@@ -56,6 +53,5 @@
       }
     },
     "owner": "marco-26"
-  },
-    
+  }
 }

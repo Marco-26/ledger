@@ -7,7 +7,7 @@ import TransactionRow from "@/components/transactions/transaction-row/Transactio
 import { useThemedStyles } from "@/styles/theme";
 import { Duration } from "@/styles/tokens";
 import { formatMonthLabel } from "@/utils/format";
-import { createStyles } from "./LedgerLoginExample.styles";
+import { createStyles } from "./LedgerSpecimen.styles";
 
 const today = dayjs();
 const SAMPLE_TRANSACTIONS: ITransaction[] = [

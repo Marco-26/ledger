@@ -1,7 +1,7 @@
 import re
 
 
-def clean_transaction(text):
+def clean_transaction(text: str) -> str:
     text = text.upper()
 
     # Remove long numbers
