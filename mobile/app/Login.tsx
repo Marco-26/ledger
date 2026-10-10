@@ -2,7 +2,7 @@ import { Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
 import GoogleSignInButton from "@/components/auth/google-sign-in-button/GoogleSignInButton";
-import LedgerSpecimen from "@/components/auth/ledger-specimen/LedgerLoginExample";
+import LedgerSpecimen from "@/components/auth/ledger-specimen/LedgerSpecimen";
 import { useThemedStyles } from "@/styles/theme";
 import { Duration } from "@/styles/tokens";
 import { createStyles } from "@/styles/screens/LoginScreen.styles";

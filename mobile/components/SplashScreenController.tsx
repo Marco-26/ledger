@@ -4,9 +4,11 @@ import { SplashScreen } from "expo-router";
 SplashScreen.preventAutoHideAsync();
 
 export function SplashScreenController() {
-  const { isLoading } = useAuthContext();
+  const { claims, isLoading } = useAuthContext();
 
-  if (!isLoading) {
+  // `claims` stays undefined until the stored session has been read (null means
+  // signed out). Waiting for it avoids flashing the Login screen on launch.
+  if (!isLoading && claims !== undefined) {
     SplashScreen.hideAsync();
   }
 

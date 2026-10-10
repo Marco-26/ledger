@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 import RootNavigator from "@/components/navigation/root-navigator/RootNavigator";
+import { SplashScreenController } from "@/components/SplashScreenController";
 import AuthProvider from "@/providers/AuthProvider";
 import { ThemeProvider } from "@/styles/theme";
 
@@ -16,7 +17,7 @@ export default function RootLayout() {
     Geist: require("../assets/fonts/Geist.ttf"),
   });
 
-  // The splash stays up until RootNavigator has also resolved the session.
+  // SplashScreenController hides the splash once the session is known.
   if (!fontsLoaded && !fontError) {
     return null;
   }
@@ -26,6 +27,7 @@ export default function RootLayout() {
       <SafeAreaProvider>
         <ThemeProvider>
           <AuthProvider>
+            <SplashScreenController />
             <RootNavigator />
           </AuthProvider>
         </ThemeProvider>
