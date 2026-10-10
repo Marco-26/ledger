@@ -1,4 +1,3 @@
-import uuid
 from datetime import date
 
 from constants import TOP_N_TRANSACTIONS
@@ -13,7 +12,7 @@ class StatementRepository:
         self.db = db
 
     def create_statement(
-        self, transactions: list[TransactionDTO], date: date, user_id: uuid.UUID
+        self, transactions: list[TransactionDTO], date: date, user_id: int
     ) -> Statement:
         try:
             new_record = Statement(date_uploaded=date, user_id=user_id)
@@ -45,9 +44,10 @@ class StatementRepository:
         self.db.delete(statement)
         self.db.commit()
 
-    def get_transactions(self, start_date: date, end_date: date):
-        stmt = select(Transaction).where(Transaction.date.between(start_date, end_date))
-        return self.db.scalars(stmt).all()
+    def get_statement(self, start_date: date, user_id:int):
+        stmt = select(Statement).where(Statement.user_id == user_id, Statement.date_uploaded == start_date)
+        return self.db.scalars(stmt).unique().one_or_none()
+          
 
     def get_top_credit_transactions(self, start_date: date, end_date: date):
         stmt = (

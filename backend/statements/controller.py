@@ -47,6 +47,6 @@ def generate_statement(
 
 @router.get("/api/statement", response_model=StatementDTO)
 def get_statement(
-    date: Annotated[date, Query()], service: Annotated[StatementService, Depends(get_statement_service)], user: Annotated[str, Depends(get_current_user)]
+    date: Annotated[date, Query()], service: Annotated[StatementService, Depends(get_statement_service)], user: Annotated[User, Depends(get_current_user)]
 ):
-    return service.get_monthly_statement(date)
+    return service.get_monthly_statement(date, user.id)
