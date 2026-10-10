@@ -1,21 +1,24 @@
-from statements.repository import StatementRepository
-from schemas.statement_dto import StatementDTO, TransactionDTO
+import uuid
+from datetime import date
+
+from domain.transaction_builder import build_statement
+from exceptions.domain import (
+    StatementNotFoundException,
+    StatementParsingException,
+    StatementWrongDateSelectedException,
+)
+from integrations.openai_api import classify_transactions
+from schemas.statement import StatementDTO, TransactionDTO
 from sqlalchemy.orm import Session
+from utils import date_utils
+from utils.file_utils import extract_table_from_pdf_file
 from utils.statement_dataframe_utils import (
     build_statement_dataframe,
     normalize_statement_dataframe,
 )
-from utils.file_utils import extract_table_from_pdf_file
-from datetime import date
-from utils import date_utils
-from domain.transaction_builder import build_statement
-from exceptions.domain import (
-    StatementWrongDateSelectedException,
-    StatementNotFoundException,
-    StatementParsingException,
-)
-from integrations.openai_api import classify_transactions
+
 from statements.adapter import dataframe_to_transactions
+from statements.repository import StatementRepository
 
 
 class StatementService:
@@ -24,7 +27,7 @@ class StatementService:
         self.repository = StatementRepository(db)
 
     def generate_monthly_statement(
-        self, file: bytes, user_selected_date: date
+        self, file: bytes, user_selected_date: date, user_id: uuid.UUID
     ) -> StatementDTO:
         table = extract_table_from_pdf_file(file)
         df = normalize_statement_dataframe(build_statement_dataframe(table))
@@ -50,7 +53,7 @@ class StatementService:
 
         categorized_transactions = self._classify_transactions(transactions)
 
-        self.repository.create_statement(categorized_transactions, user_selected_date)
+        self.repository.create_statement(categorized_transactions, user_selected_date, user_id)
 
         return self.get_monthly_statement(user_selected_date)
 

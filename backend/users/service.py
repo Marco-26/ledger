@@ -16,4 +16,8 @@ class UserService:
     return user
 
   def create_user(self, supabase_id: uuid.UUID) -> User:
+    user = self.repo.get_user_by_supabase_id(supabase_id)
+    if user:
+      return user
+      
     return self.repo.create_user(supabase_id)

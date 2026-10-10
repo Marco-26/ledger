@@ -1,6 +1,7 @@
 from datetime import date
+
 from db.models.statement import Transaction
-from schemas.statement_dto import (
+from schemas.statement import (
     StatementDTO,
     TransactionDTO,
     TransactionType,

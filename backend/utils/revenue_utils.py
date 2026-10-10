@@ -2,7 +2,7 @@ from decimal import Decimal
 
 from constants import EXPENSE_CATEGORIES
 from db.models.statement import Transaction
-from schemas.statement_dto import TransactionCategoryDTO, TransactionType
+from schemas.statement import TransactionCategoryDTO, TransactionType
 
 
 def calculate_totals(

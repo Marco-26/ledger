@@ -1,5 +1,6 @@
 from pandas import DataFrame as df
-from schemas.statement_dto import TransactionDTO, TransactionType
+
+from schemas.statement import TransactionDTO, TransactionType
 from utils.statement_dataframe_utils import DFColumns
 from utils.utils import clean_transaction
 

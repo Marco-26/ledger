@@ -1,7 +1,8 @@
 from openai import OpenAI
-from constants import MODEL_SYSTEM_PROMPT
-from schemas.statement_dto import TransactionDTO
 from pydantic import BaseModel
+
+from constants import MODEL_SYSTEM_PROMPT
+from schemas.statement import TransactionDTO
 
 client = OpenAI()
 

@@ -1,9 +1,11 @@
+import uuid
 from datetime import date
-from db.models.statement import Statement, Transaction
-from sqlalchemy.orm import Session
-from sqlalchemy import select
+
 from constants import TOP_N_TRANSACTIONS
-from schemas.statement_dto import TransactionDTO, TransactionType
+from db.models.statement import Statement, Transaction
+from schemas.statement import TransactionDTO, TransactionType
+from sqlalchemy import select
+from sqlalchemy.orm import Session
 
 
 class StatementRepository:
@@ -11,10 +13,10 @@ class StatementRepository:
         self.db = db
 
     def create_statement(
-        self, transactions: list[TransactionDTO], date: date
+        self, transactions: list[TransactionDTO], date: date, user_id: uuid.UUID
     ) -> Statement:
         try:
-            new_record = Statement(date_uploaded=date)
+            new_record = Statement(date_uploaded=date, user_id=user_id)
             new_record.transactions = [
                 Transaction(
                     date=t.date,
