@@ -2,12 +2,13 @@ import { RefreshControl, ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CategoryBreakdown from "@/components/dashboard/category-breakdown/CategoryBreakdown";
 import GreetingHeader from "@/components/dashboard/greeting-header/GreetingHeader";
-import MonthSummary from "@/components/dashboard/month-summary/MonthSummary";
+import StatementSummary from "@/components/dashboard/statement-summary/StatementSummary";
 import TopMovements from "@/components/dashboard/top-movements/TopMovements";
-import MonthStepper from "@/components/month-stepper/MonthStepper";
+import PeriodSwitcher from "@/components/dashboard/period-switcher/PeriodSwitcher";
+import YearlyNetChart from "@/components/dashboard/yearly-net-chart/YearlyNetChart";
 import Divider from "@/components/ui/divider/Divider";
 import StateMessage from "@/components/ui/state-message/StateMessage";
-import { useStatement } from "@/context/StatementContext";
+import { SelectedPeriod, useStatement } from "@/context/StatementContext";
 import { useTheme } from "@/styles/theme";
 import { MAX_CONTENT_WIDTH, Spacing } from "@/styles/tokens";
 import { Constants } from "@/utils/constants";
@@ -24,16 +25,18 @@ type ErrorCode = keyof typeof Constants.ERRORS;
 export default function HomeScreen() {
   const { colors } = useTheme();
   const {
+    period,
+    isYear,
+    setPeriod,
     statement,
+    yearlyStatement,
     isLoading,
     isError,
     isEmpty,
     isRefetching,
     refetch,
     selectedDate,
-    goToPreviousMonth,
-    goToNextMonth,
-    canGoToNextMonth,
+    setSelectedDate,
     setUploadingFileMonth,
     uploadingFileMonth,
 	} = useStatement();
@@ -72,8 +75,19 @@ export default function HomeScreen() {
     );
   };
 
-  const isSelectedMonthUploading = uploadingFileMonth === selectedMonth;
+  const isSelectedMonthUploading =
+    !isYear && uploadingFileMonth === selectedMonth;
   const isDashboardLoading = isLoading || isSelectedMonthUploading;
+  const periodLabel = isYear
+    ? selectedDate.format("YYYY")
+    : formatMonthLabel(selectedDate);
+  const periodNoun = isYear ? "year" : "month";
+  const highlights = isYear ? yearlyStatement : statement;
+
+  const openMonth = (month: number) => {
+    setSelectedDate(selectedDate.month(month).date(1));
+    setPeriod(SelectedPeriod.MONTH);
+  };
 
   return (
     <SafeAreaView
@@ -95,20 +109,13 @@ export default function HomeScreen() {
       >
 				<GreetingHeader user={user} />
 
-        <MonthStepper
-          date={selectedDate}
-          onPrevious={goToPreviousMonth}
-          onNext={goToNextMonth}
-          canGoNext={canGoToNextMonth}
-          style={styles.monthStepper}
-          fullWidth
-        />
+        <PeriodSwitcher style={styles.periodSwitcher} />
 
         {!isSelectedMonthUploading && isError ? (
           <StateMessage
             icon="cloud-offline-outline"
             tone="error"
-            title="We couldn't load this month"
+            title={`We couldn't load this ${periodNoun}`}
             message="Check your connection and try again."
             actionLabel="Try again"
             onAction={refetch}
@@ -116,40 +123,60 @@ export default function HomeScreen() {
         ) : !isSelectedMonthUploading && isEmpty ? (
           <StateMessage
             icon="document-text-outline"
-            title={`Nothing in ${formatMonthLabel(selectedDate)}`}
-            message="No statement has been imported for this month yet."
+            title={`Nothing in ${periodLabel}`}
+            message={
+              isYear
+                ? "No statement has been imported for this year yet."
+                : "No statement has been imported for this month yet."
+            }
           />
         ) : (
           <>
-            <MonthSummary
-              statement={statement}
+            <StatementSummary
+              statement={highlights}
+              period={period}
               isLoading={isDashboardLoading}
             />
+
+            {isYear && !isDashboardLoading ? (
+              <>
+                <Divider style={styles.rule} />
+                <YearlyNetChart
+                  key={selectedDate.year()}
+                  year={selectedDate.year()}
+                  transactions={yearlyStatement?.allTransactions}
+                  onOpenMonth={openMonth}
+                />
+              </>
+            ) : null}
 
             <Divider style={styles.rule} />
 
             <TopMovements
-              title="Top income"
-              transactions={statement?.topIncomes}
+              title={isYear ? `Top income of ${periodLabel}` : "Top income"}
+              transactions={highlights?.topIncomes}
               isLoading={isDashboardLoading}
-              emptyLabel="No income recorded this month."
+              emptyLabel={`No income recorded this ${periodNoun}.`}
               filter="income"
+              showSeeAll={!isYear}
             />
 
             <Divider style={styles.rule} />
 
             <TopMovements
-              title="Top spending"
-              transactions={statement?.topExpenses}
+              title={isYear ? `Top spending of ${periodLabel}` : "Top spending"}
+              transactions={highlights?.topExpenses}
               isLoading={isDashboardLoading}
-              emptyLabel="No spending recorded this month."
+              emptyLabel={`No spending recorded this ${periodNoun}.`}
               filter="expense"
+              showSeeAll={!isYear}
             />
 
             <Divider style={styles.rule} />
 
             <CategoryBreakdown
-              categories={statement?.transactionCategories}
+              categories={highlights?.transactionCategories}
+              emptyLabel={`No spending recorded this ${periodNoun}.`}
               isLoading={isDashboardLoading}
             />
           </>
@@ -157,11 +184,13 @@ export default function HomeScreen() {
 
         <View style={styles.tail} />
       </ScrollView>
-      <UploadFileFloatingButton
-        onFileSelected={handleFilePicker}
-        isLoading={isUploading}
-        disabled={!!uploadingFileMonth}
-      />
+      {!isYear ? (
+        <UploadFileFloatingButton
+          onFileSelected={handleFilePicker}
+          isLoading={isUploading}
+          disabled={!!uploadingFileMonth}
+        />
+      ) : null}
     </SafeAreaView>
   );
 }
@@ -182,8 +211,7 @@ const styles = StyleSheet.create({
   tail: {
     height: Spacing[8],
   },
-  monthStepper: {
+  periodSwitcher: {
     marginBottom: Spacing[7],
-    width: "100%",
   },
 });

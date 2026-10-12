@@ -8,6 +8,8 @@ interface MonthTransactionSummaryProps {
   label: string;
   amount?: number;
   delta?: number;
+  /** What the delta is measured against, e.g. "vs last month". */
+  comparison: string;
   /** Semantic colour for the figure — income or expense. */
   color: string;
   /** Soft tint behind the direction arrow. */
@@ -20,6 +22,7 @@ export default function MonthTransactionSummary({
   label,
   amount,
   delta,
+  comparison,
   color,
   tint,
   icon,
@@ -44,7 +47,9 @@ export default function MonthTransactionSummary({
         {formatCurrency(amount ?? 0)}
       </Text>
 
-      <Text style={styles.delta}>{formatDelta(delta)} vs last month</Text>
+      <Text style={styles.delta}>
+        {formatDelta(delta)} {comparison}
+      </Text>
     </View>
   );
 }

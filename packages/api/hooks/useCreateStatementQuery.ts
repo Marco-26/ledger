@@ -14,9 +14,18 @@ export function useCreateStatementQuery() {
       statementFile: File;
       date: string;
     }) => statementService.postStatement(statementFile, date),
+    // Keys are matched by prefix, so the month and its year need one call each.
     onSuccess: (_, variables) =>
-      queryClient.invalidateQueries({
-        queryKey: [Constants.API.TANSTACK_QUERIES.STATEMENTS, variables.date, Constants.API.TANSTACK_QUERIES.YEARLY_STATEMENTS],
-      }),
+      Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: [Constants.API.TANSTACK_QUERIES.STATEMENTS, variables.date],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: [
+            Constants.API.TANSTACK_QUERIES.YEARLY_STATEMENTS,
+            Number(variables.date.slice(0, 4)),
+          ],
+        }),
+      ]),
   });
 }

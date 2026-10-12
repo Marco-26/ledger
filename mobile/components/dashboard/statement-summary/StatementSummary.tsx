@@ -1,34 +1,44 @@
 import { Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import type { IStatement } from "@ledger/api";
+import type { IStatement, IYearlyStatement } from "@ledger/api";
 import MonthTransactionSummary from "@/components/dashboard/month-transaction-summary/MonthTransactionSummary";
 import VerticalDivider from "@/components/ui/vertical-divider/VerticalDivider";
+import { SelectedPeriod } from "@/context/StatementContext";
 import { useTheme, useThemedStyles } from "@/styles/theme";
 import { formatCurrency, formatDelta, splitCurrency } from "@/utils/format";
-import { createStyles } from "./MonthSummary.styles";
-import MonthSummarySkeleton from "./skeleton/MonthSummarySkeleton";
+import { createStyles } from "./StatementSummary.styles";
+import StatementSummarySkeleton from "./skeleton/StatementSummarySkeleton";
 
 interface MonthSummaryProps {
-  statement?: IStatement;
+  statement?: IStatement | IYearlyStatement;
+  period: SelectedPeriod;
   isLoading: boolean;
+}
+
+function isYearlyStatement(statement?: IStatement | IYearlyStatement) {
+  if (!statement) return false;
+  return "year" in statement;
 }
 
 /**
  * The anchor of the dashboard: one large balance, then the two figures that
  * produced it. Labels stay small so the numbers carry the hierarchy.
  */
-export default function MonthSummary({
+export default function StatementSummary({
   statement,
+  period,
   isLoading,
 }: MonthSummaryProps) {
   const styles = useThemedStyles(createStyles);
   const { colors } = useTheme();
 
-  if (isLoading) return <MonthSummarySkeleton />;
+  if (isLoading) return <StatementSummarySkeleton />;
 
   const balance = statement?.netBalance ?? 0;
   const { sign, symbol, integer, symbolFirst } = splitCurrency(balance);
-  const balanceDelta = statement?.netBalanceTotalGrowthRate ?? 0;
+  const balanceDelta = statement?.netBalance ?? 0;
+  const comparison =
+    period === SelectedPeriod.YEAR ? "vs last year" : "vs last month";
   const deltaColor =
     balanceDelta === 0
       ? colors.textTertiary
@@ -64,7 +74,7 @@ export default function MonthSummary({
           <Text style={[styles.deltaValue, { color: deltaColor }]}>
             {formatDelta(balanceDelta)}
           </Text>
-          <Text style={styles.deltaCaption}>vs last month</Text>
+          <Text style={styles.deltaCaption}>{comparison}</Text>
         </View>
       </View>
 
@@ -72,7 +82,8 @@ export default function MonthSummary({
         <MonthTransactionSummary
           label="Income"
           amount={statement?.creditTotal}
-          delta={statement?.creditTotalGrowthRate}
+          delta={isYearlyStatement(statement) ? 0 : (statement as IStatement).creditTotalGrowthRate}
+          comparison={comparison}
           color={colors.income}
           tint={colors.incomeSoft}
           icon="arrow-down"
@@ -81,7 +92,8 @@ export default function MonthSummary({
         <MonthTransactionSummary
           label="Expenses"
           amount={statement?.debitTotal}
-          delta={statement?.debitTotalGrowthRate}
+          delta={isYearlyStatement(statement) ? 0 : (statement as IStatement).debitTotalGrowthRate}
+          comparison={comparison}
           color={colors.expense}
           tint={colors.expenseSoft}
           icon="arrow-up"

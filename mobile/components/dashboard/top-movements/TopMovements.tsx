@@ -18,6 +18,7 @@ interface TopMovementsProps {
   emptyLabel: string;
   /** Pre-selects the matching filter on the transactions tab. */
   filter: "income" | "expense";
+  showSeeAll?: boolean;
 }
 
 const MAX_ITEMS = 3;
@@ -29,6 +30,7 @@ export default function TopMovements({
   isLoading,
   emptyLabel,
   filter,
+  showSeeAll,
 }: TopMovementsProps) {
   const styles = useThemedStyles(createStyles);
   const { colors } = useTheme();
@@ -40,21 +42,23 @@ export default function TopMovements({
       <SectionHeading
         title={title}
         accessory={
-          <TouchableOpacity
-            style={styles.seeAll}
-            hitSlop={HIT_SLOP}
-            activeOpacity={0.6}
-            accessibilityRole="link"
-            accessibilityLabel={`See all ${title.toLowerCase()}`}
-            onPress={() => router.push(`/transactions?type=${filter}`)}
-          >
-            <Text style={styles.seeAllLabel}>See all</Text>
-            <Ionicons
-              name="chevron-forward"
-              size={13}
-              color={colors.textSecondary}
-            />
-          </TouchableOpacity>
+          showSeeAll ? (
+            <TouchableOpacity
+              style={styles.seeAll}
+              hitSlop={HIT_SLOP}
+              activeOpacity={0.6}
+              accessibilityRole="link"
+              accessibilityLabel={`See all ${title.toLowerCase()}`}
+              onPress={() => router.push(`/transactions?type=${filter}`)}
+            >
+              <Text style={styles.seeAllLabel}>See all</Text>
+              <Ionicons
+                name="chevron-forward"
+                size={13}
+                color={colors.textSecondary}
+              />
+            </TouchableOpacity>
+          ) : undefined
         }
       />
 

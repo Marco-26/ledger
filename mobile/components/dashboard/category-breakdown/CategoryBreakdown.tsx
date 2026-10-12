@@ -11,6 +11,7 @@ import CategoryBreakdownSkeleton from "./skeleton/CategoryBreakdownSkeleton";
 interface CategoryBreakdownProps {
   categories?: ITransactionCategory[];
   isLoading: boolean;
+  emptyLabel?: string;
 }
 
 const MAX_ROWS = 5;
@@ -22,6 +23,7 @@ const MAX_ROWS = 5;
 export default function CategoryBreakdown({
   categories,
   isLoading,
+  emptyLabel = "No spending recorded this month.",
 }: CategoryBreakdownProps) {
   const styles = useThemedStyles(createStyles);
   const { colors } = useTheme();
@@ -88,7 +90,7 @@ export default function CategoryBreakdown({
         </View>
       ) : (
         <Text style={[styles.empty, { marginBottom: Spacing[1] }]}>
-          No spending recorded this month.
+          {emptyLabel}
         </Text>
       )}
     </View>

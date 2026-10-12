@@ -7,16 +7,30 @@ import {
   type ReactNode,
 } from "react";
 import dayjs, { type Dayjs } from "dayjs";
-import { useStatementsQuery, type IStatement } from "@ledger/api";
+import {
+  useStatementsQuery,
+  useYearlyStatementQuery,
+  type IStatement,
+  type IYearlyStatement,
+} from "@ledger/api";
 import { Constants } from "@/utils/constants";
 
+export enum SelectedPeriod {
+  MONTH = "month",
+  YEAR = "year"
+}
+
 interface StatementContextValue {
+  period: SelectedPeriod;
+  setPeriod: (period: SelectedPeriod) => void;
   selectedDate: Dayjs;
   setSelectedDate: (date: Dayjs) => void;
-  goToPreviousMonth: () => void;
-  goToNextMonth: () => void;
-  canGoToNextMonth: boolean;
+  /** Steps one month or one year back, depending on the period. */
+  goToPrevious: () => void;
+  goToNext: () => void;
+  canGoToNext: boolean;
   statement?: IStatement;
+  yearlyStatement?: IYearlyStatement;
   isLoading: boolean;
   isError: boolean;
   isEmpty: boolean;
@@ -24,12 +38,13 @@ interface StatementContextValue {
   refetch: () => void;
   setUploadingFileMonth: (month: string | undefined) => void;
   uploadingFileMonth?: string;
+  isYear: boolean;
 }
 
 const StatementContext = createContext<StatementContextValue | null>(null);
 
-/** The API answers 404 for a month that was never uploaded. */
-function isNotFound(error: unknown): boolean {
+/** The API answers 404 for a month (or a whole year) that was never uploaded. */
+export function isNotFound(error: unknown): boolean {
   return (
     (error as { response?: { status?: number } } | undefined)?.response
       ?.status === 404
@@ -37,58 +52,79 @@ function isNotFound(error: unknown): boolean {
 }
 
 /**
- * Both tabs read the same month and the same query, so switching tabs never
- * refetches and never shows two different periods.
+ * Both tabs read the same period and the same query, so switching tabs never
+ * refetches and never shows two different periods. Only the query for the
+ * active period runs; the other one stays cached for when the user flips back.
  */
 export function StatementProvider({ children }: { children: ReactNode }) {
+  const [period, setPeriod] = useState<SelectedPeriod>(SelectedPeriod.MONTH);
   const [selectedDate, setSelectedDate] = useState<Dayjs>(() => dayjs());
   const [uploadingFileMonth, setUploadingFileMonth] = useState<string>();
 
-  const { data, error, isLoading, isError, isRefetching, refetch } =
-    useStatementsQuery({
-      selectedMonth: selectedDate.date(1).format(Constants.UI.DATE_FORMAT),
-    });
+  const isYear = period === SelectedPeriod.YEAR;
 
-  const goToPreviousMonth = useCallback(
-    () => setSelectedDate((date) => date.subtract(1, "month")),
-    [],
+  const monthly = useStatementsQuery({
+    selectedMonth: isYear
+      ? undefined
+      : selectedDate.date(1).format(Constants.UI.DATE_FORMAT),
+  });
+
+  const yearly = useYearlyStatementQuery({
+    selectedYear: isYear ? selectedDate.year() : undefined,
+  });
+
+  const active = isYear ? yearly : monthly;
+
+  const goToPrevious = useCallback(
+    () => setSelectedDate((date) => date.subtract(1, period)),
+    [period],
   );
 
-  const goToNextMonth = useCallback(
+  // Never step into the future: a year step from December last year would
+  // otherwise land on a month that has not happened yet.
+  const goToNext = useCallback(
     () =>
-      setSelectedDate((date) =>
-        date.isSame(dayjs(), "month") ? date : date.add(1, "month"),
-      ),
-    [],
+      setSelectedDate((date) => {
+        const next = date.add(1, period);
+        return next.isAfter(dayjs(), "month") ? dayjs() : next;
+      }),
+    [period],
   );
 
   const value = useMemo<StatementContextValue>(
     () => ({
+      period,
+      setPeriod,
       selectedDate,
       setSelectedDate,
-      goToPreviousMonth,
-      goToNextMonth,
-      canGoToNextMonth: !selectedDate.isSame(dayjs(), "month"),
-      statement: data,
-      isLoading,
-      isError: isError && !isNotFound(error),
-      isEmpty: isError && isNotFound(error),
-      isRefetching,
-      refetch,
+      goToPrevious,
+      goToNext,
+      canGoToNext: !selectedDate.isSame(dayjs(), period),
+      statement: monthly.data,
+      yearlyStatement: yearly.data,
+      isLoading: active.isLoading,
+      isError: active.isError && !isNotFound(active.error),
+      isEmpty: active.isError && isNotFound(active.error),
+      isRefetching: active.isRefetching,
+      refetch: active.refetch,
       setUploadingFileMonth,
       uploadingFileMonth,
+      isYear
     }),
     [
+      period,
       selectedDate,
-      goToPreviousMonth,
-      goToNextMonth,
-      data,
-      error,
-      isLoading,
-      isError,
-      isRefetching,
-      refetch,
+      goToPrevious,
+      goToNext,
+      monthly.data,
+      yearly.data,
+      active.isLoading,
+      active.isError,
+      active.error,
+      active.isRefetching,
+      active.refetch,
       uploadingFileMonth,
+      isYear
     ],
   );
 

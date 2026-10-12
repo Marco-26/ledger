@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import type { Dayjs } from "dayjs";
+import { SelectedPeriod, useStatement } from "@/context/StatementContext";
 import { useTheme, useThemedStyles } from "@/styles/theme";
 import { HIT_SLOP } from "@/styles/tokens";
 import { formatMonthLabel, formatMonthShort } from "@/utils/format";
@@ -21,6 +22,7 @@ interface MonthStepperProps {
   onPrevious: () => void;
   onNext: () => void;
   canGoNext: boolean;
+  unit?: SelectedPeriod;
   /** Stretches to the container, pushing the chevrons to either end. */
   fullWidth?: boolean;
   /** Placement is the caller's business: margins, alignment, and so on. */
@@ -33,6 +35,7 @@ export default function MonthStepper({
   onPrevious,
   onNext,
   canGoNext,
+  unit,
   fullWidth = false,
   style,
 }: MonthStepperProps) {
@@ -40,15 +43,19 @@ export default function MonthStepper({
   const { colors } = useTheme();
   const { width } = useWindowDimensions();
 
-  // The full month name crowds the screen title on 320pt devices — but a
-  // full-width stepper always has room for it.
-  const isCompact = !fullWidth && width < COMPACT_WIDTH;
-  const label = isCompact ? formatMonthShort(date) : formatMonthLabel(date);
+  const { isYear } = useStatement();
+  
+  const isCompact = !isYear && !fullWidth && width < COMPACT_WIDTH;
+  const label = isYear
+    ? date.format("YYYY")
+    : isCompact
+      ? formatMonthShort(date)
+      : formatMonthLabel(date);
 
   return (
     <View
       style={[styles.container, fullWidth && styles.containerFullWidth, style]}
-      accessibilityLabel={`Period ${formatMonthLabel(date)}`}
+      accessibilityLabel={`Period ${isYear ? date.format("YYYY") : formatMonthLabel(date)}`}
     >
       <TouchableOpacity
         style={styles.chevron}
@@ -56,7 +63,7 @@ export default function MonthStepper({
         hitSlop={HIT_SLOP}
         activeOpacity={0.6}
         accessibilityRole="button"
-        accessibilityLabel="Previous month"
+        accessibilityLabel={`Previous ${unit}`}
       >
         <Ionicons name="chevron-back" size={16} color={colors.textSecondary} />
       </TouchableOpacity>
@@ -79,7 +86,7 @@ export default function MonthStepper({
         hitSlop={HIT_SLOP}
         activeOpacity={0.6}
         accessibilityRole="button"
-        accessibilityLabel="Next month"
+        accessibilityLabel={`Next ${unit}`}
         accessibilityState={{ disabled: !canGoNext }}
       >
         <Ionicons
