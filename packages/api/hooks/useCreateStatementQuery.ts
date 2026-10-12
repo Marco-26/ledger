@@ -16,7 +16,7 @@ export function useCreateStatementQuery() {
     }) => statementService.postStatement(statementFile, date),
     onSuccess: (_, variables) =>
       queryClient.invalidateQueries({
-        queryKey: [Constants.API.TANSTACK_QUERIES.STATEMENTS, variables.date],
+        queryKey: [Constants.API.TANSTACK_QUERIES.STATEMENTS, variables.date, Constants.API.TANSTACK_QUERIES.YEARLY_STATEMENTS],
       }),
   });
 }

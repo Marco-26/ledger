@@ -79,16 +79,6 @@ def build_yearly_statement(
         credit_total=float(credit_total),
         debit_total=float(debit_total),
         net_balance=float(net_balance),
-        credit_list=[
-            TransactionDTO.model_validate(t)
-            for t in transactions
-            if (t.type == TransactionType.INCOME)
-        ],
-        debit_list=[
-            TransactionDTO.model_validate(t)
-            for t in transactions
-            if (t.type == TransactionType.EXPENSE)
-        ],
         top_incomes=[
             TransactionDTO.model_validate(t)
             for t in _get_top_transactions(transactions, TransactionType.INCOME)

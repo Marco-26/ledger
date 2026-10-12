@@ -64,5 +64,5 @@ def get_yearly_statement(
     year: Annotated[int, Query()],
     service: Annotated[StatementService, Depends(get_statement_service)],
     user: Annotated[User, Depends(get_current_user)]
-) -> StatementDTO:
+) -> YearlyStatementRead:
     return service.get_yearly_statement(year, user.id)

@@ -7,7 +7,7 @@ from exceptions.domain import (
     StatementWrongDateSelectedException,
 )
 from integrations.openai_api import classify_transactions
-from schemas.statement import StatementDTO, TransactionDTO
+from schemas.statement import StatementDTO, TransactionDTO, YearlyStatementRead
 from sqlalchemy.orm import Session
 from utils import date_utils
 from utils.file_utils import extract_table_from_pdf_file
@@ -79,7 +79,7 @@ class StatementService:
             ),
         )
 
-    def get_yearly_statement(self, year: int, user_id: int) -> StatementDTO:
+    def get_yearly_statement(self, year: int, user_id: int) -> YearlyStatementRead:
         statements = self.repository.get_all_statements_in_a_year(year, user_id)
 
         if not statements or len(statements) == 0:
