@@ -42,3 +42,14 @@ class StatementDTO(BaseModel):
     credit_total_growth_rate: float
     debit_total_growth_rate: float
     net_balance_total_growth_rate: float
+
+
+class YearlyStatementRead(BaseModel):
+    year: int
+    debit_total: float
+    credit_total: float
+    net_balance: float
+    top_expenses: list[TransactionDTO]
+    top_incomes: list[TransactionDTO]
+    transaction_categories: list[TransactionCategoryDTO]
+    all_transactions: list[TransactionDTO]

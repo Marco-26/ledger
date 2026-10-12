@@ -4,7 +4,7 @@ from decimal import Decimal
 from db.models.statement import Statement, Transaction
 from db.models.statement import TransactionType as TransactionTypeModel
 from schemas.statement import TransactionDTO
-from sqlalchemy import select
+from sqlalchemy import select, extract
 from sqlalchemy.orm import Session
 
 
@@ -41,10 +41,20 @@ class StatementRepository:
         self.db.delete(statement)
         self.db.commit()
 
-    def get_statement(self, start_date: date, user_id:int) -> Statement | None:
-        stmt = select(Statement).where(Statement.user_id == user_id, Statement.date_uploaded == start_date)
+    def get_statement(self, start_date: date, user_id: int) -> Statement | None:
+        stmt = select(Statement).where(
+            Statement.user_id == user_id, Statement.date_uploaded == start_date
+        )
         return self.db.scalars(stmt).one_or_none()
-          
+
+    def get_all_statements_in_a_year(
+        self, year: int, user_id: int
+    ) -> list[Statement] | None:
+        stmt = select(Statement).where(
+            Statement.user_id == user_id,
+            extract("year", Statement.date_uploaded) == year,
+        )
+        return self.db.scalars(stmt).all()
 
     def get_category_based_on_description(self, description: str) -> str | None:
         stmt = select(Transaction.category).where(
