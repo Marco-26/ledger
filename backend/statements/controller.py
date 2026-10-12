@@ -59,12 +59,10 @@ def get_statement(
     return service.get_monthly_statement(date, user.id)
 
 
-#    date: date, service: Annotated[StatementService, Depends(get_statement_service)], user: Annotated[User, Depends(get_current_user)]
-
-
 @router.get("/api/statement/yearly", response_model=YearlyStatementRead)
 def get_yearly_statement(
     year: Annotated[int, Query()],
     service: Annotated[StatementService, Depends(get_statement_service)],
+    user: Annotated[User, Depends(get_current_user)]
 ) -> StatementDTO:
-    return service.get_yearly_statement(year, 1)
+    return service.get_yearly_statement(year, user.id)
