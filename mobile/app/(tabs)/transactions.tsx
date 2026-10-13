@@ -23,7 +23,7 @@ import TransactionRow from "@/components/transactions/transaction-row/Transactio
 import TransactionRowSkeleton from "@/components/transactions/transaction-row/skeleton/TransactionRowSkeleton";
 import Divider from "@/components/ui/divider/Divider";
 import StateMessage from "@/components/ui/state-message/StateMessage";
-import { isNotFound, useStatement } from "@/context/StatementContext";
+import { isNotFound, SelectedPeriod, useStatement } from "@/context/StatementContext";
 import { useTheme, useThemedStyles } from "@/styles/theme";
 import { categoryLabel } from "@/utils/categories";
 import {
@@ -279,6 +279,7 @@ export default function TransactionsScreen() {
             onPrevious={goToPreviousMonth}
             onNext={goToNextMonth}
             canGoNext={canGoToNextMonth}
+            unit={SelectedPeriod.MONTH}
           />
         </View>
 
