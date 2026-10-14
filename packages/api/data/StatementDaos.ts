@@ -31,6 +31,13 @@ export interface IStatementResponse {
   net_balance_total_growth_rate: number;
 }
 
+export interface IMonthlySummaryResponse {
+  month: number;
+  expenses: number;
+  income: number;
+  net_balance: number;
+}
+
 export interface IYearlyStatementResponse {
   year: number;
   debit_total: number;
@@ -40,4 +47,5 @@ export interface IYearlyStatementResponse {
   top_incomes: ITransactionResponse[];
   all_transactions: ITransactionResponse[];
   transaction_categories: ITransactionCategoryResponse[];
+  month_summaries: IMonthlySummaryResponse[];
 }

@@ -1,4 +1,5 @@
 import type {
+  IMonthlySummaryResponse,
   IStatementResponse,
   ITransactionCategoryResponse,
   ITransactionResponse,
@@ -6,6 +7,7 @@ import type {
   TransactionTypeValues,
 } from "../../data/StatementDaos";
 import type {
+  IMonthlySummary,
   IStatement,
   ITransaction,
   ITransactionCategory,
@@ -88,6 +90,17 @@ export class StatementDataAdapter {
     };
   }
 
+  convertDataToMonthlySummary(
+    monthlySummaryResponse: IMonthlySummaryResponse,
+  ): IMonthlySummary {
+    return {
+      month: monthlySummaryResponse.month,
+      expenses: monthlySummaryResponse.expenses,
+      income: monthlySummaryResponse.income,
+      netBalance: monthlySummaryResponse.net_balance,
+    };
+  }
+
   convertToYearlyStatement(
     yearlyStatementResponse: IYearlyStatementResponse,
   ): IYearlyStatement {
@@ -107,6 +120,9 @@ export class StatementDataAdapter {
       ),
       transactionCategories: yearlyStatementResponse.transaction_categories.map(
         (category) => this.convertDataToTransactionCategory(category),
+      ),
+      monthSummaries: yearlyStatementResponse.month_summaries.map(
+        (summary) => this.convertDataToMonthlySummary(summary),
       ),
     };
   }
