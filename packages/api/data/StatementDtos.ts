@@ -37,8 +37,7 @@ export interface IStatement {
 }
 
 export interface IMonthlySummary {
-  /** 1-12, as the API sends it. */
-  month: number;
+  month: string;
   expenses: number;
   income: number;
   netBalance: number;

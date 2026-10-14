@@ -1,4 +1,3 @@
-import { useMemo } from "react";
 import { Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import type { IStatement, IYearlyStatement } from "@ledger/api";
@@ -6,26 +5,20 @@ import TransactionSummary from "@/components/dashboard/transaction-summary/Trans
 import VerticalDivider from "@/components/ui/vertical-divider/VerticalDivider";
 import { SelectedPeriod } from "@/context/StatementContext";
 import { useTheme, useThemedStyles } from "@/styles/theme";
-import { Constants } from "@/utils/constants";
 import {
   formatCurrency,
   formatDelta,
   formatPercent,
   splitCurrency,
 } from "@/utils/format";
-import {
-  getMonthlyTotals,
-  getPeakMonth,
-  type MonthTotals,
-} from "@/utils/monthlyTotals";
 import { createStyles } from "./StatementSummary.styles";
 import StatementSummarySkeleton from "./skeleton/StatementSummarySkeleton";
+import { getPeakExpensesMonth, getPeakIncomeMonth } from "@/utils/utils";
 
 interface StatementSummaryProps {
   statement?: IStatement | IYearlyStatement;
   period: SelectedPeriod;
   isLoading: boolean;
-  isYear?: boolean;
 }
 
 interface BalanceLine {
@@ -35,37 +28,13 @@ interface BalanceLine {
   caption?: string;
 }
 
-/** "Highest in June · 3200,00 €" — the month the money peaked, for the year view. */
-function peakCaption(
-  month: MonthTotals | undefined,
-  field: "income" | "expenses",
-) {
-  if (!month)
-    return field === "income" ? "No income recorded" : "No spending recorded";
-  return `Highest in ${Constants.UI.MONTHS[month.month]} · ${formatCurrency(month[field])}`;
-}
-
-/**
- * The anchor of the dashboard: one large balance, then the two figures that
- * produced it. Labels stay small so the numbers carry the hierarchy.
- *
- * A month compares itself with the previous month. A year describes itself
- * instead: how much of the income was kept, and when money peaked.
- */
 export default function StatementSummary({
   statement,
   period,
   isLoading,
-  isYear
 }: StatementSummaryProps) {
   const styles = useThemedStyles(createStyles);
   const { colors } = useTheme();
-
-  const months = useMemo(
-    () =>
-      isYear ? getMonthlyTotals(statement?.allTransactions) : [],
-    [statement, isYear],
-  );
 
   if (isLoading) return <StatementSummarySkeleton />;
 
@@ -87,8 +56,18 @@ export default function StatementSummary({
           : `Spent ${formatPercent(Math.abs(savedRate))} more than earned`,
       color: balance >= 0 ? colors.income : colors.expense,
     };
-    incomeCaption = peakCaption(getPeakMonth(months, "income"), "income");
-    expensesCaption = peakCaption(getPeakMonth(months, "expenses"), "expenses");
+    // `?.` rather than a bare cast: the statement is undefined until it loads.
+    const summaries =
+      (statement as IYearlyStatement | undefined)?.monthSummaries ?? [];
+    const peakIncome = getPeakIncomeMonth(summaries);
+    const peakExpenses = getPeakExpensesMonth(summaries);
+
+    incomeCaption = peakIncome
+      ? `Highest in ${peakIncome.month} · ${formatCurrency(peakIncome.income)}`
+      : "No income recorded";
+    expensesCaption = peakExpenses
+      ? `Highest in ${peakExpenses.month} · ${formatCurrency(peakExpenses.expenses)}`
+      : "No spending recorded";
   } else {
     const monthly = statement as IStatement;
     const delta = monthly?.netBalanceTotalGrowthRate ?? 0;

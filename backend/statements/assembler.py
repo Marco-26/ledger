@@ -93,7 +93,7 @@ def build_monthly_summary(statement: Statement) -> MonthlySummaryRead:
   credit_total, debit_total, net_balance = revenue_utils.calculate_totals(
       statement.transactions
   )
-  return MonthlySummaryRead(month=statement.date_uploaded.month, expenses=float(debit_total), income=float(credit_total), net_balance=float(net_balance))
+  return MonthlySummaryRead(month=statement.date_uploaded.strftime("%B"), expenses=float(debit_total), income=float(credit_total), net_balance=float(net_balance))
 
 def _get_top_transactions(
     transactions: list[Transaction], transaction_type: TransactionType

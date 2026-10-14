@@ -32,7 +32,7 @@ export interface IStatementResponse {
 }
 
 export interface IMonthlySummaryResponse {
-  month: number;
+  month: string;
   expenses: number;
   income: number;
   net_balance: number;

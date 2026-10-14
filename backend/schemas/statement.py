@@ -46,7 +46,7 @@ class StatementDTO(BaseModel):
 
 # object that holds month summaries for the yearly statement
 class MonthlySummaryRead(BaseModel):
-    month: int
+    month: str
     expenses: float
     income: float
     net_balance: float
