@@ -49,12 +49,12 @@ class StatementRepository:
 
     def get_all_statements_in_a_year(
         self, year: int, user_id: int
-    ) -> list[Statement] | None:
+    ) -> list[Statement]:
         stmt = select(Statement).where(
             Statement.user_id == user_id,
             extract("year", Statement.date_uploaded) == year,
         )
-        return self.db.scalars(stmt).all()
+        return list(self.db.scalars(stmt).all())
 
     def get_category_based_on_description(self, description: str) -> str | None:
         stmt = select(Transaction.category).where(

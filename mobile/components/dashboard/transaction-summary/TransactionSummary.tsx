@@ -1,15 +1,13 @@
 import { Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useThemedStyles } from "@/styles/theme";
-import { formatCurrency, formatDelta } from "@/utils/format";
-import { createStyles } from "./MonthTransactionSummary.styles";
+import { formatCurrency } from "@/utils/format";
+import { createStyles } from "./TransactionSummary.styles";
 
-interface MonthTransactionSummaryProps {
+interface TransactionSummaryProps {
   label: string;
   amount?: number;
-  delta?: number;
-  /** What the delta is measured against, e.g. "vs last month". */
-  comparison: string;
+  caption: string;
   /** Semantic colour for the figure — income or expense. */
   color: string;
   /** Soft tint behind the direction arrow. */
@@ -18,15 +16,14 @@ interface MonthTransactionSummaryProps {
 }
 
 /** One half of the income / expenses pair under the balance. */
-export default function MonthTransactionSummary({
+export default function TransactionSummary({
   label,
   amount,
-  delta,
-  comparison,
+  caption,
   color,
   tint,
   icon,
-}: MonthTransactionSummaryProps) {
+}: TransactionSummaryProps) {
   const styles = useThemedStyles(createStyles);
 
   return (
@@ -47,8 +44,8 @@ export default function MonthTransactionSummary({
         {formatCurrency(amount ?? 0)}
       </Text>
 
-      <Text style={styles.delta}>
-        {formatDelta(delta)} {comparison}
+      <Text style={styles.delta} numberOfLines={2}>
+        {caption}
       </Text>
     </View>
   );

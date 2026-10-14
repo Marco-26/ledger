@@ -13,14 +13,14 @@ import { useTheme } from "@/styles/theme";
 import { MAX_CONTENT_WIDTH, Spacing } from "@/styles/tokens";
 import { Constants } from "@/utils/constants";
 import { useCreateStatementQuery } from "@ledger/api";
-import { useEffect } from "react";
 import UploadFileFloatingButton from "@/components/ui/upload-file-floating-button/UploadFileFloatingButton";
 import { formatMonthLabel } from "@/utils/format";
-import Toast from "react-native-toast-message";
-import { isAxiosError } from "axios";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 
-type ErrorCode = keyof typeof Constants.ERRORS;
+export const PERIOD_NOUN_MAPPER: Record<SelectedPeriod, string> = {
+  [SelectedPeriod.MONTH]: "month",
+  [SelectedPeriod.YEAR]: "year"
+}
 
 export default function HomeScreen() {
   const { colors } = useTheme();
@@ -29,7 +29,6 @@ export default function HomeScreen() {
     isYear,
     setPeriod,
     statement,
-    yearlyStatement,
     isLoading,
     isError,
     isEmpty,
@@ -46,24 +45,7 @@ export default function HomeScreen() {
   const {
     mutate: uploadStatement,
     isPending: isUploading,
-    error: errorUploading,
   } = useCreateStatementQuery();
-
-  useEffect(() => {
-    if (!!errorUploading) {
-      const code = isAxiosError<{ code?: string }>(errorUploading)
-        ? errorUploading.response?.data?.code
-        : undefined;
-
-      const error = Constants.ERRORS[code as ErrorCode];
-
-      Toast.show({
-        type: "error",
-        text1: error ? error.text1 : Constants.ERRORS.GENERAL.text1,
-        text2: error ? error.text2 : Constants.ERRORS.GENERAL.text2,
-      });
-    }
-  }, [errorUploading]);
 
   const selectedMonth = selectedDate.date(1).format(Constants.UI.DATE_FORMAT);
 
@@ -77,13 +59,13 @@ export default function HomeScreen() {
 
   const isSelectedMonthUploading =
     !isYear && uploadingFileMonth === selectedMonth;
+  
   const isDashboardLoading = isLoading || isSelectedMonthUploading;
+  
   const periodLabel = isYear
     ? selectedDate.format("YYYY")
     : formatMonthLabel(selectedDate);
-  const periodNoun = isYear ? "year" : "month";
-  const highlights = isYear ? yearlyStatement : statement;
-
+  
   const openMonth = (month: number) => {
     setSelectedDate(selectedDate.month(month).date(1));
     setPeriod(SelectedPeriod.MONTH);
@@ -115,7 +97,7 @@ export default function HomeScreen() {
           <StateMessage
             icon="cloud-offline-outline"
             tone="error"
-            title={`We couldn't load this ${periodNoun}`}
+            title={`We couldn't load this ${PERIOD_NOUN_MAPPER[period]}`}
             message="Check your connection and try again."
             actionLabel="Try again"
             onAction={refetch}
@@ -133,7 +115,7 @@ export default function HomeScreen() {
         ) : (
           <>
             <StatementSummary
-              statement={highlights}
+              statement={statement}
               period={period}
               isLoading={isDashboardLoading}
             />
@@ -144,7 +126,7 @@ export default function HomeScreen() {
                 <YearlyNetChart
                   key={selectedDate.year()}
                   year={selectedDate.year()}
-                  transactions={yearlyStatement?.allTransactions}
+                  transactions={statement?.allTransactions}
                   onOpenMonth={openMonth}
                 />
               </>
@@ -154,9 +136,9 @@ export default function HomeScreen() {
 
             <TopMovements
               title={isYear ? `Top income of ${periodLabel}` : "Top income"}
-              transactions={highlights?.topIncomes}
+              transactions={statement?.topIncomes}
               isLoading={isDashboardLoading}
-              emptyLabel={`No income recorded this ${periodNoun}.`}
+              emptyLabel={`No income recorded this ${PERIOD_NOUN_MAPPER[period]}.`}
               filter="income"
               showSeeAll={!isYear}
             />
@@ -165,9 +147,10 @@ export default function HomeScreen() {
 
             <TopMovements
               title={isYear ? `Top spending of ${periodLabel}` : "Top spending"}
-              transactions={highlights?.topExpenses}
+              transactions={statement?.topExpenses}
               isLoading={isDashboardLoading}
-              emptyLabel={`No spending recorded this ${periodNoun}.`}
+              emptyLabel={`No spending recorded this ${PERIOD_NOUN_MAPPER[period]
+                }.`}
               filter="expense"
               showSeeAll={!isYear}
             />
@@ -175,8 +158,8 @@ export default function HomeScreen() {
             <Divider style={styles.rule} />
 
             <CategoryBreakdown
-              categories={highlights?.transactionCategories}
-              emptyLabel={`No spending recorded this ${periodNoun}.`}
+              categories={statement?.transactionCategories}
+              emptyLabel={`No spending recorded this ${PERIOD_NOUN_MAPPER[period]}.`}
               isLoading={isDashboardLoading}
             />
           </>

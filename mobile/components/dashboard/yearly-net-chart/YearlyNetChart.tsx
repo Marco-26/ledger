@@ -2,13 +2,14 @@ import { useMemo, useState } from "react";
 import { Pressable, Text, TouchableOpacity, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
-import { TransactionType, type ITransaction } from "@ledger/api";
+import type { ITransaction } from "@ledger/api";
 import Divider from "@/components/ui/divider/Divider";
 import SectionHeading from "@/components/ui/section-heading/SectionHeading";
 import { useTheme, useThemedStyles } from "@/styles/theme";
 import { HIT_SLOP } from "@/styles/tokens";
 import { Constants } from "@/utils/constants";
 import { formatCurrency } from "@/utils/format";
+import { getMonthlyTotals } from "@/utils/monthlyTotals";
 import { createStyles } from "./YearlyNetChart.styles";
 
 interface YearlyNetChartProps {
@@ -16,14 +17,6 @@ interface YearlyNetChartProps {
   transactions?: ITransaction[];
   /** Called with a 0-based month when the user asks to open that month. */
   onOpenMonth: (month: number) => void;
-}
-
-interface MonthBucket {
-  month: number;
-  count: number;
-  income: number;
-  expenses: number;
-  net: number;
 }
 
 /**
@@ -39,26 +32,7 @@ export default function YearlyNetChart({
   const styles = useThemedStyles(createStyles);
   const { colors } = useTheme();
 
-  const buckets = useMemo<MonthBucket[]>(() => {
-    const months = Constants.UI.MONTHS.map((_, month) => ({
-      month,
-      count: 0,
-      income: 0,
-      expenses: 0,
-      net: 0,
-    }));
-
-    (transactions ?? []).forEach((transaction) => {
-      const bucket = months[transaction.date.month()];
-      const amount = Math.abs(transaction.amount);
-      bucket.count += 1;
-      if (transaction.type === TransactionType.INCOME) bucket.income += amount;
-      else bucket.expenses += amount;
-    });
-
-    months.forEach((bucket) => (bucket.net = bucket.income - bucket.expenses));
-    return months;
-  }, [transactions]);
+  const buckets = useMemo(() => getMonthlyTotals(transactions), [transactions]);
 
   const withData = buckets.filter((bucket) => bucket.count > 0);
   const latest = withData[withData.length - 1]?.month ?? null;
@@ -195,9 +169,21 @@ export default function YearlyNetChart({
           </View>
 
           <View style={styles.figures} accessibilityLiveRegion="polite">
-            <Figure label="Income" value={current.income} color={colors.income} />
-            <Figure label="Expenses" value={current.expenses} color={colors.expense} />
-            <Figure label="Net" value={current.net} color={colors.textPrimary} />
+            <Figure
+              label="Income"
+              value={current.income}
+              color={colors.income}
+            />
+            <Figure
+              label="Expenses"
+              value={current.expenses}
+              color={colors.expense}
+            />
+            <Figure
+              label="Net"
+              value={current.net}
+              color={colors.textPrimary}
+            />
           </View>
         </>
       ) : null}

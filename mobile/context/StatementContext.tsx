@@ -25,12 +25,10 @@ interface StatementContextValue {
   setPeriod: (period: SelectedPeriod) => void;
   selectedDate: Dayjs;
   setSelectedDate: (date: Dayjs) => void;
-  /** Steps one month or one year back, depending on the period. */
   goToPrevious: () => void;
   goToNext: () => void;
   canGoToNext: boolean;
-  statement?: IStatement;
-  yearlyStatement?: IYearlyStatement;
+  statement?: IStatement | IYearlyStatement;
   isLoading: boolean;
   isError: boolean;
   isEmpty: boolean;
@@ -100,8 +98,7 @@ export function StatementProvider({ children }: { children: ReactNode }) {
       goToPrevious,
       goToNext,
       canGoToNext: !selectedDate.isSame(dayjs(), period),
-      statement: monthly.data,
-      yearlyStatement: yearly.data,
+      statement: isYear ? yearly.data : monthly.data,
       isLoading: active.isLoading,
       isError: active.isError && !isNotFound(active.error),
       isEmpty: active.isError && isNotFound(active.error),

@@ -1,6 +1,5 @@
 from datetime import date
 
-from domain.transaction_builder import build_monthly_statement, build_yearly_statement
 from exceptions.domain import (
     StatementNotFoundException,
     StatementParsingException,
@@ -17,6 +16,7 @@ from utils.statement_dataframe_utils import (
 )
 
 from statements.adapter import dataframe_to_transactions
+from statements.assembler import build_monthly_statement, build_yearly_statement
 from statements.repository import StatementRepository
 
 
@@ -82,11 +82,11 @@ class StatementService:
     def get_yearly_statement(self, year: int, user_id: int) -> YearlyStatementRead:
         statements = self.repository.get_all_statements_in_a_year(year, user_id)
 
-        if not statements or len(statements) == 0:
+        if not statements:
             raise StatementNotFoundException()
 
         return build_yearly_statement(
-            year_transactions=[statement.transactions for statement in statements],
+            transactions=[transaction for statement in statements for transaction in statement.transactions],
             statement_year=year,
         )
 

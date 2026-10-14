@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { statementService } from "../service/StatementService";
 import { Constants } from "../utils/constants";
+import { showToastOnError } from "@/utils/utils";
 
 export function useCreateStatementQuery() {
   const queryClient = useQueryClient();
@@ -27,5 +28,8 @@ export function useCreateStatementQuery() {
           ],
         }),
       ]),
+    onError: (error) => {
+      showToastOnError(error)
+    }
   });
 }

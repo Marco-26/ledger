@@ -19,10 +19,11 @@ def build_monthly_statement(
     credit_total, debit_total, net_balance = revenue_utils.calculate_totals(
         transactions
     )
+
     credit_prev, debit_prev, net_prev = revenue_utils.calculate_totals(
         previous_month_transactions
     )
-
+    
     return StatementDTO(
         date=statement_date,
         credit_total=float(credit_total),
@@ -61,17 +62,11 @@ def build_monthly_statement(
 
 
 def build_yearly_statement(
-    year_transactions: list[list[Transaction]],
+    transactions: list[Transaction],
     statement_year: int,
-) -> StatementDTO:
-    transactions = [
-      transaction
-      for month_transactions in year_transactions
-      for transaction in month_transactions
-    ]
-    
+) -> YearlyStatementRead:
     credit_total, debit_total, net_balance = revenue_utils.calculate_totals(
-      transactions
+        transactions
     )
 
     return YearlyStatementRead(
@@ -95,5 +90,5 @@ def build_yearly_statement(
 def _get_top_transactions(
     transactions: list[Transaction], transaction_type: TransactionType
 ) -> list[Transaction]:
-    matching = [t for t in transactions if t.type == transaction_type]
+    matching = [transaction for transaction in transactions if transaction.type == transaction_type]
     return sorted(matching, key=lambda t: t.amount, reverse=True)[:TOP_N_TRANSACTIONS]
