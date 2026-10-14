@@ -1,5 +1,5 @@
 import { apiClient } from "./client";
-import type { IStatement } from "../data/StatementDtos";
+import type { IStatement, IYearlyStatement } from "../data/StatementDtos";
 import StatementDataAdapter from "./adapters/StatementDataAdapter";
 import { Constants } from "../utils/constants";
 
@@ -26,6 +26,14 @@ export class StatementService {
     const url = `${this.baseURL}?${Constants.API.QUERY_PARAMS.DATE}=${encodeURIComponent(date)}`;
     const response = await apiClient.get(url);
     return StatementDataAdapter.convertToStatement(response.data);
+  }
+
+  public async fetchYearlyStatement(year?: number): Promise<IYearlyStatement> {
+    if(!year) return Promise.reject();
+
+    const url = `${this.baseURL}/yearly?${Constants.API.QUERY_PARAMS.YEAR}=${year}`;
+    const response = await apiClient.get(url);
+    return StatementDataAdapter.convertToYearlyStatement(response.data);
   }
 }
 

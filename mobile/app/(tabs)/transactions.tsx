@@ -8,7 +8,12 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { TransactionType, type ITransaction } from "@ledger/api";
+import dayjs from "dayjs";
+import {
+  TransactionType,
+  useStatementsQuery,
+  type ITransaction,
+} from "@ledger/api";
 import MonthStepper from "@/components/month-stepper/MonthStepper";
 import TransactionFilters, {
   type TypeFilter,
@@ -18,7 +23,7 @@ import TransactionRow from "@/components/transactions/transaction-row/Transactio
 import TransactionRowSkeleton from "@/components/transactions/transaction-row/skeleton/TransactionRowSkeleton";
 import Divider from "@/components/ui/divider/Divider";
 import StateMessage from "@/components/ui/state-message/StateMessage";
-import { useStatement } from "@/context/StatementContext";
+import { isNotFound, SelectedPeriod, useStatement } from "@/context/StatementContext";
 import { useTheme, useThemedStyles } from "@/styles/theme";
 import { categoryLabel } from "@/utils/categories";
 import {
@@ -27,6 +32,7 @@ import {
   formatMonthLabel,
 } from "@/utils/format";
 import { createStyles } from "@/styles/screens/TransactionsScreen.styles";
+import { Constants } from "@/utils/constants";
 
 interface DaySection {
   title: string;
@@ -54,18 +60,28 @@ export default function TransactionsScreen() {
   // way a little so the month stepper stays fully reachable.
   const isNarrow = width < 360;
 
+  const { selectedDate, setSelectedDate } = useStatement();
+
   const {
-    statement,
+    data: statement,
+    error,
     isLoading,
-    isError,
-    isEmpty,
+    isError: hasFailed,
     isRefetching,
     refetch,
-    selectedDate,
-    goToPreviousMonth,
-    goToNextMonth,
-    canGoToNextMonth,
-  } = useStatement();
+  } = useStatementsQuery({
+    selectedMonth: selectedDate.date(1).format(Constants.UI.DATE_FORMAT),
+  });
+
+  const isError = hasFailed && !isNotFound(error);
+  const isEmpty = hasFailed && isNotFound(error);
+
+  const canGoToNextMonth = !selectedDate.isSame(dayjs(), "month");
+  const goToPreviousMonth = () =>
+    setSelectedDate(selectedDate.subtract(1, "month"));
+  const goToNextMonth = () => {
+    if (canGoToNextMonth) setSelectedDate(selectedDate.add(1, "month"));
+  };
 
   const [query, setQuery] = useState("");
   const [typeFilter, setTypeFilter] = useState<TypeFilter>("all");
@@ -263,6 +279,7 @@ export default function TransactionsScreen() {
             onPrevious={goToPreviousMonth}
             onNext={goToNextMonth}
             canGoNext={canGoToNextMonth}
+            unit={SelectedPeriod.MONTH}
           />
         </View>
 

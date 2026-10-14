@@ -1,9 +1,9 @@
 import { View } from "react-native";
 import Skeleton from "@/components/ui/skeleton/Skeleton";
 import VerticalDivider from "@/components/ui/vertical-divider/VerticalDivider";
-import { styles } from "./MonthSummarySkeleton.styles";
+import { styles } from "./StatementSummarySkeleton.styles";
 
-export default function MonthSummarySkeleton() {
+export default function StatementSummarySkeleton() {
   return (
     <View style={styles.container}>
       <View style={styles.group}>

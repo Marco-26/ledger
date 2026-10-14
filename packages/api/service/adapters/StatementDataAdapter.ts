@@ -2,12 +2,14 @@ import type {
   IStatementResponse,
   ITransactionCategoryResponse,
   ITransactionResponse,
+  IYearlyStatementResponse,
   TransactionTypeValues,
 } from "../../data/StatementDaos";
 import type {
   IStatement,
   ITransaction,
   ITransactionCategory,
+  IYearlyStatement,
 } from "../../data/StatementDtos";
 import { TransactionType } from "../../data/StatementDtos";
 import dayjs from "dayjs";
@@ -83,6 +85,29 @@ export class StatementDataAdapter {
       debitTotalGrowthRate: statementResponse.debit_total_growth_rate,
       netBalanceTotalGrowthRate:
         statementResponse.net_balance_total_growth_rate,
+    };
+  }
+
+  convertToYearlyStatement(
+    yearlyStatementResponse: IYearlyStatementResponse,
+  ): IYearlyStatement {
+    return {
+      year: yearlyStatementResponse.year,
+      debitTotal: yearlyStatementResponse.debit_total,
+      creditTotal: yearlyStatementResponse.credit_total,
+      netBalance: yearlyStatementResponse.net_balance,
+      topExpenses: this.convertDataToTransactionList(
+        yearlyStatementResponse.top_expenses,
+      ),
+      topIncomes: this.convertDataToTransactionList(
+        yearlyStatementResponse.top_incomes,
+      ),
+      allTransactions: this.convertDataToTransactionList(
+        yearlyStatementResponse.all_transactions,
+      ),
+      transactionCategories: yearlyStatementResponse.transaction_categories.map(
+        (category) => this.convertDataToTransactionCategory(category),
+      ),
     };
   }
 }

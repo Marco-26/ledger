@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { statementService } from "../service/StatementService";
 import { Constants } from "../utils/constants";
+import { showToastOnError } from "@/utils/utils";
 
 export function useCreateStatementQuery() {
   const queryClient = useQueryClient();
@@ -14,9 +15,21 @@ export function useCreateStatementQuery() {
       statementFile: File;
       date: string;
     }) => statementService.postStatement(statementFile, date),
+    // Keys are matched by prefix, so the month and its year need one call each.
     onSuccess: (_, variables) =>
-      queryClient.invalidateQueries({
-        queryKey: [Constants.API.TANSTACK_QUERIES.STATEMENTS, variables.date],
-      }),
+      Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: [Constants.API.TANSTACK_QUERIES.STATEMENTS, variables.date],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: [
+            Constants.API.TANSTACK_QUERIES.YEARLY_STATEMENTS,
+            Number(variables.date.slice(0, 4)),
+          ],
+        }),
+      ]),
+    onError: (error) => {
+      showToastOnError(error)
+    }
   });
 }

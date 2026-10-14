@@ -6,11 +6,12 @@ from schemas.statement import (
     StatementDTO,
     TransactionDTO,
     TransactionType,
+    YearlyStatementRead,
 )
 from utils import revenue_utils
 
 
-def build_statement(
+def build_monthly_statement(
     transactions: list[Transaction],
     statement_date: date,
     previous_month_transactions: list[Transaction],
@@ -18,10 +19,11 @@ def build_statement(
     credit_total, debit_total, net_balance = revenue_utils.calculate_totals(
         transactions
     )
+
     credit_prev, debit_prev, net_prev = revenue_utils.calculate_totals(
         previous_month_transactions
     )
-
+    
     return StatementDTO(
         date=statement_date,
         credit_total=float(credit_total),
@@ -37,8 +39,14 @@ def build_statement(
             for t in transactions
             if (t.type == TransactionType.EXPENSE)
         ],
-        top_incomes=[TransactionDTO.model_validate(t) for t in _get_top_transactions(transactions, TransactionType.INCOME)],
-        top_expenses=[TransactionDTO.model_validate(t) for t in _get_top_transactions(transactions, TransactionType.EXPENSE)],
+        top_incomes=[
+            TransactionDTO.model_validate(t)
+            for t in _get_top_transactions(transactions, TransactionType.INCOME)
+        ],
+        top_expenses=[
+            TransactionDTO.model_validate(t)
+            for t in _get_top_transactions(transactions, TransactionType.EXPENSE)
+        ],
         all_transactions=[TransactionDTO.model_validate(t) for t in transactions],
         transaction_categories=revenue_utils.process_category(transactions),
         credit_total_growth_rate=revenue_utils.calculate_revenue_growth_rate(
@@ -53,8 +61,34 @@ def build_statement(
     )
 
 
+def build_yearly_statement(
+    transactions: list[Transaction],
+    statement_year: int,
+) -> YearlyStatementRead:
+    credit_total, debit_total, net_balance = revenue_utils.calculate_totals(
+        transactions
+    )
+
+    return YearlyStatementRead(
+        year=statement_year,
+        credit_total=float(credit_total),
+        debit_total=float(debit_total),
+        net_balance=float(net_balance),
+        top_incomes=[
+            TransactionDTO.model_validate(t)
+            for t in _get_top_transactions(transactions, TransactionType.INCOME)
+        ],
+        top_expenses=[
+            TransactionDTO.model_validate(t)
+            for t in _get_top_transactions(transactions, TransactionType.EXPENSE)
+        ],
+        all_transactions=[TransactionDTO.model_validate(t) for t in transactions],
+        transaction_categories=revenue_utils.process_category(transactions),
+    )
+
+
 def _get_top_transactions(
     transactions: list[Transaction], transaction_type: TransactionType
 ) -> list[Transaction]:
-    matching = [t for t in transactions if t.type == transaction_type]
+    matching = [transaction for transaction in transactions if transaction.type == transaction_type]
     return sorted(matching, key=lambda t: t.amount, reverse=True)[:TOP_N_TRANSACTIONS]
