@@ -1,8 +1,9 @@
 from datetime import date
 
 from constants import TOP_N_TRANSACTIONS
-from db.models.statement import Transaction
+from db.models.statement import Statement, Transaction
 from schemas.statement import (
+    MonthlySummaryRead,
     StatementDTO,
     TransactionDTO,
     TransactionType,
@@ -62,12 +63,13 @@ def build_monthly_statement(
 
 
 def build_yearly_statement(
-    transactions: list[Transaction],
+    statements: list[Statement],
     statement_year: int,
 ) -> YearlyStatementRead:
-    credit_total, debit_total, net_balance = revenue_utils.calculate_totals(
-        transactions
-    )
+
+    all_year_transactions =  [transaction for statement in statements for transaction in statement.transactions]
+  
+    credit_total, debit_total, net_balance = revenue_utils.calculate_totals(all_year_transactions)
 
     return YearlyStatementRead(
         year=statement_year,
@@ -76,16 +78,22 @@ def build_yearly_statement(
         net_balance=float(net_balance),
         top_incomes=[
             TransactionDTO.model_validate(t)
-            for t in _get_top_transactions(transactions, TransactionType.INCOME)
+            for t in _get_top_transactions(all_year_transactions, TransactionType.INCOME)
         ],
         top_expenses=[
             TransactionDTO.model_validate(t)
-            for t in _get_top_transactions(transactions, TransactionType.EXPENSE)
+            for t in _get_top_transactions(all_year_transactions, TransactionType.EXPENSE)
         ],
-        all_transactions=[TransactionDTO.model_validate(t) for t in transactions],
-        transaction_categories=revenue_utils.process_category(transactions),
+        all_transactions=[TransactionDTO.model_validate(t) for t in all_year_transactions],
+        transaction_categories=revenue_utils.process_category(all_year_transactions),
+        month_summaries=[build_monthly_summary(statement) for statement in statements]
     )
 
+def build_monthly_summary(statement: Statement) -> MonthlySummaryRead:
+  credit_total, debit_total, net_balance = revenue_utils.calculate_totals(
+      statement.transactions
+  )
+  return MonthlySummaryRead(month=statement.date_uploaded.month, expenses=float(debit_total), income=float(credit_total), net_balance=float(net_balance))
 
 def _get_top_transactions(
     transactions: list[Transaction], transaction_type: TransactionType

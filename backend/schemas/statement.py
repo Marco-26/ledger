@@ -44,6 +44,14 @@ class StatementDTO(BaseModel):
     net_balance_total_growth_rate: float
 
 
+# object that holds month summaries for the yearly statement
+class MonthlySummaryRead(BaseModel):
+    month: int
+    expenses: float
+    income: float
+    net_balance: float
+    
+
 class YearlyStatementRead(BaseModel):
     year: int
     debit_total: float
@@ -53,3 +61,5 @@ class YearlyStatementRead(BaseModel):
     top_incomes: list[TransactionDTO]
     transaction_categories: list[TransactionCategoryDTO]
     all_transactions: list[TransactionDTO]
+    month_summaries: list[MonthlySummaryRead]
+
