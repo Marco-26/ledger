@@ -12,7 +12,7 @@ import { SelectedPeriod, useStatement } from "@/context/StatementContext";
 import { useTheme } from "@/styles/theme";
 import { MAX_CONTENT_WIDTH, Spacing } from "@/styles/tokens";
 import { Constants } from "@/utils/constants";
-import { useCreateStatementQuery } from "@ledger/api";
+import { useCreateStatementQuery, type IYearlyStatement } from "@ledger/api";
 import UploadFileFloatingButton from "@/components/ui/upload-file-floating-button/UploadFileFloatingButton";
 import { formatMonthLabel } from "@/utils/format";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
@@ -27,7 +27,6 @@ export default function HomeScreen() {
   const {
     period,
     isYear,
-    setPeriod,
     statement,
     isLoading,
     isError,
@@ -35,7 +34,6 @@ export default function HomeScreen() {
     isRefetching,
     refetch,
     selectedDate,
-    setSelectedDate,
     setUploadingFileMonth,
     uploadingFileMonth,
 	} = useStatement();
@@ -66,11 +64,6 @@ export default function HomeScreen() {
     ? selectedDate.format("YYYY")
     : formatMonthLabel(selectedDate);
   
-  const openMonth = (month: number) => {
-    setSelectedDate(selectedDate.month(month).date(1));
-    setPeriod(SelectedPeriod.MONTH);
-  };
-
   return (
     <SafeAreaView
       edges={["top"]}
@@ -124,10 +117,9 @@ export default function HomeScreen() {
               <>
                 <Divider style={styles.rule} />
                 <YearlyNetChart
-                  key={selectedDate.year()}
-                  year={selectedDate.year()}
-                  transactions={statement?.allTransactions}
-                  onOpenMonth={openMonth}
+                  monthSummaries={
+                    (statement as IYearlyStatement | undefined)?.monthSummaries
+                  }
                 />
               </>
             ) : null}

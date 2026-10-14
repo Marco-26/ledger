@@ -86,7 +86,7 @@ class StatementService:
             raise StatementNotFoundException()
 
         return build_yearly_statement(
-            transactions=[transaction for statement in statements for transaction in statement.transactions],
+            statements=[statement for statement in statements],
             statement_year=year,
         )
 
