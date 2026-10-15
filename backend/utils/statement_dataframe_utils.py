@@ -5,16 +5,16 @@ from enum import Enum
 class DFColumns(Enum):
     DATE = "Date"
     DESCRIPTION = "Description"
-    DEBIT = "Debit"
-    CREDIT = "Credit"
+    EXPENSE = "Expense"
+    INCOME = "Income"
     BALANCE = "Balance"
 
 
 STATEMENT_COLUMNS = [col.value for col in DFColumns]
 
 NUMERIC_COLUMNS = [
-    DFColumns.DEBIT.value,
-    DFColumns.CREDIT.value,
+    DFColumns.EXPENSE.value,
+    DFColumns.INCOME.value,
     DFColumns.BALANCE.value,
 ]
 
@@ -41,6 +41,6 @@ def normalize_statement_dataframe(data: pd.DataFrame) -> pd.DataFrame:
         df[column] = df[column].str.replace(",", ".", regex=False)
         df[column] = pd.to_numeric(df[column], errors="coerce")
 
-    df[DFColumns.CREDIT.value] = df[DFColumns.CREDIT.value].fillna(0.0)
-    df[DFColumns.DEBIT.value] = df[DFColumns.DEBIT.value].fillna(0.0)
+    df[DFColumns.INCOME.value] = df[DFColumns.INCOME.value].fillna(0.0)
+    df[DFColumns.EXPENSE.value] = df[DFColumns.EXPENSE.value].fillna(0.0)
     return df

@@ -90,7 +90,7 @@ export function TopTransactionsCard({
                 )}
               >
                 {isIncome ? "+" : "-"}
-                {formatCurrency(isIncome ? item.credit || 0 : item.debit || 0)}
+                {formatCurrency(item.amount)}
               </span>
             </div>
           ))

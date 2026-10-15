@@ -39,7 +39,7 @@ export default function StatementSummary({
   if (isLoading) return <StatementSummarySkeleton />;
 
   const balance = statement?.netBalance ?? 0;
-  const income = statement?.creditTotal ?? 0;
+  const income = statement?.incomeTotal ?? 0;
   const { sign, symbol, integer, symbolFirst } = splitCurrency(balance);
 
   let balanceLine: BalanceLine;
@@ -82,8 +82,8 @@ export default function StatementSummary({
       icon: delta === 0 ? undefined : delta > 0 ? "arrow-up" : "arrow-down",
       caption: "vs last month",
     };
-    incomeCaption = `${formatDelta(monthly?.creditTotalGrowthRate)} vs last month`;
-    expensesCaption = `${formatDelta(monthly?.debitTotalGrowthRate)} vs last month`;
+    incomeCaption = `${formatDelta(monthly?.incomeTotalGrowthRate)} vs last month`;
+    expensesCaption = `${formatDelta(monthly?.expenseTotalGrowthRate)} vs last month`;
   }
 
   return (
@@ -123,7 +123,7 @@ export default function StatementSummary({
       <View style={styles.splitRow}>
         <TransactionSummary
           label="Income"
-          amount={statement?.creditTotal}
+          amount={statement?.incomeTotal}
           caption={incomeCaption}
           color={colors.income}
           tint={colors.incomeSoft}
@@ -132,7 +132,7 @@ export default function StatementSummary({
         <VerticalDivider />
         <TransactionSummary
           label="Expenses"
-          amount={statement?.debitTotal}
+          amount={statement?.expenseTotal}
           caption={expensesCaption}
           color={colors.expense}
           tint={colors.expenseSoft}

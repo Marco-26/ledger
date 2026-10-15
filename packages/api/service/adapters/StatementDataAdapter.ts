@@ -62,8 +62,8 @@ export class StatementDataAdapter {
   convertToStatement(statementResponse: IStatementResponse): IStatement {
     return {
       date: dayjs(statementResponse.date),
-      debitTotal: statementResponse.debit_total,
-      creditTotal: statementResponse.credit_total,
+      expenseTotal: statementResponse.expense_total,
+      incomeTotal: statementResponse.income_total,
       netBalance: statementResponse.net_balance,
       topExpenses: this.convertDataToTransactionList(
         statementResponse.top_expenses,
@@ -74,17 +74,17 @@ export class StatementDataAdapter {
       allTransactions: this.convertDataToTransactionList(
         statementResponse.all_transactions,
       ),
-      creditList: this.convertDataToTransactionList(
-        statementResponse.credit_list,
+      incomeList: this.convertDataToTransactionList(
+        statementResponse.income_list,
       ),
-      debitList: this.convertDataToTransactionList(
-        statementResponse.debit_list,
+      expenseList: this.convertDataToTransactionList(
+        statementResponse.expense_list,
       ),
       transactionCategories: statementResponse.transaction_categories.map(
         (category) => this.convertDataToTransactionCategory(category),
       ),
-      creditTotalGrowthRate: statementResponse.credit_total_growth_rate,
-      debitTotalGrowthRate: statementResponse.debit_total_growth_rate,
+      incomeTotalGrowthRate: statementResponse.income_total_growth_rate,
+      expenseTotalGrowthRate: statementResponse.expense_total_growth_rate,
       netBalanceTotalGrowthRate:
         statementResponse.net_balance_total_growth_rate,
     };
@@ -106,8 +106,8 @@ export class StatementDataAdapter {
   ): IYearlyStatement {
     return {
       year: yearlyStatementResponse.year,
-      debitTotal: yearlyStatementResponse.debit_total,
-      creditTotal: yearlyStatementResponse.credit_total,
+      expenseTotal: yearlyStatementResponse.expense_total,
+      incomeTotal: yearlyStatementResponse.income_total,
       netBalance: yearlyStatementResponse.net_balance,
       topExpenses: this.convertDataToTransactionList(
         yearlyStatementResponse.top_expenses,

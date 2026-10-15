@@ -29,18 +29,18 @@ class TransactionCategoryDTO(BaseModel):
 
 class StatementDTO(BaseModel):
     date: Optional[Date] = None
-    debit_total: float
-    credit_total: float
+    expense_total: float
+    income_total: float
     net_balance: float
     top_expenses: list[TransactionDTO]
     top_incomes: list[TransactionDTO]
     all_transactions: list[TransactionDTO]
-    debit_list: list[TransactionDTO]
-    credit_list: list[TransactionDTO]
+    expense_list: list[TransactionDTO]
+    income_list: list[TransactionDTO]
     transaction_categories: list[TransactionCategoryDTO]
 
-    credit_total_growth_rate: float
-    debit_total_growth_rate: float
+    income_total_growth_rate: float
+    expense_total_growth_rate: float
     net_balance_total_growth_rate: float
 
 
@@ -54,8 +54,8 @@ class MonthlySummaryRead(BaseModel):
 
 class YearlyStatementRead(BaseModel):
     year: int
-    debit_total: float
-    credit_total: float
+    expense_total: float
+    income_total: float
     net_balance: float
     top_expenses: list[TransactionDTO]
     top_incomes: list[TransactionDTO]

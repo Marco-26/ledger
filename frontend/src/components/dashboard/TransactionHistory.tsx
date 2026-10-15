@@ -14,8 +14,8 @@ export function TransactionHistory({ data }: TransactionHistoryProps) {
 
   const count =
     activeTab === "income"
-      ? (data?.creditList?.length ?? 0)
-      : (data?.debitList?.length ?? 0);
+      ? (data?.incomeList?.length ?? 0)
+      : (data?.expenseList?.length ?? 0);
 
   return (
     <div className="rounded-xl border border-border bg-card overflow-hidden">
@@ -52,7 +52,7 @@ export function TransactionHistory({ data }: TransactionHistoryProps) {
 
         <TabsContent value="income" className="mt-0">
           <TransactionTable
-            transactions={data?.creditList}
+            transactions={data?.incomeList}
             type={TransactionType.INCOME}
             emptyMessage="No income transactions found."
           />
@@ -60,7 +60,7 @@ export function TransactionHistory({ data }: TransactionHistoryProps) {
 
         <TabsContent value="expenses" className="mt-0">
           <TransactionTable
-            transactions={data?.debitList}
+            transactions={data?.expenseList}
             type={TransactionType.EXPENSE}
             emptyMessage="No expense transactions found."
           />

@@ -9,10 +9,10 @@ def dataframe_to_transactions(data: df) -> list[TransactionDTO]:
     transactions: list[TransactionDTO] = []
 
     for row in data.to_dict(orient="records"):
-        amount = row[DFColumns.CREDIT.value] or row[DFColumns.DEBIT.value]
+        amount = row[DFColumns.INCOME.value] or row[DFColumns.EXPENSE.value]
         type = (
             TransactionType.INCOME
-            if row[DFColumns.CREDIT.value]
+            if row[DFColumns.INCOME.value]
             else TransactionType.EXPENSE
         )
 

@@ -17,17 +17,17 @@ export interface ITransactionCategoryResponse {
 
 export interface IStatementResponse {
   date: string;
-  debit_total: number;
-  credit_total: number;
+  expense_total: number;
+  income_total: number;
   net_balance: number;
   top_expenses: ITransactionResponse[];
   top_incomes: ITransactionResponse[];
   all_transactions: ITransactionResponse[];
-  credit_list: ITransactionResponse[];
-  debit_list: ITransactionResponse[];
+  income_list: ITransactionResponse[];
+  expense_list: ITransactionResponse[];
   transaction_categories: ITransactionCategoryResponse[];
-  credit_total_growth_rate: number;
-  debit_total_growth_rate: number;
+  income_total_growth_rate: number;
+  expense_total_growth_rate: number;
   net_balance_total_growth_rate: number;
 }
 
@@ -40,8 +40,8 @@ export interface IMonthlySummaryResponse {
 
 export interface IYearlyStatementResponse {
   year: number;
-  debit_total: number;
-  credit_total: number;
+  expense_total: number;
+  income_total: number;
   net_balance: number;
   top_expenses: ITransactionResponse[];
   top_incomes: ITransactionResponse[];

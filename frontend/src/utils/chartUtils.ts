@@ -1,11 +1,11 @@
 import type { ChartConfig } from "@/components/ui/chart";
 
 export const chartConfig = {
-  credit: {
+  income: {
     label: "Income",
     color: "var(--chart-1)",
   },
-  debit: {
+  expense: {
     label: "Expenses",
     color: "var(--chart-2)",
   },

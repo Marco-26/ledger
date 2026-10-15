@@ -8,15 +8,15 @@ from schemas.statement import TransactionCategoryDTO, TransactionType
 def calculate_totals(
     transactions: list[Transaction],
 ) -> tuple[Decimal, Decimal, Decimal]:
-    credit_total = sum(
+    income_total = sum(
         (t.amount for t in transactions if t.type == TransactionType.INCOME),
         Decimal(0),
     )
-    debit_total = sum(
+    expense_total = sum(
         (t.amount for t in transactions if t.type == TransactionType.EXPENSE),
         Decimal(0),
     )
-    return credit_total, debit_total, credit_total - debit_total
+    return income_total, expense_total, income_total - expense_total
 
 
 def process_category(

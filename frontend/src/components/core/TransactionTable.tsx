@@ -19,9 +19,6 @@ export function TransactionTable({
     : "text-[var(--expense)]";
   const amountPrefix = isIncome ? "+" : "-";
 
-  const getAmount = (transaction: ITransaction) =>
-    isIncome ? transaction.credit : transaction.debit;
-
   if (!transactions || transactions.length === 0) {
     return (
       <div className="py-12 text-center text-sm text-muted-foreground">
@@ -57,7 +54,7 @@ export function TransactionTable({
               )}
             >
               {amountPrefix}
-              {formatCurrency(getAmount(transaction) || 0)}
+              {formatCurrency(transaction.amount)}
             </span>
           </div>
         </div>

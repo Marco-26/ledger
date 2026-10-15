@@ -10,7 +10,7 @@ Tracking expenses is useful, but manually adding entries every time you buy some
 
 - Upload bank statement PDFs and extract transactions automatically
 - Summary cards for total income, total expenses and net balance
-- Cash flow area chart with credit vs debit over time
+- Cash flow area chart with income vs expenses over time
 - Top 3 income and top 3 expense transactions
 - Full transaction history with Income / Expenses tabs
 - Dark / Light / System theme

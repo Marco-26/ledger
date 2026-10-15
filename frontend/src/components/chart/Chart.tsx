@@ -25,11 +25,11 @@ const chartConfig = {
     label: "Visitors",
   },
   desktop: {
-    label: "credit",
+    label: "income",
     color: "var(--chart-1)",
   },
   mobile: {
-    label: "debit",
+    label: "expense",
     color: "var(--chart-2)",
   },
 } satisfies ChartConfig;
@@ -114,14 +114,14 @@ export function ChartAreaInteractive({
               }
             />
             <Area
-              dataKey="debit"
+              dataKey="expense"
               type="natural"
               fill="url(#fillMobile)"
               stroke="var(--color-mobile)"
               stackId="a"
             />
             <Area
-              dataKey="credit"
+              dataKey="income"
               type="natural"
               fill="url(#fillDesktop)"
               stroke="var(--color-desktop)"

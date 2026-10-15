@@ -22,17 +22,17 @@ export interface ITransactionCategory {
 
 export interface IStatement {
   date: Dayjs;
-  debitTotal: number;
-  creditTotal: number;
+  expenseTotal: number;
+  incomeTotal: number;
   netBalance: number;
   topExpenses: ITransaction[];
   topIncomes: ITransaction[];
   allTransactions: ITransaction[];
-  creditList: ITransaction[];
-  debitList: ITransaction[];
+  incomeList: ITransaction[];
+  expenseList: ITransaction[];
   transactionCategories: ITransactionCategory[];
-  creditTotalGrowthRate: number;
-  debitTotalGrowthRate: number;
+  incomeTotalGrowthRate: number;
+  expenseTotalGrowthRate: number;
   netBalanceTotalGrowthRate: number;
 }
 
@@ -45,8 +45,8 @@ export interface IMonthlySummary {
 
 export interface IYearlyStatement {
   year: number;
-  debitTotal: number;
-  creditTotal: number;
+  expenseTotal: number;
+  incomeTotal: number;
   netBalance: number;
   topExpenses: ITransaction[];
   topIncomes: ITransaction[];

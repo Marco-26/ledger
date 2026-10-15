@@ -6,7 +6,7 @@ import {
   ChartLegend,
   ChartLegendContent,
 } from "@/components/ui/chart";
-import type { IStatement } from "@ledger/api";
+import { TransactionType, type IStatement } from "@ledger/api";
 import { chartConfig } from "@/utils/chartUtils";
 import { useMemo } from "react";
 
@@ -22,8 +22,9 @@ export function CashFlowChart({ data }: CashFlowChartProps) {
     }
 
     return data.allTransactions.map((t) => ({
-      ...t,
       date: t.date.format("DD-MM"),
+      income: t.type === TransactionType.INCOME ? t.amount : 0,
+      expense: t.type === TransactionType.EXPENSE ? t.amount : 0,
     }));
   }, [data]);
 
@@ -82,14 +83,14 @@ export function CashFlowChart({ data }: CashFlowChartProps) {
               />
               <ChartLegend content={<ChartLegendContent />} />
               <Bar
-                dataKey="credit"
-                fill="var(--color-credit)"
+                dataKey="income"
+                fill="var(--color-income)"
                 radius={[3, 3, 0, 0]}
                 maxBarSize={24}
               />
               <Bar
-                dataKey="debit"
-                fill="var(--color-debit)"
+                dataKey="expense"
+                fill="var(--color-expense)"
                 radius={[3, 3, 0, 0]}
                 maxBarSize={24}
               />
