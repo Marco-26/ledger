@@ -1,11 +1,13 @@
-from decimal import Decimal
-
-from db.database import Base
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import Date, Numeric, String, ForeignKey, UniqueConstraint, Enum as SQLEnum
 from datetime import date as dt_date
+from decimal import Decimal
 from enum import Enum
 from typing import TYPE_CHECKING
+
+from db.database import Base
+from db.encrypted import Encrypted
+from sqlalchemy import Date, ForeignKey, String, UniqueConstraint
+from sqlalchemy import Enum as SQLEnum
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 if TYPE_CHECKING:
     from db.models.user import User
@@ -52,7 +54,7 @@ class Transaction(Base):
         "Statement", back_populates="transactions"
     )
     date: Mapped[dt_date] = mapped_column(Date)
-    description: Mapped[str] = mapped_column(String)
+    description: Mapped[str] = mapped_column(Encrypted())
     category: Mapped[str] = mapped_column(String)
     type: Mapped[TransactionType] = mapped_column(SQLEnum(TransactionType))
-    amount: Mapped[Decimal] = mapped_column(Numeric(12, 2))
+    amount: Mapped[Decimal] = mapped_column(Encrypted())
