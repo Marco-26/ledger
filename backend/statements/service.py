@@ -1,5 +1,7 @@
 from datetime import date
 
+from sqlalchemy.orm import Session
+
 from exceptions.domain import (
     StatementNotFoundException,
     StatementParsingException,
@@ -7,17 +9,15 @@ from exceptions.domain import (
 )
 from integrations.openai_api import classify_transactions
 from schemas.statement import StatementDTO, TransactionDTO, YearlyStatementRead
-from sqlalchemy.orm import Session
+from statements.adapter import dataframe_to_transactions
+from statements.assembler import build_monthly_statement, build_yearly_statement
+from statements.repository import StatementRepository
 from utils import date_utils
 from utils.file_utils import extract_table_from_pdf_file
 from utils.statement_dataframe_utils import (
     build_statement_dataframe,
     normalize_statement_dataframe,
 )
-
-from statements.adapter import dataframe_to_transactions
-from statements.assembler import build_monthly_statement, build_yearly_statement
-from statements.repository import StatementRepository
 
 
 class StatementService:

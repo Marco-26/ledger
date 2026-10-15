@@ -35,3 +35,5 @@ Transaction:
 Description: MCDONALDS PORTO
 Amount: 12.50 EUR
 """
+
+DB_ENCRYPTION_KEY=os.getenv("ENCRYPTION_KEY")
