@@ -28,6 +28,7 @@ class TransactionCategoryDTO(BaseModel):
 
 
 class StatementDTO(BaseModel):
+    id: int
     date: Optional[Date] = None
     expense_total: float
     income_total: float
