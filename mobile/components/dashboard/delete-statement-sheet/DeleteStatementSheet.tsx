@@ -71,6 +71,11 @@ export default function DeleteStatementSheet({
     }
   }, [visible, progress, hold]);
 
+  // A failed delete leaves the sheet open: drain the ink so it can be retried.
+  useEffect(() => {
+    if (!isDeleting) hold.setValue(0);
+  }, [isDeleting, hold]);
+
   const confirm = () => {
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
     onConfirm();
@@ -132,23 +137,24 @@ export default function DeleteStatementSheet({
       onRequestClose={isDeleting ? undefined : onClose}
     >
       <View style={styles.root}>
+        {/* Full-screen so the sheet's rounded corners sit on the dim, not on a hard edge. */}
+        <Animated.View
+          pointerEvents="none"
+          style={[
+            styles.backdrop,
+            {
+              opacity: progress.interpolate({
+                inputRange: [0, 1],
+                outputRange: [0, isDark ? 0.6 : 0.28],
+              }),
+            },
+          ]}
+        />
         <Pressable
           style={styles.dismissArea}
           onPress={isDeleting ? undefined : onClose}
           accessibilityLabel="Close"
-        >
-          <Animated.View
-            style={[
-              styles.backdrop,
-              {
-                opacity: progress.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [0, isDark ? 0.6 : 0.28],
-                }),
-              },
-            ]}
-          />
-        </Pressable>
+        />
 
         <Animated.View
           accessibilityViewIsModal

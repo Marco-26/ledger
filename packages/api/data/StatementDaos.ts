@@ -16,6 +16,7 @@ export interface ITransactionCategoryResponse {
 }
 
 export interface IStatementResponse {
+  id: number;
   date: string;
   expense_total: number;
   income_total: number;

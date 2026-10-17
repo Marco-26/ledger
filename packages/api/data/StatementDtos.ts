@@ -21,6 +21,7 @@ export interface ITransactionCategory {
 }
 
 export interface IStatement {
+  id: number;
   date: Dayjs;
   expenseTotal: number;
   incomeTotal: number;

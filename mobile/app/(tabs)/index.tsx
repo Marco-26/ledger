@@ -1,7 +1,9 @@
+import { useState } from "react";
 import { RefreshControl, ScrollView, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CategoryBreakdown from "@/components/dashboard/category-breakdown/CategoryBreakdown";
 import GreetingHeader from "@/components/dashboard/greeting-header/GreetingHeader";
+import DeleteStatementSheet from "@/components/dashboard/delete-statement-sheet/DeleteStatementSheet";
 import StatementSummary from "@/components/dashboard/statement-summary/StatementSummary";
 import TopMovements from "@/components/dashboard/top-movements/TopMovements";
 import PeriodSwitcher from "@/components/dashboard/period-switcher/PeriodSwitcher";
@@ -12,7 +14,12 @@ import { SelectedPeriod, useStatement } from "@/context/StatementContext";
 import { useTheme } from "@/styles/theme";
 import { MAX_CONTENT_WIDTH, Spacing } from "@/styles/tokens";
 import { Constants } from "@/utils/constants";
-import { useCreateStatementQuery, type IYearlyStatement } from "@ledger/api";
+import {
+  useCreateStatementQuery,
+  useDeleteStatementQuery,
+  type IStatement,
+  type IYearlyStatement,
+} from "@ledger/api";
 import UploadFileFloatingButton from "@/components/ui/upload-file-floating-button/UploadFileFloatingButton";
 import { formatMonthLabel } from "@/utils/format";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
@@ -45,6 +52,8 @@ export default function HomeScreen() {
     isPending: isUploading,
   } = useCreateStatementQuery();
 
+  const [isDeleteSheetOpen, setIsDeleteSheetOpen] = useState(false);
+
   const selectedMonth = selectedDate.date(1).format(Constants.UI.DATE_FORMAT);
 
   const handleFilePicker = (file: File) => {
@@ -55,6 +64,18 @@ export default function HomeScreen() {
     );
   };
 
+  const {
+    mutate: deleteStatement,
+    isPending: isDeleting,
+  } = useDeleteStatementQuery();
+
+  const handleDeleteStatement = () => {
+    if (!monthlyStatement) return;
+    deleteStatement({ statementId: monthlyStatement.id, date: selectedMonth }, {
+      onSuccess: () => setIsDeleteSheetOpen(false),
+    });
+  };
+
   const isSelectedMonthUploading =
     !isYear && uploadingFileMonth === selectedMonth;
   
@@ -63,6 +84,9 @@ export default function HomeScreen() {
   const periodLabel = isYear
     ? selectedDate.format("YYYY")
     : formatMonthLabel(selectedDate);
+
+  const monthlyStatement = isYear ? undefined : (statement as IStatement | undefined);
+  const canDelete = !!monthlyStatement && !isDashboardLoading;
   
   return (
     <SafeAreaView
@@ -111,6 +135,7 @@ export default function HomeScreen() {
               statement={statement}
               period={period}
               isLoading={isDashboardLoading}
+              onDelete={canDelete ? () => setIsDeleteSheetOpen(true) : undefined}
             />
 
             {isYear && !isDashboardLoading ? (
@@ -164,6 +189,19 @@ export default function HomeScreen() {
           onFileSelected={handleFilePicker}
           isLoading={isUploading}
           disabled={!!uploadingFileMonth}
+        />
+      ) : null}
+
+      {monthlyStatement ? (
+        <DeleteStatementSheet
+          visible={isDeleteSheetOpen}
+          periodLabel={periodLabel}
+          transactionCount={monthlyStatement.allTransactions.length}
+          incomeTotal={monthlyStatement.incomeTotal}
+          expenseTotal={monthlyStatement.expenseTotal}
+          isDeleting={isDeleting}
+          onConfirm={handleDeleteStatement}
+          onClose={() => setIsDeleteSheetOpen(false)}
         />
       ) : null}
     </SafeAreaView>

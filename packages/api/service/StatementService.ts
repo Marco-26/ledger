@@ -28,6 +28,11 @@ export class StatementService {
     return StatementDataAdapter.convertToStatement(response.data);
   }
 
+  public async deleteStatement(statementId: number): Promise<void> {
+    const url = `${this.baseURL}?${Constants.API.QUERY_PARAMS.STATEMENT_ID}=${statementId}`;
+    await apiClient.delete(url);
+  }
+
   public async fetchYearlyStatement(year?: number): Promise<IYearlyStatement> {
     if(!year) return Promise.reject();
 
