@@ -77,6 +77,8 @@ export default function DeleteStatementSheet({
   }, [isDeleting, hold]);
 
   const confirm = () => {
+    // The accessibility action ignores `disabled`, so guard against a second delete.
+    if (isDeleting) return;
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
     onConfirm();
   };

@@ -22,8 +22,8 @@ export const createStyles = (colors: ThemeColors) =>
       justifyContent: "space-between",
     },
     deleteButton: {
-      width: 32,
-      height: 32,
+      width: Spacing[8],
+      height: Spacing[8],
       marginVertical: -Spacing[2],
       marginRight: -Spacing[1],
       borderRadius: Radius.full,

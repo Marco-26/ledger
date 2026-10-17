@@ -36,7 +36,7 @@ export const createStyles = (colors: ThemeColors) =>
     },
     grabber: {
       alignSelf: "center",
-      width: 36,
+      width: Spacing[9],
       height: 4,
       borderRadius: Radius.full,
       backgroundColor: colors.borderStrong,
@@ -54,9 +54,8 @@ export const createStyles = (colors: ThemeColors) =>
       color: colors.textPrimary,
     },
     message: {
-      ...Type.meta,
+      ...Type.paragraph,
       color: colors.textSecondary,
-      lineHeight: 19,
       marginTop: Spacing[2],
     },
 

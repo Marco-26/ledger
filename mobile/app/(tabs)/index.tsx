@@ -23,6 +23,7 @@ import {
 import UploadFileFloatingButton from "@/components/ui/upload-file-floating-button/UploadFileFloatingButton";
 import { formatMonthLabel } from "@/utils/format";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
+import { showToastOnError } from "@/utils/utils";
 
 export const PERIOD_NOUN_MAPPER: Record<SelectedPeriod, string> = {
   [SelectedPeriod.MONTH]: "month",
@@ -43,38 +44,26 @@ export default function HomeScreen() {
     selectedDate,
     setUploadingFileMonth,
     uploadingFileMonth,
-	} = useStatement();
+  } = useStatement();
 
-	const user = useCurrentUser();
+  const user = useCurrentUser();
 	
   const {
     mutate: uploadStatement,
     isPending: isUploading,
-  } = useCreateStatementQuery();
-
-  const [isDeleteSheetOpen, setIsDeleteSheetOpen] = useState(false);
-
-  const selectedMonth = selectedDate.date(1).format(Constants.UI.DATE_FORMAT);
-
-  const handleFilePicker = (file: File) => {
-    setUploadingFileMonth(selectedMonth);
-    uploadStatement(
-      { statementFile: file, date: selectedMonth },
-      { onSettled: () => setUploadingFileMonth(undefined) },
-    );
-  };
+  } = useCreateStatementQuery({onError: (error) => showToastOnError(error)});
 
   const {
     mutate: deleteStatement,
     isPending: isDeleting,
-  } = useDeleteStatementQuery();
+  } = useDeleteStatementQuery({onError: (error) => showToastOnError(error)});
 
-  const handleDeleteStatement = () => {
-    if (!monthlyStatement) return;
-    deleteStatement({ statementId: monthlyStatement.id, date: selectedMonth }, {
-      onSuccess: () => setIsDeleteSheetOpen(false),
-    });
-  };
+  const [isDeleteSheetOpen, setIsDeleteSheetOpen] = useState(false);
+  // The sheet shows what is about to go, so it keeps its own copy: the live
+  // statement is cleared from the cache as soon as the delete succeeds.
+  const [statementToDelete, setStatementToDelete] = useState<IStatement>();
+
+  const selectedMonth = selectedDate.date(1).format(Constants.UI.DATE_FORMAT);
 
   const isSelectedMonthUploading =
     !isYear && uploadingFileMonth === selectedMonth;
@@ -85,8 +74,29 @@ export default function HomeScreen() {
     ? selectedDate.format("YYYY")
     : formatMonthLabel(selectedDate);
 
+  // In month view the context's statement is the monthly one.
   const monthlyStatement = isYear ? undefined : (statement as IStatement | undefined);
   const canDelete = !!monthlyStatement && !isDashboardLoading;
+
+  const handleFilePicker = (file: File) => {
+    setUploadingFileMonth(selectedMonth);
+    uploadStatement(
+      { statementFile: file, date: selectedMonth },
+      { onSettled: () => setUploadingFileMonth(undefined) },
+    );
+  };
+
+  const openDeleteSheet = () => {
+    setStatementToDelete(monthlyStatement);
+    setIsDeleteSheetOpen(true);
+  };
+
+  const handleDeleteStatement = () => {
+    if (!statementToDelete) return;
+    deleteStatement({ statementId: statementToDelete.id, date: selectedMonth }, {
+      onSuccess: () => setIsDeleteSheetOpen(false),
+    });
+  };
   
   return (
     <SafeAreaView
@@ -135,7 +145,7 @@ export default function HomeScreen() {
               statement={statement}
               period={period}
               isLoading={isDashboardLoading}
-              onDelete={canDelete ? () => setIsDeleteSheetOpen(true) : undefined}
+              onDelete={canDelete ? openDeleteSheet : undefined}
             />
 
             {isYear && !isDashboardLoading ? (
@@ -192,13 +202,13 @@ export default function HomeScreen() {
         />
       ) : null}
 
-      {monthlyStatement ? (
+      {statementToDelete ? (
         <DeleteStatementSheet
           visible={isDeleteSheetOpen}
           periodLabel={periodLabel}
-          transactionCount={monthlyStatement.allTransactions.length}
-          incomeTotal={monthlyStatement.incomeTotal}
-          expenseTotal={monthlyStatement.expenseTotal}
+          transactionCount={statementToDelete.allTransactions.length}
+          incomeTotal={statementToDelete.incomeTotal}
+          expenseTotal={statementToDelete.expenseTotal}
           isDeleting={isDeleting}
           onConfirm={handleDeleteStatement}
           onClose={() => setIsDeleteSheetOpen(false)}
