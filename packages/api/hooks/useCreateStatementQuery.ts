@@ -1,9 +1,12 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { statementService } from "../service/StatementService";
 import { Constants } from "../utils/constants";
-import { showToastOnError } from "@/utils/utils";
 
-export function useCreateStatementQuery() {
+interface IUseCreateStatementQueryProps{
+  onError?: (error: Error) => void;
+}
+
+export function useCreateStatementQuery({onError} : IUseCreateStatementQueryProps) {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -28,8 +31,6 @@ export function useCreateStatementQuery() {
           ],
         }),
       ]),
-    onError: (error) => {
-      showToastOnError(error)
-    }
+    onError: onError
   });
 }

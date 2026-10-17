@@ -13,6 +13,7 @@ from utils import revenue_utils
 
 
 def build_monthly_statement(
+    statement_id: int,
     transactions: list[Transaction],
     statement_date: date,
     previous_month_transactions: list[Transaction],
@@ -26,6 +27,7 @@ def build_monthly_statement(
     )
     
     return StatementDTO(
+        id=statement_id,
         date=statement_date,
         income_total=float(income_total),
         expense_total=float(expense_total),

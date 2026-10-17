@@ -1,9 +1,10 @@
-import { Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import type { IStatement, IYearlyStatement } from "@ledger/api";
 import TransactionSummary from "@/components/dashboard/transaction-summary/TransactionSummary";
 import VerticalDivider from "@/components/ui/vertical-divider/VerticalDivider";
 import { SelectedPeriod } from "@/context/StatementContext";
+import { HIT_SLOP } from "@/styles/tokens";
 import { useTheme, useThemedStyles } from "@/styles/theme";
 import {
   formatCurrency,
@@ -19,6 +20,7 @@ interface StatementSummaryProps {
   statement?: IStatement | IYearlyStatement;
   period: SelectedPeriod;
   isLoading: boolean;
+  onDelete?: () => void;
 }
 
 interface BalanceLine {
@@ -32,6 +34,7 @@ export default function StatementSummary({
   statement,
   period,
   isLoading,
+  onDelete,
 }: StatementSummaryProps) {
   const styles = useThemedStyles(createStyles);
   const { colors } = useTheme();
@@ -89,7 +92,29 @@ export default function StatementSummary({
   return (
     <View style={styles.container}>
       <View style={styles.balanceBlock}>
-        <Text style={styles.caption}>Balance</Text>
+        <View style={styles.captionRow}>
+          <Text style={styles.caption}>Balance</Text>
+          {onDelete ? (
+            <Pressable
+              onPress={onDelete}
+              hitSlop={HIT_SLOP}
+              style={({ pressed }) => [
+                styles.deleteButton,
+                pressed && styles.deleteButtonPressed,
+              ]}
+              accessibilityRole="button"
+              accessibilityLabel="Delete statement"
+            >
+              {({ pressed }) => (
+                <Ionicons
+                  name="trash-outline"
+                  size={17}
+                  color={pressed ? colors.expense : colors.textTertiary}
+                />
+              )}
+            </Pressable>
+          ) : null}
+        </View>
 
         <View
           style={styles.heroRow}

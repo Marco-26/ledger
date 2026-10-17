@@ -2,6 +2,7 @@ import { StyleSheet } from "react-native";
 import {
   FontSize,
   FontWeight,
+  Radius,
   Spacing,
   Type,
   type ThemeColors,
@@ -14,6 +15,23 @@ export const createStyles = (colors: ThemeColors) =>
     },
     balanceBlock: {
       gap: Spacing[2],
+    },
+    captionRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+    },
+    deleteButton: {
+      width: Spacing[8],
+      height: Spacing[8],
+      marginVertical: -Spacing[2],
+      marginRight: -Spacing[1],
+      borderRadius: Radius.full,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    deleteButtonPressed: {
+      backgroundColor: colors.expenseSoft,
     },
     caption: {
       ...Type.label,

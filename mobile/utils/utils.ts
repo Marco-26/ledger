@@ -12,12 +12,12 @@ export const showToastOnError = (error: Error | null) => {
     ? error.response?.data?.code
     : undefined;
 
-  const errorCode = Constants.ERRORS[code as ErrorCode];
+  const errorCode = Constants.ERRORS[code as ErrorCode] ?? Constants.ERRORS.GENERAL;
 
   Toast.show({
     type: "error",
-    text1: errorCode.text1 ?? Constants.ERRORS.GENERAL.text1,
-    text2: errorCode.text2 ?? Constants.ERRORS.GENERAL.text2,
+    text1: errorCode.text1,
+    text2: errorCode.text2,
   });
 }
 

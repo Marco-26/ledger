@@ -66,3 +66,12 @@ def get_yearly_statement(
     user: Annotated[User, Depends(get_current_user)]
 ) -> YearlyStatementRead:
     return service.get_yearly_statement(year, user.id)
+
+
+@router.delete("/api/statement", status_code=204)
+def delete_statement(
+    statement_id: Annotated[int, Query()],
+    service: Annotated[StatementService, Depends(get_statement_service)],
+    user: Annotated[User, Depends(get_current_user)],
+) -> None:
+    service.delete_statement(statement_id, user.id)

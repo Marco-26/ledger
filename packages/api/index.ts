@@ -3,6 +3,7 @@ export * from "./data/StatementDtos";
 export * from "./hooks/useStatementsQuery";
 export * from "./hooks/useYearlyStatementQuery";
 export * from "./hooks/useCreateStatementQuery";
+export * from "./hooks/useDeleteStatementQuery";
 export * from "./service/StatementService";
 export * from "./service/client";
 export * from "./service/adapters/StatementDataAdapter";

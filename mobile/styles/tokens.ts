@@ -235,6 +235,13 @@ export const Type = {
     fontWeight: FontWeight.regular,
     letterSpacing: 0.1,
   },
+  paragraph: {
+    fontFamily: FontFamily.sans,
+    fontSize: FontSize.sm,
+    fontWeight: FontWeight.regular,
+    letterSpacing: 0.1,
+    lineHeight: 19,
+  },
   metaSmall: {
     fontFamily: FontFamily.sans,
     fontSize: FontSize.xs,

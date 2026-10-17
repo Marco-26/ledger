@@ -61,6 +61,7 @@ export class StatementDataAdapter {
 
   convertToStatement(statementResponse: IStatementResponse): IStatement {
     return {
+      id: statementResponse.id,
       date: dayjs(statementResponse.date),
       expenseTotal: statementResponse.expense_total,
       incomeTotal: statementResponse.income_total,

@@ -1,7 +1,5 @@
 from datetime import date
 
-from sqlalchemy.orm import Session
-
 from exceptions.domain import (
     StatementNotFoundException,
     StatementParsingException,
@@ -9,15 +7,17 @@ from exceptions.domain import (
 )
 from integrations.openai_api import classify_transactions
 from schemas.statement import StatementDTO, TransactionDTO, YearlyStatementRead
-from statements.adapter import dataframe_to_transactions
-from statements.assembler import build_monthly_statement, build_yearly_statement
-from statements.repository import StatementRepository
+from sqlalchemy.orm import Session
 from utils import date_utils
 from utils.file_utils import extract_table_from_pdf_file
 from utils.statement_dataframe_utils import (
     build_statement_dataframe,
     normalize_statement_dataframe,
 )
+
+from statements.adapter import dataframe_to_transactions
+from statements.assembler import build_monthly_statement, build_yearly_statement
+from statements.repository import StatementRepository
 
 
 class StatementService:
@@ -48,9 +48,9 @@ class StatementService:
 
         categorized_transactions = self._classify_transactions(transactions)
 
-        record = self.repository.get_statement(user_selected_date, user_id)
+        record = self.repository.get_statement_by_date(user_selected_date, user_id)
         if record:
-            self.repository.delete_statement(record)
+            self.repository.delete_statement(record.id, user_id)
 
         self.repository.create_statement(
             categorized_transactions, user_selected_date, user_id
@@ -59,17 +59,18 @@ class StatementService:
         return self.get_monthly_statement(user_selected_date, user_id)
 
     def get_monthly_statement(self, date: date, user_id: int) -> StatementDTO:
-        statement = self.repository.get_statement(date, user_id)
+        statement = self.repository.get_statement_by_date(date, user_id)
 
         if not statement:
             raise StatementNotFoundException()
 
         previous_month = date_utils.get_previous_month_based_on_date(date)
-        previous_month_statement = self.repository.get_statement(
+        previous_month_statement = self.repository.get_statement_by_date(
             previous_month, user_id
         )
 
         return build_monthly_statement(
+            statement_id=statement.id,
             transactions=list(statement.transactions),
             statement_date=date,
             previous_month_transactions=(
@@ -114,3 +115,7 @@ class StatementService:
         ai_classified = classify_transactions(ai_candidates)
 
         return ai_classified + cached_classified
+
+    def delete_statement(self, statement_id: int, user_id: int) -> None:
+        if not self.repository.delete_statement(statement_id, user_id):
+            raise StatementNotFoundException()
