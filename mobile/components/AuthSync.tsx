@@ -1,11 +1,13 @@
-import { AuthContext } from '@/hooks/useAuthContext'
 import { supabase } from '@/lib/supabase'
-import { PropsWithChildren, useEffect, useState } from 'react'
+import { useAuthActions, useAuthClaims } from '@/stores/authStore'
+import { useDashboardActions } from '@/stores/dashboardStore'
+import { useEffect } from 'react'
 
-export default function AuthProvider({ children }: PropsWithChildren) {
-  const [claims, setClaims] = useState<Record<string, any> | undefined | null>()
-  const [profile, setProfile] = useState<any>()
-  const [isLoading, setIsLoading] = useState<boolean>(true)
+/** Keeps the auth store in sync with the Supabase session. Renders nothing. */
+export function AuthSync() {
+  const { setAuthClaims, setProfile, setIsLoading } = useAuthActions()
+  const claims = useAuthClaims()
+  const { reset: resetDashboard } = useDashboardActions()
 
   // Fetch the claims once, and subscribe to auth state changes
   useEffect(() => {
@@ -18,7 +20,7 @@ export default function AuthProvider({ children }: PropsWithChildren) {
         console.error('Error fetching claims:', error)
       }
 
-      setClaims(data?.claims ?? null)
+      setAuthClaims(data?.claims ?? null)
       setIsLoading(false)
     }
 
@@ -28,15 +30,17 @@ export default function AuthProvider({ children }: PropsWithChildren) {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (_event, _session) => {
       console.log('Auth state changed:', { event: _event })
+      // The dashboard store outlives the session, so the next user starts fresh.
+      if (_event === 'SIGNED_OUT') resetDashboard()
       const { data } = await supabase.auth.getClaims()
-      setClaims(data?.claims ?? null)
+      setAuthClaims(data?.claims ?? null)
     })
 
     // Cleanup subscription on unmount
     return () => {
       subscription.unsubscribe()
     }
-  }, [])
+  }, [resetDashboard, setAuthClaims, setIsLoading])
 
   // Fetch the profile when the claims change
   useEffect(() => {
@@ -55,18 +59,7 @@ export default function AuthProvider({ children }: PropsWithChildren) {
     }
 
     fetchProfile()
-  }, [claims])
+  }, [claims, setProfile, setIsLoading])
 
-  return (
-    <AuthContext.Provider
-      value={{
-        claims,
-        isLoading,
-        profile,
-        isLoggedIn: claims != undefined,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
-  )
+  return null
 }

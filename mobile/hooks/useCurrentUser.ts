@@ -1,4 +1,4 @@
-import { useAuthContext } from "./useAuthContext";
+import { useAuthClaims } from "@/stores/authStore";
 
 export interface IUser {
 	name?: string;
@@ -7,7 +7,7 @@ export interface IUser {
 }
 
 export function useCurrentUser(): IUser {
-	const { claims } = useAuthContext();
+	const claims = useAuthClaims();
 
 	return {
 		name: claims?.user_metadata?.full_name,

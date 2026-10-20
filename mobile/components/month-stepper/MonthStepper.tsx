@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import type { Dayjs } from "dayjs";
-import { SelectedPeriod } from "@/context/StatementContext";
+import { PeriodOptions } from "@/stores/dashboardStore";
 import { useTheme, useThemedStyles } from "@/styles/theme";
 import { HIT_SLOP } from "@/styles/tokens";
 import { formatMonthLabel, formatMonthShort } from "@/utils/format";
@@ -21,7 +21,7 @@ interface MonthStepperProps {
   onPrevious: () => void;
   onNext: () => void;
   canGoNext: boolean;
-  unit?: SelectedPeriod;
+  unit?: PeriodOptions;
   fullWidth?: boolean;
   style?: StyleProp<ViewStyle>;
 }
@@ -31,7 +31,7 @@ export default function MonthStepper({
   onPrevious,
   onNext,
   canGoNext,
-  unit = SelectedPeriod.MONTH,
+  unit = PeriodOptions.MONTH,
   fullWidth = false,
   style,
 }: MonthStepperProps) {
@@ -39,7 +39,7 @@ export default function MonthStepper({
   const { colors } = useTheme();
   const { width } = useWindowDimensions();
 
-  const isYear = unit === SelectedPeriod.YEAR;
+  const isYear = unit === PeriodOptions.YEAR;
   const isCompact = !isYear && !fullWidth && width < COMPACT_WIDTH;
   const label = isYear
     ? date.format("YYYY")

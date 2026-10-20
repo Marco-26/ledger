@@ -5,6 +5,14 @@ import { IMonthlySummary } from "@ledger/api/data/StatementDtos";
 
 type ErrorCode = keyof typeof Constants.ERRORS;
 
+/** The API answers 404 for a month (or a whole year) that was never uploaded. */
+export function isNotFound(error: unknown): boolean {
+  return (
+    (error as { response?: { status?: number } } | undefined)?.response
+      ?.status === 404
+  );
+}
+
 export const showToastOnError = (error: Error | null) => {
   if (!error) return;
 

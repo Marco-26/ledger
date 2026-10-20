@@ -3,7 +3,7 @@ import { Ionicons } from "@expo/vector-icons";
 import type { IStatement, IYearlyStatement } from "@ledger/api";
 import TransactionSummary from "@/components/dashboard/transaction-summary/TransactionSummary";
 import VerticalDivider from "@/components/ui/vertical-divider/VerticalDivider";
-import { SelectedPeriod } from "@/context/StatementContext";
+import { PeriodOptions } from "@/stores/dashboardStore";
 import { HIT_SLOP } from "@/styles/tokens";
 import { useTheme, useThemedStyles } from "@/styles/theme";
 import {
@@ -18,7 +18,7 @@ import { getPeakExpensesMonth, getPeakIncomeMonth } from "@/utils/utils";
 
 interface StatementSummaryProps {
   statement?: IStatement | IYearlyStatement;
-  period: SelectedPeriod;
+  period: PeriodOptions;
   isLoading: boolean;
   onDelete?: () => void;
 }
@@ -49,7 +49,7 @@ export default function StatementSummary({
   let incomeCaption: string;
   let expensesCaption: string;
 
-  if (period === SelectedPeriod.YEAR) {
+  if (period === PeriodOptions.YEAR) {
     // Savings rate: share of the year's income that was not spent.
     const savedRate = income > 0 ? (balance / income) * 100 : 0;
     balanceLine = {

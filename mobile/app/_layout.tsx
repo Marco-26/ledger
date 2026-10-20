@@ -4,8 +4,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 import RootNavigator from "@/components/navigation/root-navigator/RootNavigator";
+import { AuthSync } from "@/components/AuthSync";
 import { SplashScreenController } from "@/components/SplashScreenController";
-import AuthProvider from "@/providers/AuthProvider";
 import { ThemeProvider } from "@/styles/theme";
 
 SplashScreen.preventAutoHideAsync();
@@ -26,10 +26,9 @@ export default function RootLayout() {
     <QueryClientProvider client={queryClient}>
       <SafeAreaProvider>
         <ThemeProvider>
-          <AuthProvider>
-            <SplashScreenController />
-            <RootNavigator />
-          </AuthProvider>
+          <AuthSync />
+          <SplashScreenController />
+          <RootNavigator />
         </ThemeProvider>
         <Toast />
       </SafeAreaProvider>

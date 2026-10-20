@@ -9,11 +9,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import dayjs from "dayjs";
-import {
-  TransactionType,
-  useStatementsQuery,
-  type ITransaction,
-} from "@ledger/api";
+import { TransactionType, type ITransaction } from "@ledger/api";
 import MonthStepper from "@/components/month-stepper/MonthStepper";
 import TransactionFilters, {
   type TypeFilter,
@@ -23,7 +19,12 @@ import TransactionRow from "@/components/transactions/transaction-row/Transactio
 import TransactionRowSkeleton from "@/components/transactions/transaction-row/skeleton/TransactionRowSkeleton";
 import Divider from "@/components/ui/divider/Divider";
 import StateMessage from "@/components/ui/state-message/StateMessage";
-import { isNotFound, SelectedPeriod, useStatement } from "@/context/StatementContext";
+import {
+  PeriodOptions,
+  useDashboardActions,
+  useSelectedDate,
+} from "@/stores/dashboardStore";
+import { useCurrentStatement } from "@/hooks/useCurrentStatement";
 import { useTheme, useThemedStyles } from "@/styles/theme";
 import { categoryLabel } from "@/utils/categories";
 import {
@@ -32,7 +33,6 @@ import {
   formatMonthLabel,
 } from "@/utils/format";
 import { createStyles } from "@/styles/screens/TransactionsScreen.styles";
-import { Constants } from "@/utils/constants";
 
 interface DaySection {
   title: string;
@@ -60,21 +60,18 @@ export default function TransactionsScreen() {
   // way a little so the month stepper stays fully reachable.
   const isNarrow = width < 360;
 
-  const { selectedDate, setSelectedDate } = useStatement();
+  const selectedDate = useSelectedDate();
+  const { setSelectedDate } = useDashboardActions();
 
+  // Always the monthly statement: this screen has no year view.
   const {
-    data: statement,
-    error,
+    statement,
     isLoading,
-    isError: hasFailed,
+    isError,
+    isEmpty,
     isRefetching,
     refetch,
-  } = useStatementsQuery({
-    selectedMonth: selectedDate.date(1).format(Constants.UI.DATE_FORMAT),
-  });
-
-  const isError = hasFailed && !isNotFound(error);
-  const isEmpty = hasFailed && isNotFound(error);
+  } = useCurrentStatement({ isYear: false, selectedDate });
 
   const canGoToNextMonth = !selectedDate.isSame(dayjs(), "month");
   const goToPreviousMonth = () =>
@@ -279,7 +276,7 @@ export default function TransactionsScreen() {
             onPrevious={goToPreviousMonth}
             onNext={goToNextMonth}
             canGoNext={canGoToNextMonth}
-            unit={SelectedPeriod.MONTH}
+            unit={PeriodOptions.MONTH}
           />
         </View>
 
