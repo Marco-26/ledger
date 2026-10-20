@@ -10,7 +10,15 @@ import PeriodSwitcher from "@/components/dashboard/period-switcher/PeriodSwitche
 import YearlyNetChart from "@/components/dashboard/yearly-net-chart/YearlyNetChart";
 import Divider from "@/components/ui/divider/Divider";
 import StateMessage from "@/components/ui/state-message/StateMessage";
-import { SelectedPeriod, useStatement } from "@/context/StatementContext";
+import {
+  PeriodOptions,
+  useDashboardActions,
+  useIsYear,
+  useSelectedDate,
+  useSelectedPeriod,
+  useUploadingFileMonth,
+} from "@/stores/dashboardStore";
+import { useCurrentStatement } from "@/hooks/useStatements";
 import { useTheme } from "@/styles/theme";
 import { MAX_CONTENT_WIDTH, Spacing } from "@/styles/tokens";
 import { Constants } from "@/utils/constants";
@@ -25,26 +33,27 @@ import { formatMonthLabel } from "@/utils/format";
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { showToastOnError } from "@/utils/utils";
 
-export const PERIOD_NOUN_MAPPER: Record<SelectedPeriod, string> = {
-  [SelectedPeriod.MONTH]: "month",
-  [SelectedPeriod.YEAR]: "year"
+export const PERIOD_NOUN_MAPPER: Record<PeriodOptions, string> = {
+  [PeriodOptions.MONTH]: "month",
+  [PeriodOptions.YEAR]: "year"
 }
 
 export default function HomeScreen() {
   const { colors } = useTheme();
+  const period = useSelectedPeriod();
+  const selectedDate = useSelectedDate();
+  const uploadingFileMonth = useUploadingFileMonth();
+  const isYear = useIsYear();
+  const { setUploadingFileMonth } = useDashboardActions();
+
   const {
-    period,
-    isYear,
     statement,
     isLoading,
     isError,
     isEmpty,
     isRefetching,
     refetch,
-    selectedDate,
-    setUploadingFileMonth,
-    uploadingFileMonth,
-  } = useStatement();
+  } = useCurrentStatement({ isYear, selectedDate });
 
   const user = useCurrentUser();
 	
@@ -74,7 +83,7 @@ export default function HomeScreen() {
     ? selectedDate.format("YYYY")
     : formatMonthLabel(selectedDate);
 
-  // In month view the context's statement is the monthly one.
+  // In month view the current statement is the monthly one.
   const monthlyStatement = isYear ? undefined : (statement as IStatement | undefined);
   const canDelete = !!monthlyStatement && !isDashboardLoading;
 

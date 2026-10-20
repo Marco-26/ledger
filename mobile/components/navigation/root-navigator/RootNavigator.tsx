@@ -1,6 +1,6 @@
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { useAuthContext } from "@/hooks/useAuthContext";
+import { useAuthIsLoggedIn } from "@/stores/authStore";
 import { useTheme } from "@/styles/theme";
 
 /**
@@ -10,7 +10,7 @@ import { useTheme } from "@/styles/theme";
  */
 export default function RootNavigator() {
   const { colors, isDark } = useTheme();
-  const { isLoggedIn } = useAuthContext();
+  const isLoggedIn = useAuthIsLoggedIn();
 
   return (
     <>

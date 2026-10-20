@@ -23,7 +23,12 @@ import TransactionRow from "@/components/transactions/transaction-row/Transactio
 import TransactionRowSkeleton from "@/components/transactions/transaction-row/skeleton/TransactionRowSkeleton";
 import Divider from "@/components/ui/divider/Divider";
 import StateMessage from "@/components/ui/state-message/StateMessage";
-import { isNotFound, SelectedPeriod, useStatement } from "@/context/StatementContext";
+import {
+  PeriodOptions,
+  useDashboardActions,
+  useSelectedDate,
+} from "@/stores/dashboardStore";
+import { isNotFound } from "@/utils/utils";
 import { useTheme, useThemedStyles } from "@/styles/theme";
 import { categoryLabel } from "@/utils/categories";
 import {
@@ -60,7 +65,8 @@ export default function TransactionsScreen() {
   // way a little so the month stepper stays fully reachable.
   const isNarrow = width < 360;
 
-  const { selectedDate, setSelectedDate } = useStatement();
+  const selectedDate = useSelectedDate();
+  const { setSelectedDate } = useDashboardActions();
 
   const {
     data: statement,
@@ -279,7 +285,7 @@ export default function TransactionsScreen() {
             onPrevious={goToPreviousMonth}
             onNext={goToNextMonth}
             canGoNext={canGoToNextMonth}
-            unit={SelectedPeriod.MONTH}
+            unit={PeriodOptions.MONTH}
           />
         </View>
 
