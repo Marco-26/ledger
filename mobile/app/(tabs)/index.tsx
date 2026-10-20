@@ -18,7 +18,7 @@ import {
   useSelectedPeriod,
   useUploadingFileMonth,
 } from "@/stores/dashboardStore";
-import { useCurrentStatement } from "@/hooks/useStatements";
+import { useCurrentStatement } from "@/hooks/useCurrentStatement";
 import { useTheme } from "@/styles/theme";
 import { MAX_CONTENT_WIDTH, Spacing } from "@/styles/tokens";
 import { Constants } from "@/utils/constants";

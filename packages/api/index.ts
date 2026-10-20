@@ -7,4 +7,3 @@ export * from "./hooks/useDeleteStatementQuery";
 export * from "./service/StatementService";
 export * from "./service/client";
 export * from "./service/adapters/StatementDataAdapter";
-export * from "./hooks/useDeleteStatementQuery";

@@ -1,14 +1,19 @@
 import { Constants } from "@/utils/constants";
 import { isNotFound } from "@/utils/utils";
-import { IStatement, IYearlyStatement, useStatementsQuery, useYearlyStatementQuery } from "@ledger/api";
-import { Dayjs } from "dayjs";
+import {
+  useStatementsQuery,
+  useYearlyStatementQuery,
+  type IStatement,
+  type IYearlyStatement,
+} from "@ledger/api";
+import type { Dayjs } from "dayjs";
 
 interface IUseCurrentStatementProps {
   isYear: boolean;
   selectedDate: Dayjs;
 }
 
-interface IUseCurrentStatement{
+interface IUseCurrentStatement {
   statement?: IStatement | IYearlyStatement;
   isLoading: boolean;
   isError: boolean;
@@ -17,8 +22,10 @@ interface IUseCurrentStatement{
   refetch: () => void;
 }
 
-export function useCurrentStatement({ isYear, selectedDate}: IUseCurrentStatementProps): IUseCurrentStatement {
-
+export function useCurrentStatement({
+  isYear,
+  selectedDate,
+}: IUseCurrentStatementProps): IUseCurrentStatement {
   const monthly = useStatementsQuery({
     selectedMonth: isYear
       ? undefined
@@ -30,13 +37,13 @@ export function useCurrentStatement({ isYear, selectedDate}: IUseCurrentStatemen
   });
 
   const currentStatement = isYear ? yearly : monthly;
-  
+
   return {
     statement: currentStatement.data,
     isLoading: currentStatement.isLoading,
     isError: currentStatement.isError && !isNotFound(currentStatement.error),
     isEmpty: currentStatement.isError && isNotFound(currentStatement.error),
     isRefetching: currentStatement.isRefetching,
-    refetch: currentStatement.refetch
+    refetch: currentStatement.refetch,
   };
 }

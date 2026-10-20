@@ -1,9 +1,10 @@
 import { supabase } from '@/lib/supabase'
 import { useAuthActions, useAuthClaims } from '@/stores/authStore'
 import { useDashboardActions } from '@/stores/dashboardStore'
-import { PropsWithChildren, useEffect } from 'react'
+import { useEffect } from 'react'
 
-export default function AuthProvider({ children }: PropsWithChildren) {
+/** Keeps the auth store in sync with the Supabase session. Renders nothing. */
+export function AuthSync() {
   const { setAuthClaims, setProfile, setIsLoading } = useAuthActions()
   const claims = useAuthClaims()
   const { reset: resetDashboard } = useDashboardActions()
@@ -60,5 +61,5 @@ export default function AuthProvider({ children }: PropsWithChildren) {
     fetchProfile()
   }, [claims, setProfile, setIsLoading])
 
-  return <>{children}</>
+  return null
 }
