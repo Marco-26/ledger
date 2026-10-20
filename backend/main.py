@@ -1,16 +1,29 @@
+from contextlib import asynccontextmanager
+
+from db.database import engine
+from exceptions.handlers import register_exception_handler
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from statements.controller import router as statement_router
-from exceptions.handlers import register_exception_handler
 from logging_config import setup_logging
+from sqlalchemy import text
+from statements.controller import router as statement_router
 
 setup_logging()
 
-app = FastAPI()
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    with engine.connect() as conn:
+        conn.execute(text("SELECT 1"))
+    yield
+    engine.dispose()
+
+app = FastAPI(lifespan=lifespan)
 
 origins = [
     "http://localhost:5173",
 ]
+
 
 app.add_middleware(
     CORSMiddleware,
