@@ -21,7 +21,7 @@ export const createStyles = (colors: ThemeColors) =>
       alignItems: "center",
       justifyContent: "space-between",
     },
-    deleteButton: {
+    menuButton: {
       width: Spacing[8],
       height: Spacing[8],
       marginVertical: -Spacing[2],
@@ -30,8 +30,8 @@ export const createStyles = (colors: ThemeColors) =>
       alignItems: "center",
       justifyContent: "center",
     },
-    deleteButtonPressed: {
-      backgroundColor: colors.expenseSoft,
+    menuButtonActive: {
+      backgroundColor: colors.accentSoft,
     },
     caption: {
       ...Type.label,

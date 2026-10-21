@@ -1,10 +1,14 @@
-import { Pressable, Text, View } from "react-native";
+import { useRef, useState } from "react";
+import { Pressable, Text, View, useWindowDimensions } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import * as Haptics from "expo-haptics";
 import type { IStatement, IYearlyStatement } from "@ledger/api";
+import type { MenuAnchor } from "@/components/dashboard/profile-menu-modal/ProfileMenuModal";
+import StatementMenuModal from "@/components/dashboard/statement-menu-modal/StatementMenuModal";
 import TransactionSummary from "@/components/dashboard/transaction-summary/TransactionSummary";
 import VerticalDivider from "@/components/ui/vertical-divider/VerticalDivider";
 import { PeriodOptions } from "@/stores/dashboardStore";
-import { HIT_SLOP } from "@/styles/tokens";
+import { HIT_SLOP, Spacing } from "@/styles/tokens";
 import { useTheme, useThemedStyles } from "@/styles/theme";
 import {
   formatCurrency,
@@ -30,6 +34,10 @@ interface BalanceLine {
   caption?: string;
 }
 
+function formatVsLastMonth(rate?: number): string {
+  return rate ? `${formatDelta(rate)} vs last month` : "Same as last month";
+}
+
 export default function StatementSummary({
   statement,
   period,
@@ -38,8 +46,20 @@ export default function StatementSummary({
 }: StatementSummaryProps) {
   const styles = useThemedStyles(createStyles);
   const { colors } = useTheme();
+  const { width: windowWidth } = useWindowDimensions();
+  const menuButtonRef = useRef<View>(null);
+  const [menuAnchor, setMenuAnchor] = useState<MenuAnchor | null>(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   if (isLoading) return <StatementSummarySkeleton />;
+
+  const openMenu = () => {
+    menuButtonRef.current?.measureInWindow((x, y, width, height) => {
+      setMenuAnchor({ top: y + height + Spacing[2], right: windowWidth - (x + width) });
+      setIsMenuOpen(true);
+      Haptics.selectionAsync();
+    });
+  };
 
   const balance = statement?.netBalance ?? 0;
   const income = statement?.incomeTotal ?? 0;
@@ -74,52 +94,60 @@ export default function StatementSummary({
   } else {
     const monthly = statement as IStatement;
     const delta = monthly?.netBalanceTotalGrowthRate ?? 0;
-    balanceLine = {
-      value: formatDelta(delta),
-      color:
-        delta === 0
-          ? colors.textTertiary
-          : delta > 0
-            ? colors.income
-            : colors.expense,
-      icon: delta === 0 ? undefined : delta > 0 ? "arrow-up" : "arrow-down",
-      caption: "vs last month",
-    };
-    incomeCaption = `${formatDelta(monthly?.incomeTotalGrowthRate)} vs last month`;
-    expensesCaption = `${formatDelta(monthly?.expenseTotalGrowthRate)} vs last month`;
+    balanceLine = delta
+      ? {
+          value: formatDelta(delta),
+          color: delta > 0 ? colors.income : colors.expense,
+          icon: delta > 0 ? "arrow-up" : "arrow-down",
+          caption: "vs last month",
+        }
+      : { value: "Same as last month", color: colors.textTertiary };
+    incomeCaption = formatVsLastMonth(monthly?.incomeTotalGrowthRate);
+    expensesCaption = formatVsLastMonth(monthly?.expenseTotalGrowthRate);
   }
 
   return (
     <View style={styles.container}>
       <View style={styles.balanceBlock}>
         <View style={styles.captionRow}>
-          <Text style={styles.caption}>Balance</Text>
+          <Text style={styles.caption}>
+            {period === PeriodOptions.YEAR ? "Saved this year" : "Saved this month"}
+          </Text>
           {onDelete ? (
-            <Pressable
-              onPress={onDelete}
-              hitSlop={HIT_SLOP}
-              style={({ pressed }) => [
-                styles.deleteButton,
-                pressed && styles.deleteButtonPressed,
-              ]}
-              accessibilityRole="button"
-              accessibilityLabel="Delete statement"
-            >
-              {({ pressed }) => (
+            <>
+              <Pressable
+                ref={menuButtonRef}
+                onPress={openMenu}
+                hitSlop={HIT_SLOP}
+                style={({ pressed }) => [
+                  styles.menuButton,
+                  (pressed || isMenuOpen) && styles.menuButtonActive,
+                ]}
+                accessibilityRole="button"
+                accessibilityLabel="Statement options"
+                accessibilityState={{ expanded: isMenuOpen }}
+              >
                 <Ionicons
-                  name="trash-outline"
+                  name="ellipsis-horizontal"
                   size={17}
-                  color={pressed ? colors.expense : colors.textTertiary}
+                  color={isMenuOpen ? colors.textPrimary : colors.textTertiary}
                 />
-              )}
-            </Pressable>
+              </Pressable>
+
+              <StatementMenuModal
+                visible={isMenuOpen}
+                anchor={menuAnchor}
+                onClose={() => setIsMenuOpen(false)}
+                onDelete={onDelete}
+              />
+            </>
           ) : null}
         </View>
 
         <View
           style={styles.heroRow}
           accessibilityRole="text"
-          accessibilityLabel={`Balance ${formatCurrency(balance)}`}
+          accessibilityLabel={`Saved ${formatCurrency(balance)}`}
         >
           {sign ? <Text style={styles.heroValue}>{sign}</Text> : null}
           {symbolFirst ? <Text style={styles.heroSymbol}>{symbol}</Text> : null}

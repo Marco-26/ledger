@@ -46,4 +46,8 @@ export const createStyles = (colors: ThemeColors) =>
       ...Type.metaSmall,
       color: colors.textTertiary,
     },
+    /** A month with no statement keeps its place but steps back. */
+    monthInitialEmpty: {
+      opacity: 0.4,
+    },
   });
