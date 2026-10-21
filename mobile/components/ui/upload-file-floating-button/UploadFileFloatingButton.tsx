@@ -1,7 +1,7 @@
 import { ActivityIndicator, TouchableOpacity, View } from "react-native";
-import { Octicons } from "@expo/vector-icons";
-import * as DocumentPicker from "expo-document-picker";
+import { Ionicons } from "@expo/vector-icons";
 import { useTheme, useThemedStyles } from "@/styles/theme";
+import { pickStatementFile } from "@/utils/statementPicker";
 import { createStyles } from "./UploadFileFloatingButton.styles";
 
 interface UploadFileFloatingButtonProps {
@@ -22,21 +22,8 @@ export default function UploadFileFloatingButton({
 
 	const openFilePicker = async () => {
 		if (disabled) return;
-    try {
-      const result = await DocumentPicker.getDocumentAsync({
-        type: "application/pdf",
-        multiple: false,
-        copyToCacheDirectory: true,
-      });
-
-      // Cancelling is a normal outcome here, not a failure.
-      if (result.canceled) return;
-
-      const [file] = result.assets;
-      if (file) onFileSelected?.(file);
-    } catch (error) {
-      console.warn("Could not open the file picker:", error);
-    }
+    const file = await pickStatementFile();
+    if (file) onFileSelected?.(file);
   };
 
   return (
@@ -54,7 +41,7 @@ export default function UploadFileFloatingButton({
         {isLoading ? (
           <ActivityIndicator color={colors.textInverse} />
         ) : (
-          <Octicons name="diff-added" size={24} color={colors.textInverse} />
+          <Ionicons name="document-attach-outline" size={24} color={colors.textInverse} />
         )}
       </TouchableOpacity>
     </View>
