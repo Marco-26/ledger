@@ -90,7 +90,7 @@ export default function HomeScreen() {
   const handleFilePicker = (file: File) => {
     setUploadingFileMonth(selectedMonth);
     uploadStatement(
-      { statementFile: file, date: selectedMonth },
+      { statementFile: file },
       { onSettled: () => setUploadingFileMonth(undefined) },
     );
   };

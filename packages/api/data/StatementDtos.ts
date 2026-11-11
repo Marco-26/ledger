@@ -37,6 +37,11 @@ export interface IStatement {
   netBalanceTotalGrowthRate: number;
 }
 
+export interface IStatementUpload {
+  statement: IStatement;
+  date: Dayjs; // first day of the month the backend detected from the PDF
+}
+
 export interface IMonthlySummary {
   month: string;
   expenses: number;

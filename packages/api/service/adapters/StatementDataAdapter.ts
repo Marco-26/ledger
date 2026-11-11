@@ -1,6 +1,7 @@
 import type {
   IMonthlySummaryResponse,
   IStatementResponse,
+  IStatementUploadResponse,
   ITransactionCategoryResponse,
   ITransactionResponse,
   IYearlyStatementResponse,
@@ -9,6 +10,7 @@ import type {
 import type {
   IMonthlySummary,
   IStatement,
+  IStatementUpload,
   ITransaction,
   ITransactionCategory,
   IYearlyStatement,
@@ -88,6 +90,17 @@ export class StatementDataAdapter {
       expenseTotalGrowthRate: statementResponse.expense_total_growth_rate,
       netBalanceTotalGrowthRate:
         statementResponse.net_balance_total_growth_rate,
+    };
+  }
+
+  convertToStatementUpload(
+    uploadResponse: IStatementUploadResponse,
+  ): IStatementUpload {
+    // The backend sends the detected month as "MM/YYYY".
+    const [month, year] = uploadResponse.date.split("/").map(Number);
+    return {
+      statement: this.convertToStatement(uploadResponse.statement),
+      date: dayjs(new Date(year, month - 1, 1)),
     };
   }
 
