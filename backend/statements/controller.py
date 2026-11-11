@@ -8,7 +8,7 @@ from db.models.user import User
 from fastapi import APIRouter, Depends, File, HTTPException, Query
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from integrations.supabase import verify_token
-from schemas.statement import StatementDTO, YearlyStatementRead
+from schemas.statement import StatementDTO, StatementWrite, YearlyStatementRead
 from sqlalchemy.orm import Session
 from users.dependencies import UserServiceDep
 
@@ -40,14 +40,13 @@ def get_current_user(
     return user_service.get_or_create_user(supabase_id)
 
 
-@router.post("/api/statement", response_model=StatementDTO)
+@router.post("/api/statement", response_model=StatementWrite)
 def generate_statement(
     file: Annotated[bytes, File()],
     service: Annotated[StatementService, Depends(get_statement_service)],
-    date: Annotated[date, Query(...)],
     user: Annotated[User, Depends(get_current_user)],
-) -> StatementDTO:
-    return service.generate_monthly_statement(file, date, user.id)
+) -> StatementWrite:
+    return service.generate_monthly_statement(file, user.id)
 
 
 @router.get("/api/statement", response_model=StatementDTO)

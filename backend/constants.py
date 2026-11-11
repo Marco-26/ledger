@@ -23,6 +23,8 @@ EXPENSE_CATEGORIES = [
 
 SUPABASE_BASE_URL = os.getenv("SUPABASE_BASE_URL", "")
 
+AI_MODEL="gpt-5.4-mini"
+
 MODEL_SYSTEM_PROMPT = f"""
 You are a bank transaction classifier.
 

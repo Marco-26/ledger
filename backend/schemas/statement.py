@@ -44,8 +44,10 @@ class StatementDTO(BaseModel):
     expense_total_growth_rate: float
     net_balance_total_growth_rate: float
 
+class StatementWrite(BaseModel):
+    statement: StatementDTO
+    date: str
 
-# object that holds month summaries for the yearly statement
 class MonthlySummaryRead(BaseModel):
     month: str
     expenses: float
