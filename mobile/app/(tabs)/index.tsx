@@ -16,7 +16,6 @@ import {
   useIsYear,
   useSelectedDate,
   useSelectedPeriod,
-  useUploadingFileMonth,
 } from "@/stores/dashboardStore";
 import { useCurrentStatement } from "@/hooks/useCurrentStatement";
 import { useTheme } from "@/styles/theme";
@@ -42,9 +41,8 @@ export default function HomeScreen() {
   const { colors } = useTheme();
   const period = useSelectedPeriod();
   const selectedDate = useSelectedDate();
-  const uploadingFileMonth = useUploadingFileMonth();
   const isYear = useIsYear();
-  const { setUploadingFileMonth } = useDashboardActions();
+  const { setSelectedDate } = useDashboardActions();
 
   const {
     statement,
@@ -74,24 +72,18 @@ export default function HomeScreen() {
 
   const selectedMonth = selectedDate.date(1).format(Constants.UI.DATE_FORMAT);
 
-  const isSelectedMonthUploading =
-    !isYear && uploadingFileMonth === selectedMonth;
-  
-  const isDashboardLoading = isLoading || isSelectedMonthUploading;
-  
   const periodLabel = isYear
     ? selectedDate.format("YYYY")
     : formatMonthLabel(selectedDate);
 
   // In month view the current statement is the monthly one.
   const monthlyStatement = isYear ? undefined : (statement as IStatement | undefined);
-  const canDelete = !!monthlyStatement && !isDashboardLoading;
+  const canDelete = !!monthlyStatement && !isLoading;
 
   const handleFilePicker = (file: File) => {
-    setUploadingFileMonth(selectedMonth);
     uploadStatement(
       { statementFile: file },
-      { onSettled: () => setUploadingFileMonth(undefined) },
+      { onSuccess: (upload) => setSelectedDate(upload.date) },
     );
   };
 
@@ -129,7 +121,7 @@ export default function HomeScreen() {
 
         <PeriodSwitcher style={styles.periodSwitcher} />
 
-        {!isSelectedMonthUploading && isError ? (
+        {isError ? (
           <StateMessage
             icon="cloud-offline-outline"
             tone="error"
@@ -138,7 +130,7 @@ export default function HomeScreen() {
             actionLabel="Try again"
             onAction={refetch}
           />
-        ) : !isSelectedMonthUploading && isEmpty ? (
+        ) : isEmpty ? (
           <StateMessage
             icon="document-text-outline"
             title={`Nothing in ${periodLabel}`}
@@ -153,11 +145,11 @@ export default function HomeScreen() {
             <StatementSummary
               statement={statement}
               period={period}
-              isLoading={isDashboardLoading}
+              isLoading={isLoading}
               onDelete={canDelete ? openDeleteSheet : undefined}
             />
 
-            {isYear && !isDashboardLoading ? (
+            {isYear && !isLoading ? (
               <>
                 <Divider style={styles.rule} />
                 <YearlyNetChart
@@ -173,7 +165,7 @@ export default function HomeScreen() {
             <TopMovements
               title={isYear ? `Top income of ${periodLabel}` : "Top income"}
               transactions={statement?.topIncomes}
-              isLoading={isDashboardLoading}
+              isLoading={isLoading}
               emptyLabel={`No income recorded this ${PERIOD_NOUN_MAPPER[period]}.`}
               filter="income"
               showSeeAll={!isYear}
@@ -184,7 +176,7 @@ export default function HomeScreen() {
             <TopMovements
               title={isYear ? `Top spending of ${periodLabel}` : "Top spending"}
               transactions={statement?.topExpenses}
-              isLoading={isDashboardLoading}
+              isLoading={isLoading}
               emptyLabel={`No spending recorded this ${PERIOD_NOUN_MAPPER[period]
                 }.`}
               filter="expense"
@@ -196,7 +188,7 @@ export default function HomeScreen() {
             <CategoryBreakdown
               categories={statement?.transactionCategories}
               emptyLabel={`No spending recorded this ${PERIOD_NOUN_MAPPER[period]}.`}
-              isLoading={isDashboardLoading}
+              isLoading={isLoading}
             />
           </>
         )}
@@ -207,7 +199,7 @@ export default function HomeScreen() {
         <UploadFileFloatingButton
           onFileSelected={handleFilePicker}
           isLoading={isUploading}
-          disabled={!!uploadingFileMonth}
+          disabled={isUploading}
         />
       ) : null}
 
