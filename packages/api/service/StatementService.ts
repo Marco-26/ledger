@@ -1,23 +1,23 @@
 import { apiClient } from "./client";
-import type { IStatement, IYearlyStatement } from "../data/StatementDtos";
+import type { IStatement, IStatementUpload, IYearlyStatement } from "../data/StatementDtos";
 import StatementDataAdapter from "./adapters/StatementDataAdapter";
 import { Constants } from "../utils/constants";
 
 export class StatementService {
   readonly baseURL = "/statement";
 
-  public async postStatement(file: File, date: string): Promise<IStatement> {
+  // The backend detects the statement's month from the PDF itself.
+  public async postStatement(file: File): Promise<IStatementUpload> {
     const formData = new FormData();
     formData.append(Constants.API.GENERATE_STATEMENT_FORMDATA_KEY, file);
 
-    const url = `${this.baseURL}?${Constants.API.QUERY_PARAMS.DATE}=${encodeURIComponent(date)}`;
-    const response = await apiClient.post(url, formData, {
+    const response = await apiClient.post(this.baseURL, formData, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
     });
 
-    return StatementDataAdapter.convertToStatement(response.data);
+    return StatementDataAdapter.convertToStatementUpload(response.data);
   }
 
   public async fetchStatement(date?: string): Promise<IStatement> {

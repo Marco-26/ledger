@@ -11,21 +11,18 @@ interface DashboardActions {
   setSelectedDate: (date: Dayjs) => void;
   goToPrevious: () => void;
   goToNext: () => void;
-  setUploadingFileMonth: (month: string | undefined) => void;
   reset: () => void;
 }
 
 interface DashboardState {
   selectedPeriod: PeriodOptions;
   selectedDate: Dayjs;
-  uploadingFileMonth?: string;
   actions: DashboardActions;
 }
 
 const initialState = () => ({
   selectedPeriod: PeriodOptions.MONTH,
   selectedDate: dayjs(),
-  uploadingFileMonth: undefined,
 });
 
 const useDashboardStore = create<DashboardState>((set) => ({
@@ -42,8 +39,6 @@ const useDashboardStore = create<DashboardState>((set) => ({
         const next = state.selectedDate.add(1, state.selectedPeriod);
         return { selectedDate: next.isAfter(dayjs(), "month") ? dayjs() : next };
       }),
-    setUploadingFileMonth: (newUploadingMonth) =>
-      set({ uploadingFileMonth: newUploadingMonth }),
     reset: () => set(initialState()),
   },
 }));
@@ -53,9 +48,6 @@ export const useSelectedPeriod = () =>
 
 export const useSelectedDate = () =>
   useDashboardStore((state) => state.selectedDate);
-
-export const useUploadingFileMonth = () =>
-  useDashboardStore((state) => state.uploadingFileMonth);
 
 export const useIsYear = () =>
   useDashboardStore((state) => state.selectedPeriod === PeriodOptions.YEAR);

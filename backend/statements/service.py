@@ -3,10 +3,9 @@ from datetime import date
 from exceptions.domain import (
     StatementNotFoundException,
     StatementParsingException,
-    StatementWrongDateSelectedException,
 )
 from integrations.openai_api import classify_transactions
-from schemas.statement import StatementDTO, TransactionDTO, YearlyStatementRead
+from schemas.statement import StatementDTO, StatementWrite, TransactionDTO, YearlyStatementRead
 from sqlalchemy.orm import Session
 from utils import date_utils
 from utils.file_utils import extract_table_from_pdf_file
@@ -26,8 +25,8 @@ class StatementService:
         self.repository = StatementRepository(db)
 
     def generate_monthly_statement(
-        self, file: bytes, user_selected_date: date, user_id: int
-    ) -> StatementDTO:
+        self, file: bytes, user_id: int
+    ) -> StatementWrite:
         table = extract_table_from_pdf_file(file)
         df = normalize_statement_dataframe(build_statement_dataframe(table))
         transactions = dataframe_to_transactions(df)
@@ -37,26 +36,19 @@ class StatementService:
 
         statement_date = transactions[0].date
 
-        # if the user wants to upload a statement from february into january, for example.
-        if (statement_date.year, statement_date.month) != (
-            user_selected_date.year,
-            user_selected_date.month,
-        ):
-            raise StatementWrongDateSelectedException(
-                user_selected_date=user_selected_date, statement_date=statement_date
-            )
-
         categorized_transactions = self._classify_transactions(transactions)
 
-        record = self.repository.get_statement_by_date(user_selected_date, user_id)
+        record = self.repository.get_statement_by_date(statement_date, user_id)
         if record:
             self.repository.delete_statement(record.id, user_id)
 
         self.repository.create_statement(
-            categorized_transactions, user_selected_date, user_id
+            categorized_transactions, statement_date, user_id
         )
 
-        return self.get_monthly_statement(user_selected_date, user_id)
+        statement = self.get_monthly_statement(statement_date, user_id)
+
+        return StatementWrite(statement=statement, date=statement_date.strftime("%m/%Y"));
 
     def get_monthly_statement(self, date: date, user_id: int) -> StatementDTO:
         statement = self.repository.get_statement_by_date(date, user_id)

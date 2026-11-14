@@ -15,6 +15,11 @@ export interface ITransactionCategoryResponse {
   type: TransactionTypeValues;
 }
 
+export interface IStatementUploadResponse{
+  statement: IStatementResponse;
+  date: string; // in format M/Y
+}
+
 export interface IStatementResponse {
   id: number;
   date: string;

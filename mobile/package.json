@@ -7,6 +7,7 @@
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo run:android",
     "ios": "expo run:ios",
+    "ios:open": "open -b com.apple.dt.Devices && xcrun simctl launch booted com.marco26.ledger",
     "web": "expo start --web",
     "lint": "expo lint"
   },
